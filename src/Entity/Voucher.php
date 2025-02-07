@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\VoucherRepository;
+use App\Enum\TypeReduction;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VoucherRepository;
 
 #[ORM\Entity(repositoryClass: VoucherRepository::class)]
 class Voucher
@@ -20,9 +22,7 @@ class Voucher
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateEmission = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $typeReduction = null;
-
+   
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateExpiration = null;
 
@@ -31,6 +31,14 @@ class Voucher
 
     #[ORM\OneToOne(mappedBy: 'voucher', cascade: ['persist', 'remove'])]
     private ?User $user = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $isUsed = null;
+    public function __construct()
+    {
+         $this->codeVoucher = Uuid::v4()->toRfc4122(); // Générer un code unique aléatoire
+        
+    }
 
     public function getId(): ?int
     {
@@ -60,19 +68,6 @@ class Voucher
 
         return $this;
     }
-
-    public function getTypeReduction(): ?string
-    {
-        return $this->typeReduction;
-    }
-
-    public function setTypeReduction(string $typeReduction): static
-    {
-        $this->typeReduction = $typeReduction;
-
-        return $this;
-    }
-
     public function getDateExpiration(): ?\DateTimeInterface
     {
         return $this->dateExpiration;
@@ -118,4 +113,16 @@ class Voucher
 
         return $this;
     }
+    public function getIsUsed(): ?bool
+    {
+        return $this->isUsed;
+    }
+    
+
+    public function setIsUsed(?bool $isUsed): static
+{
+    $this->isUsed = $isUsed;
+    return $this;
+}
+
 }

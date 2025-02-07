@@ -1,0 +1,45 @@
+{% block title %}Liste des Offres{% endblock %}
+{% extends 'admin/index.html.twig' %}
+
+{% block body %}
+    <h1>Liste des Offres</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Réduction (%)</th>
+                <th>Date de début</th>
+                <th>Date d'expiration</th>
+                <th>Activité</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offre in offres %}
+                <tr>
+                    <td>{{ offre.id }}</td>
+                    <td>{{ offre.reduction }}</td>
+                    <td>{{ offre.dateDebut|date('d/m/Y') }}</td>
+                    <td>{{ offre.dateExpiration|date('d/m/Y') }}</td>
+                    <td>{{ offre.activitie.libelle }}</td>
+                    <td>
+                        <form method="post" action="{{ path('offre_delete', {id: offre.id}) }}" style="display:inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                            <button class="btn btn-danger" type="submit">Supprimer</button>
+                        </form>
+                        <a href="{{ path('offre_edit', {id: offre.id}) }}" class="btn btn-warning">Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucune offre disponible.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('offer_create') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
+
+  
+{% endblock %}

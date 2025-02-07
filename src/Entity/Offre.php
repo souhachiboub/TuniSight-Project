@@ -25,15 +25,15 @@ class Offre
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateExpiration = null;
 
-    /**
-     * @var Collection<int, Activite>
-     */
-    #[ORM\OneToMany(targetEntity: Activite::class, mappedBy: 'offre')]
-    private Collection $activites;
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Activite $activitie = null;
+
+
 
     public function __construct()
     {
-        $this->activites = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -77,33 +77,17 @@ class Offre
         return $this;
     }
 
-    /**
-     * @return Collection<int, Activite>
-     */
-    public function getActivites(): Collection
+    public function getActivitie(): ?Activite
     {
-        return $this->activites;
+        return $this->activitie;
     }
 
-    public function addActivite(Activite $activite): static
+    public function setActivitie(?Activite $activitie): static
     {
-        if (!$this->activites->contains($activite)) {
-            $this->activites->add($activite);
-            $activite->setOffre($this);
-        }
+        $this->activitie = $activitie;
 
         return $this;
     }
 
-    public function removeActivite(Activite $activite): static
-    {
-        if ($this->activites->removeElement($activite)) {
-            // set the owning side to null (unless already changed)
-            if ($activite->getOffre() === $this) {
-                $activite->setOffre(null);
-            }
-        }
-
-        return $this;
-    }
+    
 }

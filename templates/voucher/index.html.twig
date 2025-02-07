@@ -1,0 +1,16 @@
+
+
+{% block body %}
+    <h1>Créer un Nouveau Coupon</h1>
+
+    {{ form_start(voucherForm) }}
+        {{ form_row(voucherForm.codeVoucher) }}
+        {{ form_row(voucherForm.valeurReduction) }}
+        {{ form_row(voucherForm.dateEmission) }}
+        {{ form_row(voucherForm.dateExpiration) }}
+        {{ form_row(voucherForm.user) }} {# Sélection du client #}
+        {{ form_row(voucherForm.isUsed) }}
+    {{ form_end(voucherForm) }}
+
+    
+{% endblock %}

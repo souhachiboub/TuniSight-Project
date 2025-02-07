@@ -59,20 +59,24 @@ class Activite
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieActivite $categorie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activites')]
-    private ?Offre $offre = null;
-
     /**
      * @var Collection<int, Reservation>
      */
     #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
     private Collection $reservation;
 
+    /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'activitie')]
+    private Collection $offres;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
         $this->ville = new ArrayCollection();
         $this->reservation = new ArrayCollection();
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -254,17 +258,6 @@ class Activite
         return $this;
     }
 
-    public function getOffre(): ?Offre
-    {
-        return $this->offre;
-    }
-
-    public function setOffre(?Offre $offre): static
-    {
-        $this->offre = $offre;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Reservation>
@@ -289,4 +282,38 @@ class Activite
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setActivitie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getActivitie() === $this) {
+                $offre->setActivitie(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
+
+
 }

@@ -1,0 +1,17 @@
+{# templates/offer/create.html.twig #}
+
+
+
+{% block title %}Ajouter une offre{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une nouvelle offre</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.reduction) }}
+        {{ form_row(form.dateDebut) }}
+        {{ form_row(form.dateExpiration) }}
+        {{ form_row(form.activitie) }}  {# Affichage du champ activité #}
+        {{ form_row(form.save) }}
+    {{ form_end(form) }}
+{% endblock %}
