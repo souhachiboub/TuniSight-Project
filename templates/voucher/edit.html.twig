@@ -1,0 +1,11 @@
+{%extends 'admin/index.html.twig'%}
+{% block body %}
+    <h1>Modifier</h1>
+<div class="container-fluid">
+    {{ form_start(voucherForm) }}
+        {{ form_row(voucherForm.dateExpiration) }}
+        {{ form_row(voucherForm.valeurReduction) }}
+        {{ form_row(voucherForm.save) }}
+    {{ form_end(voucherForm) }}
+    <div/>
+{% endblock %}

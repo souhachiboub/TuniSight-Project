@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>{%block title%}Admin - Dashboard{%endblock%}</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{asset('admin/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -362,6 +362,7 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                {%block body%}
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -696,6 +697,7 @@
 
             </div>
             <!-- End of Main Content -->
+            {%endblock%}
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">

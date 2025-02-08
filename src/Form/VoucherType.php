@@ -32,10 +32,6 @@ class VoucherType extends AbstractType
         ->add('valeurReduction',IntegerType::class, [
             'label' => 'Réduction (%)'
         ])
-        ->add('isUsed', CheckboxType::class, [
-            'label' => 'Coupon utilisé',
-            'required' => false,
-        ])
         ->add('user', EntityType::class, [
             'class' => User::class,
             'choice_label' => 'email', // Sélection par email

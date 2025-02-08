@@ -1,0 +1,53 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 class="mb-4">Gestion des Vouchers</h1>
+    <div class="mb-4">
+            <a href="{{ path('admin_voucher_new') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
+        </div>
+
+    <style>
+        .blur-text {
+            filter: blur(5px); /* Effet de flou */
+            user-select: none; /* Empêche la sélection */
+            pointer-events: none; /* Désactive l'interaction */
+        }
+    </style>
+
+    <div class="row">
+        {% for voucher in vouchers %}
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title {% if not voucher.user %}blur-text{% endif %}">
+                            {{ voucher.codeVoucher }}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Valeur :</strong> {{ voucher.valeurReduction }}% <br>
+                            <strong>Date d'Émission :</strong> {{ voucher.dateEmission|date('d/m/Y') }} <br>
+                            <strong>Date d'Expiration :</strong> {{ voucher.dateExpiration|date('d/m/Y') }} <br>
+                            <strong>Assigné à :</strong> {{ voucher.user ? voucher.user.email : 'Non assigné' }}
+                        </p>
+                        <span class="badge {% if voucher.isUsed %}bg-danger{% else %}bg-success{% endif %}">
+                            {{ voucher.isUsed ? 'Utilisé' : 'Disponible' }}
+                        </span>
+
+                        <div class="mt-3 d-flex justify-content-between">
+                            <a href="{{ path('admin_voucher_edit', {id: voucher.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                            <form method="post" action="{{ path('admin_voucher_delete', {'id': voucher.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce coupon ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voucher.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p>Aucun voucher disponible.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

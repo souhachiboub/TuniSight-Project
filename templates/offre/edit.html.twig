@@ -1,34 +1,30 @@
+{% extends 'admin/index.html.twig' %}
+
 {% block title %}Modifier l'offre{% endblock %}
 
 {% block body %}
     <div class="container mt-4">
-        <h1 class="mb-4">Modifier l'offre {{ offre.activitie.libelle }}</h1>
-
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
+        <h1 class="mb-4">{{ offre.activitie.libelle }}</h1>
 
         {{ form_start(form) }}
-           
+        
+        <div class="mb-3">
+            {{ form_row(form.reduction) }}
+        </div>
 
-            <div class="mb-3">
-                {{ form_row(form.reduction) }}
-            </div>
+        <div class="mb-3">
+            {{ form_row(form.dateDebut) }}
+        </div>
 
-            <div class="mb-3">
-                {{ form_row(form.dateDebut) }}
-            </div>
+        <div class="mb-3">
+            {{ form_row(form.dateExpiration) }}
+        </div>
 
-            <div class="mb-3">
-                {{ form_row(form.dateExpiration) }}
-            </div>
-
-            <div class="mb-3">
-            {{ form_row(form.activitie) }}
-          </div>
+        <div class="mb-3">
+            <label for="{{ form.activitie.vars.id }}">Activité</label>
+            {{ form_widget(form.activitie, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        
         {{ form_end(form) }}
     </div>
-   
 {% endblock %}
