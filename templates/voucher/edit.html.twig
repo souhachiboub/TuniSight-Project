@@ -3,15 +3,12 @@
 {% block body %}
 <div class="container-fluid">
     <h1>Modifier le Coupon</h1>
-
-    
-
     {% for flash in app.flashes('error') %}
         <div class="alert alert-danger">{{ flash }}</div>
     {% endfor %}
 
     {{ form_start(voucherForm) }}
-        {{ form_row(voucherForm.dateExpiration) }}
+       {{ form_errors(voucherForm.dateExpiration) }}
         {{ form_row(voucherForm.valeurReduction) }}
 
         {% if voucherForm.user is defined %}
@@ -21,8 +18,6 @@
             {{ form_errors(voucherForm.user) }}
         </div>
         {% endif %}
-
-        {{ form_row(voucherForm.save) }}
     {{ form_end(voucherForm) }}
 </div>
 {% endblock %}

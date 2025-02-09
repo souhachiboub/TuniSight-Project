@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\VoucherRepository;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: VoucherRepository::class)]
 class Voucher
 {
@@ -22,7 +22,10 @@ class Voucher
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateEmission = null;
 
-   
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: "dateEmission",
+        message: "La date d'expiration doit être supérieure ou égale à la date d'émission."
+    )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateExpiration = null;
 

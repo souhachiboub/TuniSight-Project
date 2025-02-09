@@ -18,25 +18,16 @@ class OffreController extends AbstractController
     #[Route('/create', name: 'offer_create')]
     public function create(Request $request, EntityManagerInterface $em): Response
     {
-        // Crée une nouvelle instance de l'entité Offer
         $offer = new Offre();
-
-        // Création du formulaire pour l'offre
         $form = $this->createForm(OffreType::class, $offer);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // L'offre est déjà liée à l'activité dans le formulaire via le champ "activity"
-            // Si vous souhaitez effectuer des opérations supplémentaires sur l'activité, vous pouvez le faire ici
-
-            // Sauvegarder l'offre dans la base de données
             $em->persist($offer);
             $em->flush();
             $this->addFlash('success', 'L\'offre a été ajoutée avec succès!');
             return $this->redirectToRoute('offre_show');
         }
-
-        // Si le formulaire n'est pas encore soumis, afficher la vue
         return $this->render('offre/new.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -52,12 +43,9 @@ class OffreController extends AbstractController
     #[Route('/{id}/delete', name: 'offre_delete')]
     public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
-    // Vérifier si le token CSRF est valide pour éviter les suppressions non sécurisées
     if ($this->isCsrfTokenValid('delete'.$offre->getId(), $request->request->get('_token'))) {
         $entityManager->remove($offre);
         $entityManager->flush();
-
-        // Ajouter un message flash pour informer l'utilisateur
         $this->addFlash('success', 'L\'offre a été supprimée avec succès.');
     } else {
         $this->addFlash('error', 'Token CSRF invalide, suppression échouée.');
@@ -66,10 +54,9 @@ class OffreController extends AbstractController
     return $this->redirectToRoute('offre_show');
     }
 
-    #[Route('/offre/{id}/edit', name: 'offre_edit', methods: ['GET', 'POST'])]
-public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
-{
-    // Passer l'option 'is_edit' à true pour désactiver le champ activitie
+    #[Route('/offre/{id}/edit', name: 'offre_edit')]
+    public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
+    {
     $form = $this->createForm(OffreType::class, $offre, [
         'is_edit' => true
     ]);
@@ -86,9 +73,4 @@ public function edit(Request $request, Offre $offre, EntityManagerInterface $ent
         'form' => $form->createView(),
     ]);
 }
-
-
-
-
- 
 }

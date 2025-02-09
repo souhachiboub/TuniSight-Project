@@ -25,6 +25,10 @@ class Offre
     private ?\DateTimeInterface $dateDebut = null;
 
     #[Assert\NotBlank]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: "dateDebut",
+        message: "La date d'expiration doit être supérieure  à la date d'émission."
+    )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateExpiration = null;
 

@@ -7,13 +7,13 @@
     <h1>Ajouter une nouvelle offre</h1>
     
     {# Début du formulaire #}
-    {{ form_start(form, {'attr': {'id': 'offer-form', 'novalidate': 'novalidate'}}) }}
+    {{ form_start(form) }}
     
     {# Champs de formulaire #}
     <div class="mb-3">
         {{ form_label(form.reduction) }}
         {{ form_widget(form.reduction, {'attr': {'class': 'form-control'}}) }}
-        <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
+        <div class="invalid-feedback">Veuillez renseigner ce champ</div>
     </div>
 
     <div class="mb-3">
@@ -27,53 +27,11 @@
         {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control'}}) }}
         <div class="invalid-feedback">Veuillez sélectionner une date d'expiration.</div>
     </div>
-
-    {# Sélection de l'activité avec le champ form.activitie #}
     <div class="mb-3">
         {{ form_label(form.activitie) }}
         {{ form_widget(form.activitie, {'attr': {'class': 'form-control'}}) }}
         <div class="invalid-feedback">Veuillez choisir une activité.</div>
     </div>
-    
-   
-
-    {# Fin du formulaire #}
     {{ form_end(form) }}
 </div>
-
-{# Ajout du JavaScript pour la validation #}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('offer-form');
-
-        form.addEventListener('submit', function(event) {
-            let isValid = true;
-            
-            // Vérifier chaque champ du formulaire
-            form.querySelectorAll('.form-control').forEach(input => {
-                if (!input.value.trim()) {
-                    input.classList.add('is-invalid');
-                    isValid = false;
-                } else {
-                    input.classList.remove('is-invalid');
-                }
-            });
-
-            // Empêcher la soumission si le formulaire est invalide
-            if (!isValid) {
-                event.preventDefault();
-                return;
-            }
-        });
-
-        // Supprimer la classe is-invalid lors de la saisie dans un champ
-        form.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.value.trim()) {
-                    this.classList.remove('is-invalid');
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}

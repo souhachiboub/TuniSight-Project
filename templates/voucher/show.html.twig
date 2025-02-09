@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <h1 class="mb-4">Gestion des Vouchers</h1>
     <div class="mb-4">
-            <a href="{{ path('admin_voucher_new') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
+            <a href="{{ path('voucher_new') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
         </div>
 
     <style>
@@ -29,13 +29,9 @@
                             <strong>Date d'Expiration :</strong> {{ voucher.dateExpiration|date('d/m/Y') }} <br>
                             <strong>Assigné à :</strong> {{ voucher.user ? voucher.user.email : 'Non assigné' }}
                         </p>
-                        <span class="badge {% if voucher.isUsed %}bg-danger{% else %}bg-success{% endif %}">
-                            {{ voucher.isUsed ? 'Utilisé' : 'Disponible' }}
-                        </span>
-
                         <div class="mt-3 d-flex justify-content-between">
-                            <a href="{{ path('admin_voucher_edit', {id: voucher.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
-                            <form method="post" action="{{ path('admin_voucher_delete', {'id': voucher.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce voucher ?');">
+                            <a href="{{ path('voucher_edit', {id: voucher.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                            <form method="post" action="{{ path('voucher_delete', {'id': voucher.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce voucher ?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voucher.id) }}">
                                 <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                             </form>

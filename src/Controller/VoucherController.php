@@ -32,7 +32,7 @@ class VoucherController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'admin_voucher_new')]
+    #[Route('/new', name: 'voucher_new')]
     public function new(Request $request, EntityManagerInterface $entityManager,MailerService $mailer): Response
     {
         $voucher = new Voucher();
@@ -42,9 +42,7 @@ class VoucherController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($voucher);
             $entityManager->flush();
-            //Email sending 
             if ($voucher->getUser()) {
-                // Envoyer un e-mail au client
                 $mailer->sendVoucherEmail(
                     $voucher->getUser()->getEmail(),
                     $voucher->getCodeVoucher(),
@@ -53,7 +51,6 @@ class VoucherController extends AbstractController
                 );
             }
 
-            $this->addFlash('success', 'Coupon créé avec succès !');
             return $this->redirectToRoute('voucher_show');
         }
 
@@ -69,7 +66,7 @@ class VoucherController extends AbstractController
     ]);
     }
 
-    #[Route('/voucher/{id}/edit', name: 'admin_voucher_edit')]
+    #[Route('/voucher/edit/{id}', name: 'voucher_edit')]
     public function edit(Request $request, Voucher $voucher, EntityManagerInterface $entityManager, MailerService $mailer): Response
     {
         $formBuilder = $this->createFormBuilder($voucher)
@@ -82,8 +79,6 @@ class VoucherController extends AbstractController
                 'required' => true,
                 'label' => 'Nouvelle valeur de réduction (%)'
             ]);
-    
-        // Ajouter le champ "Sélectionner un client" si le voucher n'a pas d'utilisateur
         if (!$voucher->getUser()) {
             $formBuilder->add('user', EntityType::class, [
                 'class' => User::class,
@@ -94,19 +89,14 @@ class VoucherController extends AbstractController
                 'required' => false,
                 'label' => 'Assigner à un client'
             ]);
-        }
-    
+        }    
         $formBuilder->add('save', SubmitType::class, [
             'label' => 'Enregistrer les modifications'
-        ]);
-    
+        ]);    
         $form = $formBuilder->getForm();
-        $form->handleRequest($request);
-    
+        $form->handleRequest($request);   
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-    
-            // Vérifier si un utilisateur a été assigné et envoyer un e-mail
+            $entityManager->flush();           
             if ($voucher->getUser()) {
                 $mailer->sendVoucherEmail(
                     $voucher->getUser()->getEmail(),
@@ -114,24 +104,20 @@ class VoucherController extends AbstractController
                     $voucher->getValeurReduction(),
                     $voucher->getDateExpiration()
                 );
-            }
-    
-            $this->addFlash('success', 'Coupon mis à jour avec succès !');
+            }    
+            $this->addFlash('success', 'Voucher mis à jour avec succès !');
             return $this->redirectToRoute('voucher_show');
-        }
-    
+        }   
         return $this->render('voucher/edit.html.twig', [
             'voucherForm' => $form->createView(),
         ]);
     }
     
-    #[Route('/voucher/{id}/delete', name: 'admin_voucher_delete')]
+    #[Route('/voucher/delete/{id}', name: 'voucher_delete')]
     public function delete(Request $request, Voucher $voucher, EntityManagerInterface $entityManager): Response
     {
        
         if ($this->isCsrfTokenValid('delete' . $voucher->getId(), $request->request->get('_token'))) {
-            
-            
             if ($voucher->getUser()) {
                 $voucher->setUser(null);  
                 $entityManager->persist($voucher); 
@@ -141,36 +127,6 @@ class VoucherController extends AbstractController
         }
         return $this->redirectToRoute('voucher_show');
     }
-
-    // #[Route('/assign/{id}', name: 'admin_voucher_assign')]
-    // public function assigner(int $id, Request $request, VoucherRepository $voucherRepository,UserRepository $userRepository,EntityManagerInterface $entityManager,MailerService $mailer): Response {
-    //     $voucher = $voucherRepository->find($id);
-    //     if (!$voucher) {
-    //         throw $this->createNotFoundException('Le coupon demandé n\'existe pas.');
-    //     }
-    //     $users = $userRepository->findAll();
-    //     if ($request->isMethod('POST')) {
-    //         $userId = $request->request->get('client_id');
-    //         if ($userId) {
-    //             $user = $userRepository->find($userId);
-    //             if ($user) {
-    //                 $voucher->setUser($user);
-    //                 $entityManager->flush();
-    //                 $this->addFlash('success', 'Coupon assigné avec succès !');
-    //                 return $this->redirectToRoute('voucher_show');
-    //             } else {
-    //                 $this->addFlash('error', 'Utilisateur non trouvé.');
-    //             }
-    //         } else {
-    //             $this->addFlash('error', 'Veuillez sélectionner un utilisateur.');
-    //         }
-    //     }
-    //     return $this->render('voucher/assign.html.twig', [
-    //         'voucher' => $voucher,
-    //         'users' => $users 
-    //     ]);
-    // }
-    
     
 
 
