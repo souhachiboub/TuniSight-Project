@@ -1,41 +1,39 @@
+{% extends 'admin/index.html.twig' %}
 
-{%extends 'admin/index.html.twig'%}
 {% block body %}
 <div class="container-fluid">
     <h1>Créer un Nouveau Coupon</h1>
 
     {{ form_start(voucherForm) }}
         <div class="mb-3">
-        {{ form_label(voucherForm.codeVoucher) }}
-        {{ form_widget(voucherForm.codeVoucher, {'attr': {'class': 'form-control' ~ (voucherForm.codeVoucher.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
-        {{ form_errors(voucherForm.codeVoucher) }}
+            {{ form_label(voucherForm.codeVoucher) }}
+            {{ form_widget(voucherForm.codeVoucher, {'attr': {'class': 'form-control' ~ (voucherForm.codeVoucher.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.codeVoucher) }}
         </div>
 
         <div class="mb-3">
-        {{ form_label(voucherForm.valeurReduction) }}
-        {{ form_widget(voucherForm.valeurReduction, {'attr': {'class': 'form-control' ~ (voucherForm.valeurReduction.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
-        {{ form_errors(voucherForm.valeurReduction) }}
+            {{ form_label(voucherForm.valeurReduction) }}
+            {{ form_widget(voucherForm.valeurReduction, {'attr': {'class': 'form-control' ~ (voucherForm.valeurReduction.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.valeurReduction) }}
         </div>
 
         <div class="mb-3">
-        {{ form_label(voucherForm.dateEmission) }}
-        {{ form_widget(voucherForm.dateEmission, {'attr': {'class': 'form-control' ~ (voucherForm.dateEmission.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
-        {{ form_errors(voucherForm.dateEmission) }}
+            {{ form_label(voucherForm.dateEmission) }}
+            {{ form_widget(voucherForm.dateEmission, {'attr': {'class': 'form-control' ~ (voucherForm.dateEmission.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.dateEmission) }}
         </div>
 
         <div class="mb-3">
-        {{ form_label(voucherForm.dateExpiration) }}
-        {{ form_widget(voucherForm.dateExpiration, {'attr': {'class': 'form-control' ~ (voucherForm.dateExpiration.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
-        {{ form_errors(voucherForm.dateExpiration) }}
+            {{ form_label(voucherForm.dateExpiration) }}
+            {{ form_widget(voucherForm.dateExpiration, {'attr': {'class': 'form-control' ~ (voucherForm.dateExpiration.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.dateExpiration) }}
         </div>
         
         <div class="mb-3">
-        {{ form_label(voucherForm.user) }}
-        {{ form_widget(voucherForm.user, {'attr': {'class': 'form-control' ~ (voucherForm.user.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
-        {{ form_errors(voucherForm.user) }}
+            {{ form_label(voucherForm.user) }}
+            {{ form_widget(voucherForm.user, {'attr': {'class': 'form-control' ~ (voucherForm.user.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.user) }}
         </div>
     {{ form_end(voucherForm) }}
-
-   </div>
-   
+</div>
 {% endblock %}
