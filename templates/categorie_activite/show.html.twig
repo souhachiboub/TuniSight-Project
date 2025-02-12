@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>SB Admin 2 - Blank</title>
+
+		<link href="{{asset('admin/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+		<link href="{{asset('admin/css/sb-admin-2.min.css')}}" rel="stylesheet">
+
+		<style>
+			.custom-input {
+				border: 2px solid #77b9d3;
+				border-radius: 5px;
+				padding: 10px;
+				background-color: #f7f7f7;
+			}
+
+			.custom-btn {
+				border: none;
+				padding: 10px 20px;
+				color: white;
+				border-radius: 5px;
+
+			}
+
+			.custom-btn:hover {
+				background-color: #218838;
+			}
+
+			form {
+				width: 40%;
+				margin-left: 30%;
+				border-color: black
+			}
+			h2 {
+				text-align: center
+			}
+		</style>
+	</head>
+
+	<body
+		id="page-top">
+
+		<!-- Page Wrapper -->
+		<div
+			style="background-color:blue" id="wrapper">
+
+			<!-- Sidebar -->
+			<ul
+				class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
+
+				<!-- Sidebar - Brand -->
+				<a class="sidebar-brand d-flex align-items-center justify-content-center">
+					<div class="sidebar-brand-icon ">
+						<img style="width:170px" src="{{asset('admin/img/logo.png')}}"/>
+					</div>
+
+				</a>
+
+				<!-- Divider -->
+				<hr
+				class="sidebar-divider my-0">
+				<!-- Divider -->
+				<hr
+				class="sidebar-divider">
+
+				<!-- Nav Item - Dashboard -->
+				<li class="nav-item">
+					<a class="nav-link" href="">
+						<i class="fas fa-fw fa-tachometer-alt"></i>
+						<span>Dashboard</span>
+					</a>
+				</li>
+
+
+				<!-- Divider -->
+				<hr class="sidebar-divider">
+
+				<li class="nav-item">
+					<a class="nav-link" href="charts.html">
+						<i class="fas fa-fw fa-chart-area"></i>
+						<span>Activités</span>
+					</a>
+				</li>
+
+				<!-- Divider -->
+				<hr class="sidebar-divider d-none d-md-block">
+
+
+			</ul>
+			<!-- End of Sidebar -->
+			<!-- Content Wrapper -->
+			<div
+				id="content-wrapper" class="d-flex flex-column">
+
+				<!-- Main Content -->
+				<div
+					id="content">
+
+					<!-- Topbar -->
+					<nav
+						class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+						<!-- Sidebar Toggle (Topbar) -->
+						<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+							<i class="fa fa-bars"></i>
+						</button>
+
+						<!-- Topbar Search -->
+						<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+							<div class="input-group">
+								<input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+								<div class="input-group-append">
+									<button class="btn btn-primary" type="button" style="background-color:#77b9d3">
+										<i class="fas fa-search fa-sm"></i>
+									</button>
+								</div>
+							</div>
+						</form>
+
+						<!-- Topbar Navbar -->
+						<ul
+							class="navbar-nav ml-auto">
+
+							<!-- Nav Item - Search Dropdown (Visible Only XS) -->
+							<li class="nav-item dropdown no-arrow d-sm-none">
+								<a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fas fa-search fa-fw"></i>
+								</a>
+								<!-- Dropdown - Messages -->
+								<div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+									<form class="form-inline mr-auto w-100 navbar-search">
+										<div class="input-group">
+											<input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+											<div class="input-group-append">
+												<button class="btn btn-primary" type="button">
+													<i class="fas fa-search fa-sm"></i>
+												</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</li>
+
+							<!-- Nav Item  -->
+
+							<div class="topbar-divider d-none d-sm-block"></div>
+
+							<!-- Nav Item - User Information -->
+							<li class="nav-item dropdown no-arrow">
+								<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<span class="mr-2 d-none d-lg-inline text-gray-600 small">Prestataire</span>
+									<img class="img-profile rounded-circle" src="{{asset('admin/img/undraw_profile.svg')}}">
+								</a>
+								<!-- Dropdown - User Information -->
+								<div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+									<a class="dropdown-item" href="#">
+										<i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+										Profile
+									</a>
+									<a class="dropdown-item" href="#">
+										<i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+										Settings
+									</a>
+									<a class="dropdown-item" href="#">
+										<i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+										Activity Log
+									</a>
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+										<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+										Logout
+									</a>
+								</div>
+							</li>
+
+						</ul>
+
+					</nav>
+					<!-- End of Topbar -->
+					<br><br><hr>
+					{% block body %}
+
+						<div class="d-flex justify-content-center">
+							<div class="card shadow p-3 mb-5 rounded" style="width: 25rem; border: 2px solid #4f8fc0;">
+								<div class="card-body text-center">
+									<h4 class="card-title" style="color: #26648e;">{{ categorie_activite.nom }}</h4>
+									<h6 class="card-subtitle mb-2" style="color: #4f8fc0;">ID:
+										{{ categorie_activite.id }}</h6>
+									<p class="card-text" style="color: #26648e;">{{ categorie_activite.description }}</p>
+								</div>
+								<div style="display:flex;justify-content: center;width: 100%;">
+									<button class="editCategoryBtn" data-id="{{ categorie_activite.id }}" class="btn" style="width:50%;border:1px solid black;background-color: #4f8fc0; color: white;">Mettre à jour</button>
+									{{ include('categorie_activite/_delete_form.html.twig', { 'button_class': 'btn' }) }}
+								</div>
+							</div>
+						</div>
+						<a href="{{ path('app_categorie_activite_index') }}" class="btn" style="background-color:rgb(229, 229, 229); color: black;">
+							<img src="{{asset('admin/img/back.png')}}"/>&nbsp; Retour à la liste</a>
+
+						<!-- Modal -->
+						<div class="modal fade" id="addCategorieModal" tabindex="-1" role="dialog" aria-labelledby="addCategorieModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="addCategorieModalLabel">Ajouter une catégorie</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div
+										class="modal-body">
+										<!-- Le formulaire -->
+										<div id="form-container"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endblock %}
+
+					{% block javascripts %}
+						<script>
+							$(document).ready(function () {
+$('#editCategoryBtn').on('click', function () {
+var categoryId = $(this).data('id');
+$('#addCategorieModal').modal('show');
+
+$.ajax({
+url: '{{ path("app_categorie_activite_edit", { "id": "replace_with_id" }) }}'.replace('replace_with_id', categoryId),
+method: 'GET',
+success: function (response) {
+$('#form-container').html(response);
+},
+error: function (xhr) {
+console.log(xhr.responseText);
+}
+});
+});
+
+$(document).on('submit', '#categorie-form', function (e) {
+e.preventDefault();
+var form = $(this);
+var actionUrl = form.attr('action');
+$.ajax({
+url: actionUrl,
+method: 'POST',
+data: form.serialize(),
+success: function () {
+$('#addCategorieModal').modal('hide');
+location.reload();
+},
+error: function (xhr) {
+console.log(xhr.responseText);
+alert('Une erreur est survenue.');
+}
+});
+});
+});
+						</script>
+					{% endblock %}
+
+
+					<!-- Footer -->
+					<footer class="sticky-footer bg-white" style="margin-top :170px">
+						<div class="container my-auto">
+							<div class="copyright text-center my-auto">
+								<span>Copyright &copy; TuniSight 2025</span>
+							</div>
+						</div>
+					</footer>
+					<!-- End of Footer -->
+
+				</div>
+				<!-- End of Content Wrapper -->
+
+			</div>
+			<!-- End of Page Wrapper -->
+
+			<!-- Bootstrap core JavaScript-->
+			<script src="{{asset('admin/vendor/jquery/jquery.min.js')}}"></script>
+			<script src="{{asset('admin/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+			<!-- Core plugin JavaScript-->
+			<script src="{{asset('admin/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+
+			<!-- Custom scripts for all pages-->
+			<script src="{{asset('admin/js/sb-admin-2.min.js')}}"></script>
+			<!-- Inclure jQuery -->
+			<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+			<!-- Inclure Popper.js -->
+			<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+			<!-- Inclure Bootstrap JS -->
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+		</body>
+	</body>
+</html></body></html>

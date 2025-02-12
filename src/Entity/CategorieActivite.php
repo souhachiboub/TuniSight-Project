@@ -6,6 +6,7 @@ use App\Repository\CategorieActiviteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategorieActiviteRepository::class)]
 class CategorieActivite
@@ -15,9 +16,14 @@ class CategorieActivite
     #[ORM\Column]
     private ?int $id = null;
 
+
+
+    #[Assert\NotBlank(message: "Le nom de la catégorie est requis!")]
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
+
+    #[Assert\NotBlank(message: "La description est requise!")]
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 

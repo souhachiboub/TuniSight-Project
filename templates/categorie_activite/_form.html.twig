@@ -1,0 +1,72 @@
+<style>
+	#categorie-form {
+		max-width: 500px;
+		margin: 20px auto;
+		padding: 20px;
+		background: #f8f9fa;
+		border-radius: 8px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	#categorie-form label {
+		font-weight: bold;
+		margin-top: 10px;
+		display: block;
+	}
+
+	#categorie-form input,
+	#categorie-form textarea,
+	#categorie-form select {
+		width: 100%;
+		padding: 8px;
+		margin-top: 5px;
+		border: 1px solid rgb(162, 204, 236);
+		border-radius: 5px;
+	}
+
+	.btn-primary {
+		width: 100%;
+		padding: 10px;
+		margin-top: 15px;
+		background-color: #26648e
+	}
+
+	.form-error {
+		color: red;
+		font-size: 12px;
+		margin-top: 5px;
+	}
+</style>
+
+{% for message in app.flashes('error') %}
+	<div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+{{ form_start(form, {'attr': {'id': 'categorie-form', 'novalidate': 'novalidate'}}) }}
+<img src="{{ asset('admin/img/logo2.png') }}" alt="Logo"/>
+
+<div class="form-group">
+	{{ form_label(form.nom) }}
+	{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+	{% if form_errors(form.nom) %}
+		<div class="form-error">
+			{{ form_errors(form.nom) }}
+		</div>
+	{% endif %}
+</div>
+
+<div class="form-group">
+	{{ form_label(form.description) }}
+	{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+	{% if form_errors(form.description) %}
+		<div class="form-error">
+			{{ form_errors(form.description) }}
+		</div>
+	{% endif %}
+</div>
+
+<button type="submit" class="btn btn-primary">
+	{{ button_label is defined ? button_label : 'Enregistrer' }}
+</button>
+
+{{ form_end(form) }}

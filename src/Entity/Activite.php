@@ -6,8 +6,11 @@ use App\Repository\ActiviteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: ActiviteRepository::class)]
+#[Vich\Uploadable]
 class Activite
 {
     #[ORM\Id]
@@ -21,7 +24,7 @@ class Activite
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column]
@@ -68,6 +71,43 @@ class Activite
     #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
     private Collection $reservation;
 
+
+    #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+
+
+    // Ajoute un setter pour la propriété updatedAt
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    // Ajoute un getter pour la propriété updatedAt
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
@@ -109,7 +149,7 @@ class Activite
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
 
