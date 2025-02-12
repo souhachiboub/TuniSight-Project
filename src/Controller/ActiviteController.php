@@ -16,14 +16,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 #[Route('/activite')]
 final class ActiviteController extends AbstractController
 {
-    #[Route(name: 'app_activite_index', methods: ['GET'])]
+    #[Route('/list', name: 'app_index', methods: ['GET'])]
     public function index(ActiviteRepository $activiteRepository): Response
     {
-        return $this->render('activite/index.html.twig', [
+        return $this->render('base/index.html.twig', [
             'activites' => $activiteRepository->findAll(),
         ]);
     }
-
 
 
     #[Route('/new', name: 'app_activite_new', methods: ['GET', 'POST'])]
