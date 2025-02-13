@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Enum\UserRole;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -33,6 +34,9 @@ class User
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $motdepasse = null;  // Champ ajouté pour le mot de passe
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $cartePro = null;
@@ -111,6 +115,9 @@ class User
      */
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commentaires;
+
+    #[ORM\Column(length: 255)]
+    private ?string $confirmpwd = null;
 
     public function __construct()
     {
@@ -201,6 +208,20 @@ class User
 
         return $this;
     }
+
+     
+     public function getMotdepasse(): ?string
+     {
+         return $this->motdepasse;
+     }
+ 
+     
+     public function setMotdepasse(string $motdepasse): static
+     {
+         $this->motdepasse = $motdepasse;
+ 
+         return $this;
+     }
 
     public function getCartePro(): ?string
     {
@@ -566,5 +587,26 @@ class User
         }
 
         return $this;
+    }
+    #[Assert\NotBlank(message: "Veuillez confirmer votre mot de passe.")]
+    public function getConfirmpwd(): ?string
+    {
+        return $this->confirmpwd;
+    }
+
+    public function setConfirmpwd(string $confirmpwd): static
+    {
+        $this->confirmpwd = $confirmpwd;
+
+        return $this;
+    }
+    #[Assert\Callback]
+    public function validatePasswords(ExecutionContextInterface $context): void
+    {
+        if ($this->motdepasse !== $this->confirmpwd) {
+            $context->buildViolation('Les mots de passe ne correspondent pas.')
+                ->atPath('confirmmotdepasse')
+                ->addViolation();
+        }
     }
 }

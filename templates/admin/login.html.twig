@@ -2,26 +2,33 @@
 
 {% block title %}Login{% endblock %}
 
-
 {% block content %}
-            <form class="login">
-				<div class="login__field">
-					<i class="login__icon fas fa-user"></i>
-					<input type="text" class="login__input" placeholder="User name / Email">
-				</div>
-				<div class="login__field">
-					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" placeholder="Password">
-				</div>
-				<button class="button login__submit">
-					<span class="button__text">Log In Now</span>
-					<i class="button__icon fas fa-chevron-right"></i>
-				</button>		
-                <br><br><br><br><br><br>
-                <center>
-                    <a href="{{ path('app_inscription') }}" style="color: aliceblue;">
-                        Vous n'avez pas un compte ?
-                    </a>
-                </center>
-            </form>
+    <form class="login" method="post">
+
+        {{ form_start(form) }}
+
+        <div class="login__field">
+            <i class="login__icon fas fa-user"></i>
+            {{ form_widget(form.email, { 'attr': {'class': 'login__input', 'placeholder': 'Email'} }) }}
+        </div>
+
+        <div class="login__field">
+            <i class="login__icon fas fa-lock"></i>
+            {{ form_widget(form.motdepasse, { 'attr': {'class': 'login__input', 'placeholder': 'Password'} }) }}
+        </div>
+
+        <button type="submit" class="button login__submit">
+            <span class="button__text">Log In Now</span>
+            <i class="button__icon fas fa-chevron-right"></i>
+        </button>        
+
+        {{ form_end(form) }}
+
+        <br><br><br><br><br><br>
+        <center>
+            <a href="{{ path('app_inscription') }}" style="color: aliceblue;">
+                Vous n'avez pas un compte ?
+            </a>
+        </center>
+    </form>
 {% endblock %}

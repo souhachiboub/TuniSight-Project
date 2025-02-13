@@ -1,7 +1,5 @@
 {{ form_start(form) }}
 
-<h1> Inscrivez-vous </h1>
-
 <div class="form-group">
     {{ form_label(form.nom) }}
     {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
@@ -19,6 +17,22 @@
 </div>
 
 <div class="form-group">
+    {{ form_label(form.numTel) }}
+    {{ form_widget(form.numTel, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.numTel) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.cin) }}
+    {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.cin) }}
+    </div>
+</div>
+
+<div class="form-group">
     {{ form_label(form.email) }}
     {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
     <div class="invalid-feedback">
@@ -27,18 +41,10 @@
 </div>
 
 <div class="form-group">
-    {{ form_label(form.motdepasse) }}
-    {{ form_widget(form.motdepasse, {'attr': {'class': 'form-control'}}) }}
+    {{ form_label(form.cartePro) }}
+    {{ form_widget(form.cartePro, {'attr': {'class': 'form-control'}}) }}
     <div class="invalid-feedback">
-        {{ form_errors(form.motdepasse) }}
-    </div>
-</div>
-
-<div class="form-group">
-    {{ form_label(form.confirmpwd) }}
-    {{ form_widget(form.confirmpwd, {'attr': {'class': 'form-control'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.confirmpwd) }}
+        {{ form_errors(form.cartePro) }}
     </div>
 </div>
 
@@ -51,18 +57,26 @@
 </div>
 
 <div class="form-group">
-    {{ form_label(form.role) }}
-    {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+    {{ form_label(form.adresse) }}
+    {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
     <div class="invalid-feedback">
-        {{ form_errors(form.role) }}
+        {{ form_errors(form.adresse) }}
     </div>
 </div>
 
 <div class="form-group">
-    {{ form_label(form.cin) }}
-    {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+    {{ form_label(form.photoProfil) }}
+    {{ form_widget(form.photoProfil, {'attr': {'class': 'form-control'}}) }}
     <div class="invalid-feedback">
-        {{ form_errors(form.cin) }}
+        {{ form_errors(form.photoProfil) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.bio) }}
+    {{ form_widget(form.bio, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.bio) }}
     </div>
 </div>
 

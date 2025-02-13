@@ -2,25 +2,19 @@
 
 namespace App\Form;
 
-use App\Entity\DemandePrestataire;
 use App\Entity\User;
-use App\Entity\Voucher;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
-class UserType extends AbstractType
+class InfoFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -41,9 +35,20 @@ class UserType extends AbstractType
                     new Assert\Length(['min' => 2, 'max' => 50]),
                 ],
             ])
-            
-            
-            ->add('cin', IntegerType::class, [
+            ->add('numTel', TelType::class, [
+                'required' => false,
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\+?\d{9,15}$/',
+                        'message' => 'Veuillez entrer un numéro de téléphone valide avec un préfixe +'
+                    ]),
+                    new Assert\Length([
+                        'min' => 9,
+                        'minMessage' => 'Le numéro de téléphone doit contenir au moins {{ limit }} caractères'
+                    ]),
+                ],
+            ])
+            ->add('cin', TextType::class, [
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'Le CIN est obligatoire']),
                     new Assert\Length([
@@ -58,50 +63,39 @@ class UserType extends AbstractType
                     new Assert\Email(['message' => 'Veuillez entrer une adresse email valide']),
                 ],
             ])
-            ->add('motdepasse', PasswordType::class, [
-                'label' => 'Mot de passe',
+            ->add('cartePro', TextType::class, [
+                'required' => false,
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le mot de passe est obligatoire']),
-                    new Assert\Length([
-                        'min' => 6,
-                        'max' => 255,
-                    ]),
+                    new Assert\Length(['max' => 50]),
                 ],
             ])
-            ->add('confirmpwd', PasswordType::class, [
-                'label' => 'Confirmer le mot de passe',
-                'mapped' => false, // Ne sera pas enregistré en base
-                'attr' => ['class' => 'form-control'],
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Veuillez confirmer votre mot de passe.']),
-                ],
-            ])
-            
-            
-            
-            
             ->add('dateNaissance', DateType::class, [
                 'widget' => 'single_text',
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'La date de naissance est obligatoire']),
-                    new Assert\LessThanOrEqual([
-                        'value' => new \DateTime('-18 years'),
-                        'message' => 'Vous devez avoir au moins 18 ans pour vous inscrire.',
+                ],
+            ])
+            ->add('adresse', TextType::class, [
+                'required' => false,
+                'constraints' => [
+                    new Assert\Length(['min' => 5, 'max' => 100]),
+                ],
+            ])
+            ->add('photoProfil', FileType::class, [
+                'required' => false,
+                'mapped' => false, // prevents Symfony from trying to store it as a string
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG/PNG)',
                     ]),
                 ],
             ])
-           
-            
-            
-            ->add('role', ChoiceType::class, [
-                'choices' => [
-                    'Prestataire' => 'prestataire',
-                    'Artisant' => 'artisant',
-                ],
-                'expanded' => false,
-                'multiple' => false,
+            ->add('bio', TextType::class, [
+                'required' => false,
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Veuillez choisir un rôle']),
+                    new Assert\Length(['max' => 255]),
                 ],
             ]);
     }
@@ -111,19 +105,5 @@ class UserType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
-    }
-
-    /**
-     * Custom validator to check if the user is over 18 years old
-     */
-    public function validateAge($value, ExecutionContextInterface $context)
-    {
-        $now = new \DateTime();
-        $age = $now->diff($value)->y;
-
-        if ($age < 18) {
-            $context->buildViolation('L\'utilisateur doit avoir au moins 18 ans')
-                ->addViolation();
-        }
     }
 }
