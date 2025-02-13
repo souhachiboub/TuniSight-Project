@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Entity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 use App\Repository\CategorieProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategorieProduitRepository::class)]
+#[UniqueEntity(fields: ['nom'], message: 'Une catégorie avec ce nom existe déjà.')]
+
 class CategorieProduit
 {
     #[ORM\Id]
@@ -16,9 +20,15 @@ class CategorieProduit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
+   
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $description = null;
 
     /**
@@ -45,7 +55,6 @@ class CategorieProduit
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -57,13 +66,9 @@ class CategorieProduit
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
     public function getProduits(): Collection
     {
         return $this->produits;
@@ -75,19 +80,17 @@ class CategorieProduit
             $this->produits->add($produit);
             $produit->setCategorie($this);
         }
-
         return $this;
     }
 
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
             if ($produit->getCategorie() === $this) {
                 $produit->setCategorie(null);
             }
         }
-
         return $this;
     }
 }
+

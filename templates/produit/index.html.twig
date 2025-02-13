@@ -1,0 +1,148 @@
+
+
+
+
+
+{% extends 'squeletteboutique.html.twig' %}
+
+
+
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">Liste des Produits</h2>
+
+    <table class="table table-bordered shadow-sm">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all"></th> {# Checkbox pour tout sélectionner #}
+                <th>Libellé</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produit in produits %}
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox" value="{{ produit.id }}"></td>
+                    <td>{{ produit.libelle }}</td>
+<td>
+    {% set mots = produit.description|split(' ') %}
+    {{ mots|slice(0, 11)|join(' ') }}{% if mots|length > 11 %}...{% endif %}
+</td>
+                    <td>{{ produit.prix }} €</td>
+                    <td>
+                        <a href="{{ path('produit_show', {'id': produit.id}) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-eye"></i> Voir
+                        </a>
+                        <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </a>
+                        <a href="{{ path('produit_edit_stock', {'id': produit.id}) }}" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-box"></i> Stock
+                        </a>
+                        <form method="post" action="{{ path('produit_delete', {'id': produit.id}) }}" class="d-inline delete-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm delete-btn" data-produit="{{ produit.libelle }}">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Bouton de suppression multiple -->
+    <button id="delete-selected" class="btn btn-danger mt-3 d-none">
+        <i class="bi bi-trash"></i> 
+    </button>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".product-checkbox");
+    const selectAll = document.getElementById("select-all");
+    const deleteBtn = document.getElementById("delete-selected");
+
+    function updateDeleteButton() {
+        let checkedCount = document.querySelectorAll(".product-checkbox:checked").length;
+        deleteBtn.classList.toggle("d-none", checkedCount === 0);
+    }
+
+    // Sélectionner/Désélectionner toutes les cases
+    selectAll.addEventListener("change", function () {
+        checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
+        updateDeleteButton();
+    });
+
+    // Afficher wla Masquer le bouton de suppression selon la sélection
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", updateDeleteButton);
+    });
+
+    // Suppression multiple
+    deleteBtn.addEventListener("click", function () {
+        let selectedIds = Array.from(document.querySelectorAll(".product-checkbox:checked"))
+                               .map(checkbox => checkbox.value);
+
+        if (selectedIds.length === 0) return;
+
+        Swal.fire({
+            title: "Êtes-vous sûr ?",
+            text: "Vous allez supprimer plusieurs produits.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Oui, supprimer",
+            cancelButtonText: "Annuler"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("{{ path('produit_delete_multiple') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids: selectedIds })
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          Swal.fire("Supprimé !", "Les produits ont été supprimés.", "success")
+                              .then(() => location.reload());
+                      } else {
+                          Swal.fire("Erreur", "Un problème est survenu.", "error");
+                      }
+                  });
+            }
+        });
+    });
+
+    // Suppression wa7da barka  avec confirmation
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            let form = this.closest(".delete-form");
+            let produitLibelle = this.getAttribute("data-produit");
+
+            Swal.fire({
+                title: "Êtes-vous sûr ?",
+                text: "Vous allez supprimer le produit : " + produitLibelle,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Oui, supprimer",
+                cancelButtonText: "Annuler"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

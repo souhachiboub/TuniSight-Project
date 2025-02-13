@@ -1,0 +1,10 @@
+
+{% block title %}Modifier un Stock{% endblock %}
+
+{% block body %}
+    <h1>Modifier un Stock</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit">Modifier</button>
+    {{ form_end(form) }}
+{% endblock %}
