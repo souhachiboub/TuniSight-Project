@@ -19,25 +19,32 @@ class VoucherType extends AbstractType
     {
         $builder
         ->add('codeVoucher', null, [
-            'disabled' => true, // Le code est généré automatiquement
+            'disabled' => true, 
         ])
         ->add('dateEmission', DateType::class, [
             'widget' => 'single_text',
-            'label' => 'Date de début'
+            'label' => 'Date Emission',
+            'required' => false,
+            'empty_data' => null,
+            'attr' => [
+            'min' => (new \DateTime())->format('Y-m-d'),
+             ],
         ])
         ->add('dateExpiration',DateType::class, [
             'widget' => 'single_text',
-            'label' => 'Date de début'
+            'label' => 'Date Expiration',
+            'required' => false,
+            'empty_data' => null,
         ])
         ->add('valeurReduction',IntegerType::class, [
             'label' => 'Réduction (%)'
         ])
         ->add('user', EntityType::class, [
             'class' => User::class,
-            'choice_label' => 'email', // Sélection par email
+            'choice_label' => 'email', 
             'label' => 'Assigné à (Client)',
             'required' => false,
-            'placeholder' => 'Aucun', // Option pour ne pas assigner
+            'placeholder' => 'Aucun', 
         ])
         ->add('save', SubmitType::class, [
             'label' => 'Enregistrer'

@@ -16,22 +16,40 @@ class OffreController extends AbstractController
 {
     
     #[Route('/create', name: 'offer_create')]
-    public function create(Request $request, EntityManagerInterface $em): Response
-    {
-        $offer = new Offre();
-        $form = $this->createForm(OffreType::class, $offer);
-        $form->handleRequest($request);
+public function create(Request $request, EntityManagerInterface $em): Response
+{
+    $offer = new Offre();
+    $form = $this->createForm(OffreType::class, $offer);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($offer);
-            $em->flush();
-            $this->addFlash('success', 'L\'offre a été ajoutée avec succès!');
-            return $this->redirectToRoute('offre_show');
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Récupérer l'activité sélectionnée dans le formulaire
+        $activity = $offer->getActivitie();
+
+        // Appliquer la réduction au prix de l'activité si une réduction est spécifiée
+        $discount = $offer->getReduction(); // Par exemple, un pourcentage de réduction
+
+        if ($discount) {
+            $prixInitial = $activity->getPrix(); // Le prix de l'activité
+            $prixAvecReduction = $prixInitial - ($prixInitial * $discount / 100);
+            $activity->setPrix($prixAvecReduction); // Mettre à jour le prix de l'activité avec la réduction
         }
-        return $this->render('offre/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
+
+        // Persist l'offre dans la base de données
+        $em->persist($offer);
+        $em->flush();
+
+        // Ajouter un message de succès
+        $this->addFlash('success', 'L\'offre a été ajoutée avec succès!');
+
+        return $this->redirectToRoute('offre_show');
     }
+
+    return $this->render('offre/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
 
     #[Route('/offres', name: 'offre_show')]
     public function index(OffreRepository $offreRepository): Response

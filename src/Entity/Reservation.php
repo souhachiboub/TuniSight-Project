@@ -26,15 +26,19 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    /**
-     * @var Collection<int, Activite>
-     */
-    #[ORM\ManyToMany(targetEntity: Activite::class, mappedBy: 'reservation')]
-    private Collection $activites;
+   
+    #[ORM\ManyToOne(targetEntity: Activite::class, inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Activite $activite = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Voucher $voucher = null;
+
+    #[ORM\Column]
+    private ?float $totalPrice = null;
 
     public function __construct()
     {
-        $this->activites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,30 +82,85 @@ class Reservation
         return $this;
     }
 
-    /**
-     * @return Collection<int, Activite>
-     */
-    public function getActivites(): Collection
+    
+
+    public function getVoucher(): ?Voucher
     {
-        return $this->activites;
+        return $this->voucher;
     }
 
-    public function addActivite(Activite $activite): static
+    public function setVoucher(?Voucher $voucher): static
     {
-        if (!$this->activites->contains($activite)) {
-            $this->activites->add($activite);
-            $activite->addReservation($this);
-        }
+        $this->voucher = $voucher;
 
         return $this;
     }
 
-    public function removeActivite(Activite $activite): static
+    public function getActivite(): ?Activite
     {
-        if ($this->activites->removeElement($activite)) {
-            $activite->removeReservation($this);
+        return $this->activite;
+    }
+
+    public function setActivite(?Activite $activite): static
+    {
+        $this->activite = $activite;
+        return $this;
+    }
+
+    public function getTotalPrice(): float
+    {
+        $total = 0;
+
+        // Vérifier si une activité est liée à la réservation
+        if ($this->activite) {
+            $total += $this->activite->getPrix();
         }
+
+        // Vérifier la validité du voucher
+        if ($this->voucher !== null && !$this->voucher->getIsUsed() && $this->voucher->getDateExpiration() > new \DateTime()) {
+            $discount = $this->voucher->getValeurReduction();
+            $total -= ($total * ($discount / 100));
+        }
+
+        return max($total, 0);
+    }
+
+    public function applyVoucher(): float
+    {
+        if ($this->voucher !== null) {
+            if ($this->voucher->getIsUsed()) {
+                throw new \Exception("Le voucher a déjà été utilisé.");
+            }
+
+            if ($this->voucher->getDateExpiration() <= new \DateTime()) {
+                throw new \Exception("Le voucher est expiré.");
+            }
+
+            $total = 0;
+
+            if ($this->activite) {
+                $total += $this->activite->getPrix();
+            }
+
+            $discount = $this->voucher->getValeurReduction();
+            $total -= ($total * ($discount / 100));
+
+            $this->voucher->setIsUsed(true);
+
+            return max($total, 0);
+        }
+
+        return $this->activite ? $this->activite->getPrix() : 0;
+    }
+
+    public function setTotalPrice(float $totalPrice): static
+    {
+        $this->totalPrice = $totalPrice;
 
         return $this;
     }
+
+
+
+
 }

@@ -7,9 +7,9 @@
         <div class="alert alert-danger">{{ flash }}</div>
     {% endfor %}
 
-    {{ form_start(voucherForm) }}
+    {{ form_start(voucherForm, {'attr': {'novalidate': 'novalidate'}}) }}
        {{ form_errors(voucherForm.dateExpiration) }}
-        {{ form_row(voucherForm.valeurReduction) }}
+        {{ form_errors(voucherForm.valeurReduction) }}
 
         {% if voucherForm.user is defined %}
           <div class="mb-3">

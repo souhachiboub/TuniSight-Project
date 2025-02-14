@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <h1>Créer un Nouveau Voucher</h1>
 
-    {{ form_start(voucherForm) }}
+    {{ form_start(voucherForm, {'attr': {'novalidate': 'novalidate'}}) }}
         <div class="mb-3">
             {{ form_label(voucherForm.codeVoucher) }}
             {{ form_widget(voucherForm.codeVoucher, {'attr': {'class': 'form-control' ~ (voucherForm.codeVoucher.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}

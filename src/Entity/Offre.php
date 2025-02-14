@@ -30,17 +30,25 @@ class Offre
         message: "La date d'expiration doit être supérieure  à la date d'émission."
     )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateExpiration = null;
 
     #[ORM\ManyToOne(inversedBy: 'offres')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(['message' => 'Veuillez sélectionner une activité.',])]
     private ?Activite $activitie = null;
+
+    /**
+     * @var Collection<int, Pack>
+     */
+    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'offre')]
+    private Collection $packs;
 
 
 
     public function __construct()
     {
-       
+        $this->packs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,6 +100,36 @@ class Offre
     public function setActivitie(?Activite $activitie): static
     {
         $this->activitie = $activitie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pack>
+     */
+    public function getPacks(): Collection
+    {
+        return $this->packs;
+    }
+
+    public function addPack(Pack $pack): static
+    {
+        if (!$this->packs->contains($pack)) {
+            $this->packs->add($pack);
+            $pack->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removePack(Pack $pack): static
+    {
+        if ($this->packs->removeElement($pack)) {
+            // set the owning side to null (unless already changed)
+            if ($pack->getOffre() === $this) {
+                $pack->setOffre(null);
+            }
+        }
 
         return $this;
     }

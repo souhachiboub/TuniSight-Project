@@ -17,9 +17,11 @@ class Voucher
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(['message' => 'Le code du voucher ne peut pas être vide.'])]
     private ?string $codeVoucher = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateEmission = null;
 
     #[Assert\GreaterThanOrEqual(
@@ -27,19 +29,26 @@ class Voucher
         message: "La date d'expiration doit être supérieure ou égale à la date d'émission."
     )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateExpiration = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $valeurReduction = null;
+    #[Assert\NotBlank]
+   
+    #[Assert\GreaterThanOrEqual(value: 5, message: "La valeur de réduction doit être positive.")]
+    private ?int $valeurReduction = null;
 
-    #[ORM\OneToOne(mappedBy: 'voucher', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'vouchers')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
     private ?User $user = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isUsed = null;
+
+    
     public function __construct()
     {
-         $this->codeVoucher = Uuid::v4()->toRfc4122(); // Générer un code unique aléatoire
+         $this->codeVoucher = Uuid::v4()->toRfc4122(); 
         
     }
 
@@ -83,12 +92,12 @@ class Voucher
         return $this;
     }
 
-    public function getValeurReduction(): ?string
+    public function getValeurReduction(): ?int
     {
         return $this->valeurReduction;
     }
 
-    public function setValeurReduction(string $valeurReduction): static
+    public function setValeurReduction(int $valeurReduction): static
     {
         $this->valeurReduction = $valeurReduction;
 
@@ -102,15 +111,13 @@ class Voucher
 
     public function setUser(?User $user): static
     {
-        // unset the owning side of the relation if necessary
-        if ($user === null && $this->user !== null) {
-            $this->user->setVoucher(null);
-        }
+        // if ($user === null && $this->user !== null) {
+        //     $this->user->setVoucher(null);
+        // }
 
-        // set the owning side of the relation if necessary
-        if ($user !== null && $user->getVoucher() !== $this) {
-            $user->setVoucher($this);
-        }
+        // if ($user !== null && $user->getVoucher() !== $this) {
+        //     $user->setVoucher($this);
+        // }
 
         $this->user = $user;
 
@@ -123,9 +130,11 @@ class Voucher
     
 
     public function setIsUsed(?bool $isUsed): static
-{
+    {
     $this->isUsed = $isUsed;
     return $this;
-}
+    }
+
+   
 
 }

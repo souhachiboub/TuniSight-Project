@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Appliquer un Coupon</h1>
+
+    {# Affichage des messages flash (erreurs ou succès) #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {# Affichage du formulaire #}
+    {{ form_start(voucherForm, {'attr': {'novalidate': 'novalidate'}}) }}
+        {# Affichage du champ voucher avec les erreurs spécifiques au champ #}
+        {{ form_row(voucherForm.codeVoucher) }}
+
+        {# Affichage du bouton de soumission #}
+        <button type="submit" class="btn btn-primary">Appliquer</button>
+    {{ form_end(voucherForm) }}
+{% endblock %}

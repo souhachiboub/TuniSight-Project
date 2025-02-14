@@ -23,11 +23,18 @@ class OffreType extends AbstractType
             ])
             ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Date de début'
+                'label' => 'Date Emission',
+                'required' => false,
+                'empty_data' => null,
+                'attr' => [
+                'min' => (new \DateTime())->format('Y-m-d'),
+                 ],
             ])
-            ->add('dateExpiration', DateType::class, [
+            ->add('dateExpiration',DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Date d\'expiration'
+                'label' => 'Date Expiration',
+                'required' => false,
+                'empty_data' => null,
             ])
             ->add('activitie', EntityType::class, [
                 'class' => Activite::class, // Spécifier l'entité associée

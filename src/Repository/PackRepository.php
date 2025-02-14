@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Produit;
+use App\Entity\Pack;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Produit>
+ * @extends ServiceEntityRepository<Pack>
  */
-class ProduitRepository extends ServiceEntityRepository
+class PackRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Produit::class);
+        parent::__construct($registry, Pack::class);
     }
 
 //    /**
-//     * @return Produit[] Returns an array of Produit objects
+//     * @return Pack[] Returns an array of Pack objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class ProduitRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Produit
+//    public function findOneBySomeField($value): ?Pack
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')
@@ -40,14 +40,4 @@ class ProduitRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-
-    public function findByCriteria(string $criteria)
-    {
-        $qb = $this->createQueryBuilder('p')
-            ->where('p.libelle LIKE :criteria')
-            ->setParameter('criteria', '%'.$criteria.'%')
-            ->getQuery();
-
-        return $qb->getResult();
-    }
 }

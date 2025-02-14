@@ -62,8 +62,8 @@ class Activite
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
-    private Collection $reservation;
+    #[ORM\OneToMany(mappedBy: 'activite', targetEntity: Reservation::class)]
+    private Collection $reservations;
 
     /**
      * @var Collection<int, Offre>
@@ -75,7 +75,7 @@ class Activite
     {
         $this->avis = new ArrayCollection();
         $this->ville = new ArrayCollection();
-        $this->reservation = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
         $this->offres = new ArrayCollection();
     }
 
@@ -264,13 +264,13 @@ class Activite
      */
     public function getReservation(): Collection
     {
-        return $this->reservation;
+        return $this->reservations;
     }
 
     public function addReservation(Reservation $reservation): static
     {
-        if (!$this->reservation->contains($reservation)) {
-            $this->reservation->add($reservation);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
         }
 
         return $this;
@@ -278,7 +278,7 @@ class Activite
 
     public function removeReservation(Reservation $reservation): static
     {
-        $this->reservation->removeElement($reservation);
+        $this->reservations->removeElement($reservation);
 
         return $this;
     }
