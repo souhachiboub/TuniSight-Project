@@ -21,14 +21,16 @@
                         <ul class="navbar-nav ml-auto">
                             {% if userId is not null %}
                                 <li class="nav-item">
-                                    <span class="nav-link">👤 {{ nom }} {{ prenom }}</span>
+								<a style="color:white" class="nav-link" href="{{ path('moncompte', {'id': userId}) }}">
+                                    <span >👤 {{ nom }} {{ prenom }}</span>
+								</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ path('app_logout') }}" class="nav-link">Logout</a>
+                                    <a href="{{ path('app_logout_front') }}" class="nav-link">Logout</a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <a href="{{ path('app_login') }}" class="nav-link">Login</a>
+                                    <a href="{{ path('app_login_front') }}" class="nav-link">Login</a>
                                 </li>
                             {% endif %}
                         </ul>

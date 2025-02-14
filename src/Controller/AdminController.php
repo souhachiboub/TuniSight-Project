@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\AddAdminType;
 use App\Form\InfoFormType;
 use App\Form\LoginType;
 use App\Repository\UserRepository;
@@ -107,8 +108,6 @@ class AdminController extends AbstractController
                 'form' => $form->createView(),
             ]);
         }
-
-
                 // Continue with your user creation and password encoding logic
 
                 $entityManager->persist($user);
@@ -137,14 +136,14 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_login'); // Redirect to login page
         }
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(AddAdminType::class, $user);
         $form->handleRequest($request);
-
+        $user->setRole("admin");
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_admin', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('listUtilisateur', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/addadmin.html.twig', [

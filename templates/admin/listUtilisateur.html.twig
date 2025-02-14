@@ -294,7 +294,6 @@
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
                         <table class="table">
         <thead>
             <tr>
@@ -311,7 +310,6 @@
                 <th>PhotoProfil</th>
                 <th>Bio</th>
                 <th>Role</th>
-                <th>actions</th>
             </tr>
         </thead>
         <tbody>
@@ -330,10 +328,6 @@
                 <td>{{ user.photoProfil }}</td>
                 <td>{{ user.bio }}</td>
                 <td>{{ user.role }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
             </tr>
         {% else %}
             <tr>
@@ -342,7 +336,6 @@
         {% endfor %}
         </tbody>
     </table>
-                    </div>
 
                     <!-- Content Row -->
 

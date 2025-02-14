@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
-class UserType extends AbstractType
+class InscriptionuserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -93,17 +93,7 @@ class UserType extends AbstractType
            
             
             
-            ->add('role', ChoiceType::class, [
-                'choices' => [
-                    'Prestataire' => 'prestataire',
-                    'Artisant' => 'artisant',
-                ],
-                'expanded' => false,
-                'multiple' => false,
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Veuillez choisir un rôle']),
-                ],
-            ]);
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
