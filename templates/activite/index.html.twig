@@ -249,13 +249,6 @@
 
 								<div class="card-body">
 									<h5 class="card-title">{{ activite.libelle }}</h5><hr>
-
-
-									{#<p class="card-description">
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					{{ activite.description|length > 100 ? activite.description|slice(0, 100) ~ '...' : activite.description }}
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																				</p>
-																																																																																																																																																																																																																																																																																																																																																																																																												
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																											#}
 									<strong>Disponibilité:</strong>
 									{{ activite.disponibilite ? 'Oui' : 'Non' }}</p>
 								<p>
@@ -407,8 +400,5 @@ console.log(xhr.responseText);
 				</script>
 			{% endblock %}
 
-			<!-- Inclure Popper.js -->
 			<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-			<!-- Inclure Bootstrap JS -->
 			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -170,10 +170,12 @@
 						</h2>
 						<br>
 						<div class="d-flex justify-content-start">
-							<button style="margin-left:1110px;background-color:#77b9d3;color:white" type="button" class="btn  btn-icon-split" id="openModalBtn">
+							<button id="openModalBtn" data-url="{{ path('app_categorie_activite_new') }}" class="btn btn-primary">
 								<span class="text">Ajouter une catégorie</span>
 							</button>
+
 						</div><br>
+
 
 						<table class="table">
 							<thead>
@@ -229,31 +231,40 @@
 						</div>
 					</div>
 					<!--End Modal -->
-
 					{% block javascripts %}
 						<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 						<script>
 							$(document).ready(function () {
 $('#openModalBtn').on('click', function () {
+let url = $(this).data('url');
+
 $('#addCategorieModal').modal('show');
 $('#addCategorieModalLabel').text('Ajouter une catégorie');
 $('#form-container').html('');
 
 $.ajax({
-url: '{{ path("app_categorie_activite_new") }}',
+url: url,
 method: 'GET',
 success: function (response) {
-$('#form-container').html(response);
+$('#form-container').html(response.form);
+
+$('#categorie-form').attr('action', url);
 
 $('#categorie-form').on('submit', function (e) {
 e.preventDefault();
+let postUrl = $(this).attr('action');
+
 $.ajax({
-url: '{{ path("app_categorie_activite_new") }}',
+url: postUrl,
 method: 'POST',
 data: $(this).serialize(),
-success: function () {
+success: function (response) {
+if (response.errors) {
+$('#form-container').html(response.form);
+} else {
 $('#addCategorieModal').modal('hide');
 location.reload();
+}
 },
 error: function (xhr) {
 alert('Erreur lors de l\'ajout');
@@ -268,6 +279,17 @@ console.log(xhr.responseText);
 });
 });
 
+$('#form-container').on('input', 'input, select, textarea', function () {
+let dynamicUrl = calculateDynamicUrl();
+$('#categorie-form').attr('action', dynamicUrl);
+});
+
+function calculateDynamicUrl() {
+let dynamicUrl = $('#someInput').val() ? "/categorie/activite/modify" : "/categorie/activite/new";
+return dynamicUrl;
+}
+
+});
 $('.edit-btn').on('click', function () {
 var id = $(this).data('id');
 $('#addCategorieModal').modal('show');
@@ -302,13 +324,10 @@ console.log(xhr.responseText);
 }
 });
 });
-});
 						</script>
 					{% endblock %}
 
 
-					<!-- Inclure Popper.js -->
 					<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-					<!-- Inclure Bootstrap JS -->
 					<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

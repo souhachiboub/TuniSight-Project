@@ -5,12 +5,12 @@ namespace App\Form;
 use App\Entity\Activite;
 use App\Entity\CategorieActivite;
 use App\Entity\Offre;
-use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ActiviteType extends AbstractType
 {
@@ -34,15 +34,9 @@ class ActiviteType extends AbstractType
 
             ])
             ->add('prix')
-            ->add('duree')
             ->add('localisation')
             ->add('capacite')
             ->add('disponibilite')
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'username',
-            ])
-
 
             #->add('ville', EntityType::class, [
             #   'class' => Ville::class,
@@ -56,7 +50,15 @@ class ActiviteType extends AbstractType
             ])
             ->add('offre', EntityType::class, [
                 'class' => Offre::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
+            ])
+            ->add('dateDebut', DateType::class, [
+                'widget' => 'single_text',
+                'attr' => ['class' => 'form-control'],
+            ])
+            ->add('dateFin', DateType::class, [
+                'widget' => 'single_text',
+                'attr' => ['class' => 'form-control'],
             ])
 
             #->add('reservation', EntityType::class, [

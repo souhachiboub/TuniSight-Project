@@ -7,6 +7,7 @@ use App\Form\CategorieActiviteType;
 use App\Repository\CategorieActiviteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,27 +31,42 @@ final class CategorieActiviteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = $form->getErrors(true, false);
-            dump($errors);
-        }
-
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                $entityManager->persist($categorieActivite);
-                $entityManager->flush();
-                $this->addFlash('success', 'Catégorie ajoutée avec succès!');
-                return $this->redirectToRoute('app_categorie_activite_index');
-            } else {
-                $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire.');
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'errors' => true,
+                    'form' => $this->renderView('categorie_activite/_form.html.twig', [
+                        'form' => $form->createView(),
+                    ])
+                ]);
             }
         }
-        if ($form->isSubmitted() && !$form->isValid()) {
-            dump($form->getErrors(true));
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($categorieActivite);
+            $entityManager->flush();
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+
+            $this->addFlash('success', 'Catégorie ajoutée avec succès!');
+            return $this->redirectToRoute('app_categorie_activite_index');
         }
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'form' => $this->renderView('categorie_activite/_form.html.twig', [
+                    'form' => $form->createView(),
+                ])
+            ]);
+        }
+
         return $this->render('categorie_activite/_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
+
 
 
 

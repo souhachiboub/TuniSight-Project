@@ -47,8 +47,45 @@ class Activite
     private ?User $user = null;
 
     /**
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateDebut;
+
+    /**
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateFin;
+
+    public function getDateDebut(): ?\DateTimeInterface
+    {
+        return $this->dateDebut;
+    }
+
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    {
+        $this->dateDebut = $dateDebut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(\DateTimeInterface $dateFin): self
+    {
+        $this->dateFin = $dateFin;
+
+        return $this;
+    }
+
+    /**
      * @var Collection<int, Avis>
      */
+
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'activite', orphanRemoval: true)]
     private Collection $avis;
 
@@ -173,9 +210,12 @@ class Activite
         return $this->duree;
     }
 
-    public function setDuree(?int $duree): static
+    public function setDuree(): static
     {
-        $this->duree = $duree;
+        if ($this->dateDebut && $this->dateFin) {
+            $interval = $this->dateDebut->diff($this->dateFin);
+            $this->duree = $interval->days;
+        }
 
         return $this;
     }

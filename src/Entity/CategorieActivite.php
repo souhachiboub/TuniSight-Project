@@ -17,15 +17,17 @@ class CategorieActivite
     private ?int $id = null;
 
 
-
-    #[Assert\NotBlank(message: "Le nom de la catégorie est requis!")]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
     private ?string $nom = null;
 
 
-    #[Assert\NotBlank(message: "La description est requise!")]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "La catégorie ne peut pas être vide.")]
     private ?string $description = null;
+
+
+
 
     /**
      * @var Collection<int, Activite>

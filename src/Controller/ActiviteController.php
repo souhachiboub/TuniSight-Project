@@ -24,7 +24,13 @@ final class ActiviteController extends AbstractController
         ]);
     }
 
-
+    #[Route('/', name: 'app_activite_index', methods: ['GET'])]
+    public function indexx(ActiviteRepository $activiteRepository): Response
+    {
+        return $this->render('activite/index.html.twig', [
+            'activites' => $activiteRepository->findAll(),
+        ]);
+    }
     #[Route('/new', name: 'app_activite_new', methods: ['GET', 'POST'])]
     public function newActivite(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -33,6 +39,7 @@ final class ActiviteController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $activite->setDuree();
             $entityManager->persist($activite);
             $entityManager->flush();
 
@@ -54,7 +61,7 @@ final class ActiviteController extends AbstractController
     #[Route('/{id}', name: 'app_activite_show', methods: ['GET'])]
     public function show(Activite $activite): Response
     {
-        return $this->render('activite/show.html.twig', [
+        return $this->render('base/detailsActivite.html.twig', [
             'activite' => $activite,
         ]);
     }
@@ -66,6 +73,7 @@ final class ActiviteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $activite->setDuree();
             $entityManager->flush();
             return $this->redirectToRoute('app_activite_index');
         }
