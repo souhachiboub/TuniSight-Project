@@ -35,9 +35,12 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 255)]
     private ?string $motdepasse = null;  // Champ ajouté pour le mot de passe
 
+=======
+>>>>>>> gestion-activites
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $cartePro = null;
 
@@ -54,7 +57,11 @@ class User
     private ?string $bio = null;
 
     #[ORM\Column(length: 255)]
+<<<<<<< HEAD
     private ?string $role;
+=======
+    private UserRole $role;
+>>>>>>> gestion-activites
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Voucher $voucher = null;
@@ -116,9 +123,12 @@ class User
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commentaires;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 255)]
     private ?string $confirmpwd = null;
 
+=======
+>>>>>>> gestion-activites
     public function __construct()
     {
         $this->notifications = new ArrayCollection();
@@ -209,6 +219,7 @@ class User
         return $this;
     }
 
+<<<<<<< HEAD
      
      public function getMotdepasse(): ?string
      {
@@ -223,6 +234,8 @@ class User
          return $this;
      }
 
+=======
+>>>>>>> gestion-activites
     public function getCartePro(): ?string
     {
         return $this->cartePro;
@@ -283,7 +296,11 @@ class User
         return $this;
     }
 
+<<<<<<< HEAD
     public function getRole(): ?string
+=======
+    public function getRole(): UserRole
+>>>>>>> gestion-activites
     {
         return $this->role;
     }
@@ -588,6 +605,7 @@ class User
 
         return $this;
     }
+<<<<<<< HEAD
     #[Assert\NotBlank(message: "Veuillez confirmer votre mot de passe.")]
     public function getConfirmpwd(): ?string
     {
@@ -609,4 +627,6 @@ class User
                 ->addViolation();
         }
     }
+=======
+>>>>>>> gestion-activites
 }

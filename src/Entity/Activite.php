@@ -6,8 +6,16 @@ use App\Repository\ActiviteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+<<<<<<< HEAD
 
 #[ORM\Entity(repositoryClass: ActiviteRepository::class)]
+=======
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+
+#[ORM\Entity(repositoryClass: ActiviteRepository::class)]
+#[Vich\Uploadable]
+>>>>>>> gestion-activites
 class Activite
 {
     #[ORM\Id]
@@ -21,7 +29,11 @@ class Activite
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 255)]
+=======
+    #[ORM\Column(length: 255, nullable: true)]
+>>>>>>> gestion-activites
     private ?string $image = null;
 
     #[ORM\Column]
@@ -44,8 +56,50 @@ class Activite
     private ?User $user = null;
 
     /**
+<<<<<<< HEAD
      * @var Collection<int, Avis>
      */
+=======
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateDebut;
+
+    /**
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateFin;
+
+    public function getDateDebut(): ?\DateTimeInterface
+    {
+        return $this->dateDebut;
+    }
+
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    {
+        $this->dateDebut = $dateDebut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(\DateTimeInterface $dateFin): self
+    {
+        $this->dateFin = $dateFin;
+
+        return $this;
+    }
+
+    /**
+     * @var Collection<int, Avis>
+     */
+
+>>>>>>> gestion-activites
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'activite', orphanRemoval: true)]
     private Collection $avis;
 
@@ -68,6 +122,46 @@ class Activite
     #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
     private Collection $reservation;
 
+<<<<<<< HEAD
+=======
+
+    #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+
+
+    // Ajoute un setter pour la propriété updatedAt
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    // Ajoute un getter pour la propriété updatedAt
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+
+>>>>>>> gestion-activites
     public function __construct()
     {
         $this->avis = new ArrayCollection();
@@ -109,7 +203,11 @@ class Activite
         return $this->image;
     }
 
+<<<<<<< HEAD
     public function setImage(string $image): static
+=======
+    public function setImage(?string $image): static
+>>>>>>> gestion-activites
     {
         $this->image = $image;
 
@@ -133,9 +231,18 @@ class Activite
         return $this->duree;
     }
 
+<<<<<<< HEAD
     public function setDuree(?int $duree): static
     {
         $this->duree = $duree;
+=======
+    public function setDuree(): static
+    {
+        if ($this->dateDebut && $this->dateFin) {
+            $interval = $this->dateDebut->diff($this->dateFin);
+            $this->duree = $interval->days;
+        }
+>>>>>>> gestion-activites
 
         return $this;
     }

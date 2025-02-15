@@ -1,5 +1,12 @@
 controllers:
+<<<<<<< HEAD
     resource:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+=======
+  resource:
+    path: ../src/Controller/
+    namespace: App\Controller
+  type: attribute
+>>>>>>> gestion-activites

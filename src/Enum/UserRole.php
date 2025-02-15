@@ -7,4 +7,8 @@ enum UserRole: string
     case USER = 'user';
     case PRESTATAIRE = 'prestataire';
     case ARTISANT    ='artisant';
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> gestion-activites

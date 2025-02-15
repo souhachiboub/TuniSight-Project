@@ -25,6 +25,26 @@ class Offre
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateExpiration = null;
 
+<<<<<<< HEAD
+=======
+
+    #[ORM\Column]
+    private ?string $nom = null;
+
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+>>>>>>> gestion-activites
     /**
      * @var Collection<int, Activite>
      */

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+<<<<<<< HEAD
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\InfoFormType;
@@ -14,10 +15,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+=======
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+>>>>>>> gestion-activites
 
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'app_admin')]
+<<<<<<< HEAD
     public function index(SessionInterface $session): Response
     {
         // Retrieve the user role from the session
@@ -27,10 +34,15 @@ class AdminController extends AbstractController
         if (!in_array($role, ['admin', 'artisant', 'prestataire'])) {
             return $this->redirectToRoute('app_login'); // Redirect to login page
         }
+=======
+    public function index(): Response
+    {
+>>>>>>> gestion-activites
         return $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
         ]);
     }
+<<<<<<< HEAD
 
 
     #[Route('/logout', name: 'app_logout')]
@@ -217,4 +229,6 @@ class AdminController extends AbstractController
 
     
 
+=======
+>>>>>>> gestion-activites
 }

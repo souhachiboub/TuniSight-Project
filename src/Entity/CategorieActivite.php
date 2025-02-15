@@ -6,6 +6,10 @@ use App\Repository\CategorieActiviteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+<<<<<<< HEAD
+=======
+use Symfony\Component\Validator\Constraints as Assert;
+>>>>>>> gestion-activites
 
 #[ORM\Entity(repositoryClass: CategorieActiviteRepository::class)]
 class CategorieActivite
@@ -15,12 +19,28 @@ class CategorieActivite
     #[ORM\Column]
     private ?int $id = null;
 
+<<<<<<< HEAD
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
+=======
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
+    private ?string $nom = null;
+
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "La catégorie ne peut pas être vide.")]
+    private ?string $description = null;
+
+
+
+
+>>>>>>> gestion-activites
     /**
      * @var Collection<int, Activite>
      */

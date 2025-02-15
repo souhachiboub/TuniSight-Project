@@ -144,7 +144,11 @@ a:not([href]) {
   color: inherit;
   text-decoration: none; }
   a:not([href]):hover {
+<<<<<<< HEAD
     color: inherit;
+=======
+    color: #53d2dc;
+>>>>>>> gestion-activites
     text-decoration: none; }
 
 pre,
@@ -3571,7 +3575,11 @@ input[type="button"].btn-block {
       border-color: transparent; }
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
+<<<<<<< HEAD
     color: #495057;
+=======
+    color: #53d2dc;
+>>>>>>> gestion-activites
     background-color: #fff;
     border-color: #dee2e6 #dee2e6 #fff; }
   .nav-tabs .dropdown-menu {

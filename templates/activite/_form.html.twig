@@ -1,0 +1,167 @@
+<style>
+	#activite-form {
+		max-width: 700px;
+		margin: 20px auto;
+		padding: 20px;
+		background: #f8f9fa;
+		border-radius: 8px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.form-group {
+		display: flex;
+		gap: 10px;
+		margin-bottom: 10px;
+	}
+
+	.form-group > div {
+		flex: 1;
+	}
+
+	.form-label {
+		font-weight: bold;
+		margin-bottom: 3px;
+		display: block;
+	}
+
+	.form-control {
+		width: 100%;
+		padding: 6px;
+		border: 1px solid rgb(162, 204, 236);
+		border-radius: 5px;
+	}
+
+	.form-control.textarea {
+		height: 120px; /* Adjust as necessary */
+	}
+
+	.btn-primary {
+		width: 100%;
+		padding: 10px;
+		margin-top: 15px;
+		background-color: #26648e;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	.btn-primary:hover {
+		background-color: #1d4f73;
+	}
+
+	#activite-form img {
+		width: 420px;
+		height: 200px;
+		object-fit: cover;
+		margin-bottom: 10px;
+	}
+
+
+	#logo-form {
+		width: 40px;
+		height: 200px;
+		object-fit: cover;
+		margin-bottom: 10px;
+	}
+
+
+	input[type="checkbox"] {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 40px;
+		height: 40px;
+		border: 2px solid #ccc;
+		border-radius: 4px;
+		outline: none;
+		cursor: pointer;
+		transition: background 0.3s ease, border 0.3s ease;
+		margin-left: 80px
+	}
+
+	input[type="checkbox"]:checked::after {
+		content: '✔';
+		top: 0;
+		left: 4px;
+		font-size: 25px;
+		color: white !important;
+	}
+
+
+	input[type="checkbox"]:checked {
+		background-color: #26648e;
+		border-color: #26648e;
+	}
+</style>
+{{ form_start(form, {'action': path('app_activite_new'), 'method': 'POST', 'attr': {'id': 'activite-form', 'novalidate': 'novalidate'}}) }}
+
+<img id="logo-form" src="{{ asset('admin/img/logo2.png') }}"/>
+
+<div class="form-group">
+	<div>
+		{{ form_label(form.libelle) }}
+		{{ form_widget(form.libelle, {'attr': {'class': 'form-control'}}) }}
+	</div>
+	<div>
+		{{ form_label(form.prix) }}
+		{{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	<div>
+		{{ form_label(form.description) }}
+		{{ form_widget(form.description, {'attr': {'class': 'form-control textarea'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	<div>
+		{{ form_label(form.localisation) }}
+		{{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+	</div>
+	<div>
+		{{ form_label(form.capacite) }}
+		{{ form_widget(form.capacite, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	<div>
+		{{ form_label(form.dateDebut) }}
+		{{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+	</div>
+	<div>
+		{{ form_label(form.dateFin) }}
+		{{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+<div class="form-group">
+	<div>
+		{{ form_label(form.disponibilite) }}
+		{{ form_widget(form.disponibilite, {'attr': {'class': 'form-control', 'checked': 'checked'}}) }}
+	</div>
+	<div>
+		{{ form_label(form.imageFile) }}
+		{{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+	</div>
+
+</div>
+
+<div class="form-group">
+	<div>
+		{{ form_label(form.categorie) }}
+		{{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
+	</div>
+	<div>
+		{{ form_label(form.offre) }}
+		{{ form_widget(form.offre, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+
+<button type="submit" class="btn btn-primary">
+	{{ button_label is defined ? button_label : 'Enregistrer' }}
+</button>
+
+{{ form_end(form) }}
