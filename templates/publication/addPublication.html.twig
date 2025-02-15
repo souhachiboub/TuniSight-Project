@@ -66,15 +66,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    $('#publicationModal').modal('hide');
-                    alert("Publication ajoutée avec succès !");
+                    setTimeout(function() {
+                        window.location.href = data.redirectUrl;
+                    }, 200);
                 } else {
                     displayErrors(data.errors);
                 }
             })
             .catch(error => {
                 console.error("Une erreur est survenue :", error);
-                alert("Une erreur est survenue lors de la soumission du formulaire.");
             });
         });
 
