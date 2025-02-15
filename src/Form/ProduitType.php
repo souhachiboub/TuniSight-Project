@@ -13,14 +13,26 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Length;
 
 class ProduitType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('libelle', TextType::class)
-            ->add('description', TextType::class)
+        ->add('libelle', TextType::class, [
+            'attr' => ['class' => 'form-control'],
+            'empty_data' => '',  // Si le champ est vide, cela renvoie une chaîne vide au lieu de null
+            'constraints' => [
+                new NotBlank(['message' => '']),
+                new Length([
+                    'max' => 255,
+                    'maxMessage' => '',
+                ]),
+            ],
+        ])            ->add('description', TextType::class)
             ->add('prix', NumberType::class)
             ->add('imageFile', FileType::class, [
                 'label' => 'Image du produit (PNG, JPG)',

@@ -49,23 +49,20 @@
 
     <!-- Nav Item - Catégorie -->
     <li class="nav-item">
-        <a class="nav-link">
-            <i class="bi bi-list"></i> <span>Catégorie</span>
-        </a>
-        <a class="nav-link" href="{{ path('app_categorie_produit_new') }}">Créer catégorie</a>
-        <a class="nav-link" href="{{ path('app_categorie_produit') }}">Liste catégorie</a>
-    </li>
+    <a class="nav-link" href="{{ path('app_categorie_produit') }}">
+        <i class="bi bi-list"></i> <span>Catégorie</span>
+    </a>
+</li>
 
     <hr class="sidebar-divider">
 
     <!-- Nav Item - Produit -->
     <li class="nav-item">
-        <a class="nav-link">
-            <i class="bi bi-list"></i> <span>Produit</span>
-        </a>
-        <a class="nav-link" href="{{ path('produit_create') }}">Créer produit</a>
-        <a class="nav-link" href="{{ path('app_produit') }}">Liste produit</a>
-    </li>
+    <a class="nav-link" href="{{ path('app_produit') }}">
+        <i class="bi bi-list"></i> <span>Produit</span>
+    </a>
+</li>
+
 
     <hr class="sidebar-divider d-none d-md-block">
 

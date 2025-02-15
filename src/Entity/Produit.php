@@ -22,8 +22,8 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le libellé ne peut pas être vide.")]
-#[Assert\Length(
+    #[Assert\NotBlank(message: "Le libellé ne peut pas être vide ririiii.", groups: ['Default'])]
+    #[Assert\Length(
     max: 255,
     maxMessage: "Le libellé ne peut pas dépasser 255 caractères."
 )]
@@ -38,7 +38,7 @@ class Produit
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Le prix est obligatoire.")]
-#[Assert\PositiveOrZero(message: "Le prix ne peut pas être négatif.")]
+#[Assert\PositiveOrZero(message: "Le prix ne peut pas être négatif rourorrrrr.")]
     private ?float $prix = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -74,8 +74,8 @@ class Produit
     private ?LigneCommande $ligneCommande = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message: "La quantité est obligatoire.")]
-    #[Assert\PositiveOrZero(message: "La quantité doit être supérieure ou égale à 0.")]
+    #[Assert\NotNull(message: " rawouna La quantité est obligatoire.")]
+    #[Assert\PositiveOrZero(message: "  rawouna La quantité doit être supérieure ou égale à 0.")]
     private ?int $quantite = null;
 
     #[ORM\Column]

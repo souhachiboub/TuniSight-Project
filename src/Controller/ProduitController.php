@@ -6,6 +6,11 @@ use App\Form\ProduitType;
 use App\Form\StockType;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieProduitRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,69 +24,109 @@ class ProduitController extends AbstractController
     #[Route('/produit', name: 'app_produit')]
     public function index(ProduitRepository $produitRepository): Response
     {
+        // Récupération des produits existants
         $produits = $produitRepository->findAll();
-
+    
+        // Création d'une instance vide de Produit pour le formulaire
+        $produit = new Produit();
+        // Création du formulaire à partir du ProduitType
+        $formProduit = $this->createForm(ProduitType::class, $produit, ['is_edit' => false]);
+    
+        // Transmission des produits et du formulaire (sous forme de vue) au template
         return $this->render('produit/index.html.twig', [
-            'produits' => $produits,
-
+            'produits'    => $produits,
+            'formProduit' => $formProduit->createView(),
         ]);
     }
 
-    #[Route('/produit/new', name: 'produit_create')]
-public function create(Request $request, EntityManagerInterface $em): Response
-{
-    $produit = new Produit();
-    $form = $this->createForm(ProduitType::class, $produit, ['is_edit' => false]);
 
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Gestion de l'upload de l'image
-        $imageFile = $form->get('imageFile')->getData();
-        if ($imageFile) {
-            $produit->setImageFile($imageFile);
+
+
+    
+    #[Route('/produit/create', name: 'produit_create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $produit = new Produit();
+        $form = $this->createForm(ProduitType::class, $produit);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $produit->setImageFile($imageFile);
+            }
+            $produit->setDisponibilite($produit->getQuantite() > 0);
+
+            $entityManager->persist($produit);
+            $entityManager->flush();
+    
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Produit créé avec succès'
+            ]);
         }
-
-        $em->persist($produit);
-        $em->flush();
-        $this->addFlash('success', 'Le produit a été créé avec succès.');
-
-        return $this->redirectToRoute('produit_create');
-    }
-
-    return $this->render('produit/create.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
-
-#[Route('/produit/{id}', name: 'produit_show', requirements: ['id' => '\d+'])]
-public function show(ProduitRepository $produitRepository, int $id): Response
-{
-    $produit = $produitRepository->find($id);
     
-    if (!$produit) {
-        throw $this->createNotFoundException('Produit non trouvé.');
+        // 🔹 Récupération des erreurs uniquement si le formulaire est invalide
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+    
+        return new JsonResponse([
+            'success' => false,
+            'errors' => $errors
+        ], Response::HTTP_BAD_REQUEST);
     }
     
-    return $this->render('produit/show.html.twig', [
-        'produit' => $produit,
-    ]);
-}
 
+    
+    #[Route('/produit/{id}', name: 'produit_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(ProduitRepository $produitRepository, int $id): JsonResponse
+    {
+        $produit = $produitRepository->find($id);
+    
+        if (!$produit) {
+            return $this->json(['success' => false, 'message' => 'Produit non trouvé.'], Response::HTTP_NOT_FOUND);
+        }
+    
+        return $this->json([
+            'success' => true,
+            'produit' => [
+                'libelle' => $produit->getLibelle(),
+                'description' => $produit->getDescription(),
+                'prix' => $produit->getPrix(),
+                'categorie' => $produit->getCategorieProduit()->getNom(), // Assure-toi que getNom() existe
+                'quantite' => $produit->getQuantite(),
+                'image' => $produit->getImageFile() ? '/uploads/produits' . $produit->getImageFile() : null,
+            ]
+        ]);
+    }
+    
 
 
     #[Route('/produit/{id}/edit', name: 'produit_edit')]
-    public function edit(Request $request, Produit $produit, EntityManagerInterface $em): Response
+    public function edit(Request $request, Produit $produit, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         $form = $this->createForm(ProduitType::class, $produit, ['is_edit' => true]);
-    
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion de l'upload de l'image
-            $imageFile = $form->get('imageFile')->getData();
-            
-            if ($imageFile) { // Vérifie si une nouvelle image est envoyée
-                if (file_exists($imageFile->getPathname())) { // Vérifie si le fichier temporaire existe
-                    // Supprimer l'ancienne image si elle existe
+    
+        // Si le formulaire est soumis (POST)
+        if ($form->isSubmitted()) {
+            // Si le formulaire est valide
+            if ($form->isValid()) {
+                // Validation supplémentaire
+                $errors = $validator->validate($produit);
+                if (count($errors) > 0) {
+                    $errorMessages = [];
+                    foreach ($errors as $error) {
+                        $errorMessages[] = $error->getMessage();
+                    }
+                    return new JsonResponse(['success' => false, 'message' => implode("\n", $errorMessages)]);
+                }
+    
+                // Gestion de l'upload de l'image
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile && $imageFile->isFile()) {
                     $oldImage = $produit->getImage();
                     if ($oldImage) {
                         $oldImagePath = $this->getParameter('kernel.project_dir') . '/public/uploads/produits/' . $oldImage;
@@ -89,35 +134,44 @@ public function show(ProduitRepository $produitRepository, int $id): Response
                             unlink($oldImagePath);
                         }
                     }
-    
-                    // Générer un nom de fichier unique
                     $newFilename = uniqid().'.'.$imageFile->guessExtension();
-    
-                    // Déplacer le fichier vers le répertoire de stockage
                     $imageFile->move(
                         $this->getParameter('kernel.project_dir') . '/public/uploads/produits/',
                         $newFilename
                     );
-    
-                    // Mettre à jour le champ image de l'entité
                     $produit->setImage($newFilename);
-                } else {
-                    $this->addFlash('error', 'Le fichier temporaire est introuvable.');
                 }
+    
+                $em->flush();
+    
+                // Retourner une réponse JSON en cas de succès
+                $this->addFlash('success', 'Produit modifié avec succès !');
+
+                // Retourner une réponse JSON en cas de succès
+                return new JsonResponse(['success' => true, 'message' => 'Produit modifié avec succès !']);
+            } else {
+                $errorMessages = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errorMessages[] = $error->getMessage();
+                }
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => implode("\n", $errorMessages)
+                ]);
+            
             }
-    
-            $em->flush();
-            $this->addFlash('success', 'Produit modifié avec succès !');
-    
-            // Redirection vers la liste des produits après la modification
         }
     
-        // Afficher le formulaire si la requête n'est pas soumise ou si le formulaire n'est pas valide
-        return $this->render('produit/edit.html.twig', [
-            'form' => $form->createView(),
+        // Pour le chargement initial (GET), renvoyer le formulaire partiel
+        return $this->render('produit/_edit_form.html.twig', [
+            'form'    => $form->createView(),
+            'produit' => $produit
         ]);
     }
 
+
+
+    
     #[Route('/produit/{id}/delete', name: 'produit_delete', methods: ['POST'])]
     public function delete(Request $request, Produit $produit, EntityManagerInterface $em): Response
     {
@@ -129,26 +183,56 @@ public function show(ProduitRepository $produitRepository, int $id): Response
         return $this->redirectToRoute('app_produit');
     }
 
-    #[Route("/produit/{id}/stock", name: "produit_edit_stock", methods: ['GET', 'POST'])]
-public function editStock(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
-{
-    $form = $this->createForm(StockType::class, $produit);
-    $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->flush();
-        
-        // Ajouter un indicateur de succès
-        return $this->redirectToRoute('produit_edit_stock', ['id' => $produit->getId(), 'success' => 1]);
+
+
+
+    #[Route('/modifier-quantite/{id}', name: 'modifier_quantite', methods: ['POST'])]
+public function modifierQuantite(Request $request, Produit $produit, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
+{
+    // Récupérer les données envoyées en JSON
+    $data = json_decode($request->getContent(), true);
+
+    // Vérifier si 'quantite' est présente et valide
+    if (!isset($data['quantite']) || $data['quantite'] === '') {
+        return new JsonResponse([
+            'success' => false,
+            'message' => "La quantité est obligatoire."
+        ], 400);
     }
 
-    return $this->render('produit/edit_stock.html.twig', [
-        'form' => $form->createView(),
-        'produit' => $produit,
-        'success' => $request->query->get('success', 0), // Vérifier si succès existe
+    // Mettre à jour la quantité du produit
+    $quantite = (int) $data['quantite'];
+    $produit->setQuantite($quantite);
+
+    // Validation de l'entité Produit (les erreurs de validation seront directement issues des annotations de l'entité)
+    $errors = $validator->validate($produit);
+
+    // Si des erreurs de validation sont trouvées, renvoyer un message d'erreur
+    if (count($errors) > 0) {
+        // Récupérer les messages d'erreur directement depuis l'entité
+        $errorMessages = [];
+        foreach ($errors as $error) {
+            $errorMessages[] = $error->getMessage(); // Utilise directement les messages d'erreur définis dans l'entité
+        }
+        return new JsonResponse([
+            'success' => false,
+            'message' => implode(', ', $errorMessages) // Renvoie les messages d'erreur récupérés
+        ], 400);
+    }
+
+    // Sauvegarde dans la base de données si tout est valide
+    $entityManager->flush();
+
+    return new JsonResponse([
+        'success' => true,
+        'message' => "Quantité modifiée avec succèsss !"
     ]);
 }
 
+    
+    
+    
 
 
     #[Route('/boutique', name: 'app_boutique')]
@@ -224,4 +308,4 @@ public function deleteMultiple(Request $request, ProduitRepository $produitRepos
 
 
 
-}  
+} 

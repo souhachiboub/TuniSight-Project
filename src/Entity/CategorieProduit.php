@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategorieProduitRepository::class)]
-#[UniqueEntity(fields: ['nom'], message: 'Une catégorie avec ce nom existe déjà.')]
+#[UniqueEntity(fields: ['nom'], message: 'Une catégorie avec ce nom existe déjà rourou .')]
 
 class CategorieProduit
 {
@@ -20,7 +20,7 @@ class CategorieProduit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide rourou .")]
    
     private ?string $nom = null;
 
@@ -34,7 +34,7 @@ class CategorieProduit
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'CategorieProduit', orphanRemoval: true)]
     private Collection $produits;
 
     public function __construct()

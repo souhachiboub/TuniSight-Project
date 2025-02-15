@@ -1,50 +1,123 @@
-
-
-
-
-
 {% extends 'squeletteboutique.html.twig' %}
-
-
-
 
 {% block body %}
 <div class="container mt-5">
     <h2 class="mb-4">Liste des Produits</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajoutProduitModal">
+        Ajouter un Produit
+    </button>
 
-    <table class="table table-bordered shadow-sm">
+
+
+    <!-- Modal d'ajout -->
+    <div class="modal fade" id="ajoutProduitModal" tabindex="-1" aria-labelledby="ajoutProduitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un Produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(formProduit, {
+                        'action': path('produit_create'),
+                        'method': 'POST',
+                    'attr': {'id': 'form-produit', 'novalidate': 'novalidate'} 
+                    }) }}
+                        <div class="mb-3">
+                            {{ form_label(formProduit.libelle, 'Libellé') }}
+                            {{ form_widget(formProduit.libelle, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(formProduit.description, 'Description') }}
+                            {{ form_widget(formProduit.description, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(formProduit.prix, 'Prix') }}
+                            {{ form_widget(formProduit.prix, {'attr': {'class': 'form-control', 'min': '0'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(formProduit.categorieProduit, 'Catégorie') }}
+                            {{ form_widget(formProduit.categorieProduit, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(formProduit.quantite, 'Quantité') }}
+                            {{ form_widget(formProduit.quantite, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(formProduit.imageFile, 'Image') }}
+                            {{ form_widget(formProduit.imageFile, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-success">Ajouter</button>
+                        </div>
+                    {{ form_end(formProduit) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mt-5">
+    <!-- Tableau des produits -->
+    <table class="table table-bordered shadow-sm mt-3">
+        <!-- En-tête du tableau -->
         <thead>
             <tr>
-                <th><input type="checkbox" id="select-all"></th> {# Checkbox pour tout sélectionner #}
+                <th>
+                    <!-- Case à cocher pour sélectionner/désélectionner toutes les lignes -->
+                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                </th>
                 <th>Libellé</th>
                 <th>Description</th>
                 <th>Prix</th>
                 <th>Actions</th>
             </tr>
         </thead>
+
+        <!-- Corps du tableau -->
         <tbody>
             {% for produit in produits %}
                 <tr>
-                    <td><input type="checkbox" class="product-checkbox" value="{{ produit.id }}"></td>
-                    <td>{{ produit.libelle }}</td>
-<td>
-    {% set mots = produit.description|split(' ') %}
-    {{ mots|slice(0, 11)|join(' ') }}{% if mots|length > 11 %}...{% endif %}
-</td>
-                    <td>{{ produit.prix }} €</td>
+                    <!-- Case à cocher pour sélectionner la ligne -->
                     <td>
-                        <a href="{{ path('produit_show', {'id': produit.id}) }}" class="btn btn-outline-primary btn-sm">
+                        <input type="checkbox" class="delete-checkbox" data-id="{{ produit.id }}" onchange="toggleDeleteButton()">
+                    </td>
+
+                    <!-- Libellé du produit -->
+                    <td>{{ produit.libelle }}</td>
+
+                    <!-- Description du produit (tronquée à 50 caractères si nécessaire) -->
+                    <td>{{ produit.description|length > 50 ? produit.description|slice(0, 50) ~ '...' : produit.description }}</td>
+
+                    <!-- Prix du produit -->
+                    <td>{{ produit.prix }} €</td>
+
+                    <!-- Actions -->
+                    <td>
+                        <!-- Bouton "Voir" -->
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#voirProduitModal{{ produit.id }}">
                             <i class="bi bi-eye"></i> Voir
-                        </a>
-                        <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-pencil"></i> Modifier
-                        </a>
-                        <a href="{{ path('produit_edit_stock', {'id': produit.id}) }}" class="btn btn-outline-warning btn-sm">
-                            <i class="bi bi-box"></i> Stock
-                        </a>
+                        </button>
+
+                        <!-- Bouton "Modifier" -->
+                        <button class="btn btn-warning edit-produit-btn" data-id="{{ produit.id }}" data-bs-toggle="modal" data-bs-target="#editProduitModal">
+                            Modifier
+                        </button>
+
+                        <!-- Bouton "Stock" -->
+                        <button type="button" class="btn btn-primary edit-product-btn"
+                                data-id="{{ produit.id }}" 
+                                data-quantite="{{ produit.quantite }}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editProductModal">
+                            Stock
+                        </button>
+
+                        <!-- Bouton "Supprimer" -->
                         <form method="post" action="{{ path('produit_delete', {'id': produit.id}) }}" class="d-inline delete-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
-                            <button type="submit" class="btn btn-outline-danger btn-sm delete-btn" data-produit="{{ produit.libelle }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                 <i class="bi bi-trash"></i> Supprimer
                             </button>
                         </form>
@@ -54,95 +127,560 @@
         </tbody>
     </table>
 
-    <!-- Bouton de suppression multiple -->
-    <button id="delete-selected" class="btn btn-danger mt-3 d-none">
-        <i class="bi bi-trash"></i> 
-    </button>
+    <!-- Icône de poubelle pour la suppression multiple -->
+    <div id="deleteMultipleButton" class="d-none">
+        <button class="btn btn-danger" onclick="deleteSelectedProducts()">
+            <i class="bi bi-trash"></i> Supprimer les éléments sélectionnés
+        </button>
+    </div>
 </div>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+
+
+
+$(document).ready(function() {
+    $(".edit-product-btn").click(function() {
+        let productId = $(this).data("id");
+        let productQuantite = $(this).data("quantite");
+
+        $("#productId").val(productId);
+        $("#productQuantity").val(productQuantite);
+    });
+
+    $("#editProductForm").submit(function(e) {
+    e.preventDefault();
+
+    let productId = $("#productId").val();
+    let newQuantite = $("#productQuantity").val();
+
+ $.ajax({
+    url: "/modifier-quantite/" + productId,
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({ quantite: newQuantite }),
+    success: function(response) {
+        // Afficher le message dans le modal
+        $("#successMessage").text(response.message);
+        $("#successModal").modal("show");
+
+        // Attendre 3 secondes puis recharger la page
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+    },
+  error: function(response) {
+    if (response.responseJSON && response.responseJSON.message) {
+        // Supprimer les anciens messages d'erreur avant d'en ajouter un nouveau
+        $(".error-message").remove();
+
+        // Insérer le message d'erreur sous l'input de la quantité avec un fond rouge clair
+        $("#productQuantity").after(`
+            <small class="error-message d-block mt-1 p-2 text-danger" 
+                   style="background: rgba(255, 0, 0, 0.1); border-radius: 5px;">
+                ${response.responseJSON.message}
+            </small>
+        `);
+    }
+}
+
+});
+
+});
+
+});
+
+</script>
+<!-- Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Modifier la Quantité</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProductForm" novalidate>
+                    <input type="hidden" id="productId">
+                    <div class="mb-3">
+                        <label for="productQuantity" class="form-label">Quantité</label>
+                        <input type="number" class="form-control" id="productQuantity" name="quantite" required min="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Fonction pour sélectionner/désélectionner toutes les cases
+function toggleSelectAll(source) {
+    const checkboxes = document.querySelectorAll('.delete-checkbox');
+    checkboxes.forEach(checkbox => checkbox.checked = source.checked);
+    toggleDeleteButton(); // Mettre à jour l'affichage de l'icône de poubelle
+}
+
+// Fonction pour activer/désactiver l'icône de poubelle
+function toggleDeleteButton() {
+    const deleteButton = document.getElementById('deleteMultipleButton');
+    const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
+
+    if (checkboxes.length > 0) {
+        deleteButton.classList.remove('d-none'); // Afficher l'icône de poubelle
+    } else {
+        deleteButton.classList.add('d-none'); // Masquer l'icône de poubelle
+    }
+}
+
+// Fonction pour afficher le modal de confirmation avant la suppression
+function deleteSelectedProducts() {
+    const selectedIds = [];
+    const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
+
+    // Récupérer les IDs des produits sélectionnés
+    checkboxes.forEach(checkbox => {
+        selectedIds.push(checkbox.getAttribute('data-id'));
+    });
+
+    if (selectedIds.length > 0) {
+        // Stocker les IDs sélectionnés pour la suppression
+        window.selectedIds = selectedIds;
+
+        // Afficher le modal de confirmation
+        $('#confirmDeleteModal').modal('show');
+    } else {
+        alert("Aucun produit sélectionné.");
+    }
+}
+
+// Fonction pour confirmer la suppression
+function confirmDelete() {
+    const selectedIds = window.selectedIds;
+
+    // Envoyer une requête de suppression multiple au serveur
+    fetch('/produit/delete-multiple', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token('delete_multiple') }}' // Jeton CSRF
+        },
+        body: JSON.stringify({ ids: selectedIds })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Fermer le modal de confirmation
+            $('#confirmDeleteModal').modal('hide');
+
+            // Afficher le modal de succès
+            $('#successModal').modal('show');
+
+            // Recharger la page après 2 secondes
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            alert("Une erreur est survenue lors de la suppression.");
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert("Une erreur est survenue lors de la suppression.");
+    });
+}
+</script>
+<!-- Modal de confirmation pour la suppression multiple -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer les produits sélectionnés ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Modals de détails des produits -->
+    {% for produit in produits %}
+        <div class="modal fade" id="voirProduitModal{{ produit.id }}" tabindex="-1" aria-labelledby="voirProduitModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Détails du Produit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Libellé :</strong> {{ produit.libelle }}</p>
+                        <p><strong>Description :</strong> {{ produit.description }}</p>
+                        <p><strong>Reference :</strong> {{ produit.Reference }}</p>
+                        <p><strong>Prix :</strong> {{ produit.prix }} €</p>
+                        <p><strong>Catégorie :</strong> {{ produit.categorieProduit.nom }}</p>
+                        <p><strong>Quantité :</strong> {{ produit.quantite }}</p>
+<p><strong>Disponibilité :</strong> {{ produit.isDisponible() ? 'Disponible' : 'Rupture de stock' }}</p>
+                        {% if produit.image %}
+                            <img src="{{ asset('uploads/produits/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.libelle }}">
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+
+
+
+
+<!-- Modal de succès -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête du modal -->
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">Succès</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="modal-body">
+        <p id="successMessage">L'action a été réalisée avec succès.</p>
+      </div>
+
+      <!-- Pied du modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const checkboxes = document.querySelectorAll(".product-checkbox");
-    const selectAll = document.getElementById("select-all");
-    const deleteBtn = document.getElementById("delete-selected");
 
-    function updateDeleteButton() {
-        let checkedCount = document.querySelectorAll(".product-checkbox:checked").length;
-        deleteBtn.classList.toggle("d-none", checkedCount === 0);
-    }
+    // S'assure que le script s'exécute une fois que le DOM est complètement chargé
 
-    // Sélectionner/Désélectionner toutes les cases
-    selectAll.addEventListener("change", function () {
-        checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
-        updateDeleteButton();
+    // 1. Gestion des clics sur les boutons de mise à jour de stock (class '.btn-stock')
+    document.querySelectorAll('.btn-stock').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();  // Empêche l'action par défaut du bouton (comme un rechargement de page)
+            
+            // Crée un formulaire temporaire pour effectuer la requête POST
+            const form = document.createElement('form');
+            form.method = 'POST';  // Définit la méthode du formulaire en POST
+            form.action = this.getAttribute('href');  // L'URL d'action du formulaire vient de l'attribut 'href' du bouton
+            document.body.appendChild(form);  // Ajoute le formulaire au DOM
+            form.submit();  // Soumet le formulaire
+        });
     });
 
-    // Afficher wla Masquer le bouton de suppression selon la sélection
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", updateDeleteButton);
+    // 2. Soumission des formulaires dans les modals
+    const forms = document.querySelectorAll('.modal form');  // Sélectionne tous les formulaires à l'intérieur des modals
+    forms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();  // Empêche la soumission classique du formulaire
+
+            const formData = new FormData(form);  // Récupère les données du formulaire
+            const actionUrl = form.getAttribute('action');  // Récupère l'URL d'action du formulaire
+
+            // Envoie les données via une requête AJAX avec fetch
+            fetch(actionUrl, {
+                method: 'POST',
+                body: formData,  // Corps de la requête : les données du formulaire
+            })
+            .then(response => response.json())  // Convertit la réponse en JSON
+            .then(data => {
+                if (data.success) {
+                    // Si la mise à jour du stock a réussi, on ferme le modal
+                    const modal = new bootstrap.Modal(form.closest('.modal'));
+                    modal.hide();
+
+                    // Mise à jour de la quantité du produit dans l'interface sans recharger la page
+                    const quantiteElement = document.getElementById('quantite' + data.produitId);
+                    quantiteElement.innerText = data.newQuantite;
+                } else {
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);  // Affiche l'erreur dans la console si quelque chose échoue
+            });
+        });
+    });
+    // 3. Soumission des formulaires de mise à jour du stock (class '.stock-form')
+    document.querySelectorAll("form.stock-form").forEach(form => {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();  // Empêche la soumission classique du formulaire
+            console.log("Formulaire soumis via AJAX !");  // Affiche un message dans la console pour le débogage
+
+            const quantite = form.querySelector("input[name='produit[quantite]']").value;  // Récupère la quantité du produit
+            const url = form.getAttribute("action");  // Récupère l'URL d'action du formulaire
+
+            // Prépare les données à envoyer dans le corps de la requête au format JSON
+            const data = JSON.stringify({
+                quantite: parseInt(quantite),  // Convertit la quantité en nombre
+                disponibilite: quantite > 0  // Détermine la disponibilité du produit
+            });
+
+            // Envoie les données via AJAX avec fetch
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",  // Indique que les données sont au format JSON
+                    "X-Requested-With": "XMLHttpRequest"  // En-tête nécessaire pour indiquer que c'est une requête AJAX
+                },
+                body: data  // Corps de la requête : les données du formulaire en JSON
+            })
+            .then(response => response.json())  // Convertit la réponse en JSON
+            .then(data => {
+                console.log("Réponse du serveur :", data);  // Affiche la réponse dans la console pour le débogage
+
+                if (data.success) {
+                    // Si la mise à jour du stock a réussi, affiche un message de succès
+                    document.getElementById("successMessage").textContent = data.message;
+                    new bootstrap.Modal(document.getElementById("successModal")).show();  // Affiche le modal de succès
+                } else {
+                    alert("Erreur : " + data.message);  // Affiche une alerte en cas d'erreur
+                }
+
+                // Ferme le modal après la soumission
+                const modal = form.closest(".modal");
+                if (modal) {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.hide();  // Cache le modal si l'instance existe
+                    } else {
+                        new bootstrap.Modal(modal).hide();  // Crée et cache le modal si l'instance n'existe pas
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Erreur :", error);  // Affiche l'erreur dans la console
+                alert("Une erreur est survenue.");  // Affiche un message générique d'erreur
+            });
+        });
     });
 
-    // Suppression multiple
-    deleteBtn.addEventListener("click", function () {
-        let selectedIds = Array.from(document.querySelectorAll(".product-checkbox:checked"))
-                               .map(checkbox => checkbox.value);
 
-        if (selectedIds.length === 0) return;
 
-        Swal.fire({
-            title: "Êtes-vous sûr ?",
-            text: "Vous allez supprimer plusieurs produits.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Oui, supprimer",
-            cancelButtonText: "Annuler"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch("{{ path('produit_delete_multiple') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ids: selectedIds })
-                }).then(response => response.json())
-                  .then(data => {
-                      if (data.success) {
-                          Swal.fire("Supprimé !", "Les produits ont été supprimés.", "success")
-                              .then(() => location.reload());
-                      } else {
-                          Swal.fire("Erreur", "Un problème est survenu.", "error");
-                      }
-                  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 4. Gestion AJAX pour le formulaire d'ajout de produit (ID : 'form-produit')
+const formProduit = document.getElementById("form-produit");
+if (formProduit) {
+    formProduit.addEventListener("submit", function (e) {
+        e.preventDefault();  // Empêche la soumission classique du formulaire
+
+        const formData = new FormData(this);  // Récupère les données du formulaire
+        const url = this.getAttribute("action");  // Récupère l'URL d'action du formulaire
+
+        // Envoie les données via une requête AJAX avec fetch
+        fetch(url, {
+            method: "POST",
+            body: formData,  // Corps de la requête : les données du formulaire
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }  // Indique qu'il s'agit d'une requête AJAX
+        })
+        .then(response => response.json())  // Convertit la réponse en JSON
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour le texte du modal avec le message de succès
+                document.getElementById("successMessage").textContent = "Produit ajouté avec succès !";
+
+                // Afficher le modal de succès
+                let successModalEl = document.getElementById("successModal");
+                let successModal = bootstrap.Modal.getInstance(successModalEl) || new bootstrap.Modal(successModalEl);
+                successModal.show();
+
+                // Recharger la page après quelques secondes pour afficher le nouveau produit
+                setTimeout(() => {
+                    location.reload();
+                }, 2000); // Recharge après 2 secondes
+            } else {
+                alert("Erreur : " + (data.errors ? data.errors.join("\n") : "Une erreur est survenue."));
+            }
+        })
+        .catch(error => console.error("Erreur :", error));  // Affiche l'erreur dans la console en cas de problème
+    });
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 5. Confirmation avant la suppression d'un produit
+    document.querySelectorAll(".delete-form").forEach(form => {
+        form.addEventListener("submit", function (e) {
+            if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) {
+                e.preventDefault();  // Si l'utilisateur annule, la soumission est empêchée
             }
         });
     });
 
-    // Suppression wa7da barka  avec confirmation
-    document.querySelectorAll(".delete-btn").forEach(button => {
-        button.addEventListener("click", function (event) {
-            event.preventDefault();
-            let form = this.closest(".delete-form");
-            let produitLibelle = this.getAttribute("data-produit");
 
-            Swal.fire({
-                title: "Êtes-vous sûr ?",
-                text: "Vous allez supprimer le produit : " + produitLibelle,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, supprimer",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
+});
+
+</script>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editProduitModal" tabindex="-1" aria-labelledby="editProduitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifier un Produit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editProduitFormContainer">
+                    <!-- Le formulaire sera chargé ici via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Chargement du formulaire dans le modal
+    document.querySelectorAll(".edit-produit-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let produitId = this.getAttribute("data-id");
+            fetch(`/produit/${produitId}/edit`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
                 }
-            });
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("editProduitFormContainer").innerHTML = html;
+            })
+            .catch(error => console.error("Erreur lors du chargement du formulaire:", error));
         });
     });
+    // // Fonction pour afficher le modal de succès
+function showSuccessModal(message) {
+    let successMessage = document.getElementById("successMessage");
+    if (successMessage) {
+        successMessage.textContent = message; // Mettre à jour le message du modal
+    }
+    let successModal = new bootstrap.Modal(document.getElementById("successModal"));
+    successModal.show();
+}
+
+// Soumission du formulaire via AJAX
+document.addEventListener("submit", function(e) {
+    if (e.target && e.target.id === "form-edit-produit") {
+        e.preventDefault(); // Empêche la soumission classique
+
+        let form = e.target;
+        let formData = new FormData(form);
+
+        fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Fermer la modal d'édition
+                let modal = bootstrap.Modal.getInstance(document.getElementById("editProduitModal"));
+                modal.hide();
+
+                // Afficher le modal de succès
+                showSuccessModal(data.message);
+
+                // Recharger la page après un court délai pour voir les modifications
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                // Afficher les erreurs de validation renvoyées par le serveur
+                let errorContainer = form.querySelector(".error-message");
+                if (!errorContainer) {
+                    errorContainer = document.createElement("div");
+                    errorContainer.classList.add("error-message", "alert", "alert-danger");
+                    form.prepend(errorContainer);
+                }
+                errorContainer.textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors de la soumission du formulaire:", error);
+            alert("Une erreur est survenue. Veuillez réessayer.");
+        });
+    }
+});
+
 });
 </script>
 {% endblock %}

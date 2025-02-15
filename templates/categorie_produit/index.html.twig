@@ -1,6 +1,12 @@
 {% extends 'squeletteboutique.html.twig' %}
-
+  
 {% block body %}
+
+
+
+ 
+
+
 <!-- Vos styles personnalisés ici ... -->
 <style>
   /* ... Vos styles déjà définis ... */
@@ -70,9 +76,11 @@
           ➕ Ajouter Catégorie
       </button>
   </div>
+
   <!-- Table de catégories -->
   <div class="table-responsive">
       <table class="table text-center">
+          <!-- En-tête du tableau -->
           <thead>
               <tr>
                   <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
@@ -81,13 +89,20 @@
                   <th>Actions</th>
               </tr>
           </thead>
+
+          <!-- Corps du tableau -->
           <tbody>
               {% for categorie in categories %}
                   <tr>
+                      <!-- Case à cocher pour la sélection -->
                       <td>
                           <input type="checkbox" class="delete-checkbox" data-id="{{ categorie.id }}" onchange="toggleDeleteMultipleButton()">
                       </td>
+
+                      <!-- Nom de la catégorie -->
                       <td>{{ categorie.nom }}</td>
+
+                      <!-- Description de la catégorie (tronquée si trop longue) -->
                       <td>
                           {% set words = categorie.description|split(' ') %}
                           {% if words|length > 8 %}
@@ -96,14 +111,25 @@
                               {{ categorie.description }}
                           {% endif %}
                       </td>
+
+                      <!-- Actions (Modifier, Voir, Supprimer) -->
                       <td>
-                          <button class="btn btn-outline-info btn-sm" onclick="openModal('{{ categorie.id }}', '{{ categorie.nom }}', '{{ categorie.description }}')">
-                              <i class="fa fa-edit"></i>
+                          <!-- Bouton "Modifier" -->
+                          <button class="btn btn-warning btn-sm" 
+                              onclick="openModal(this.getAttribute('data-id'), this.getAttribute('data-nom'), this.getAttribute('data-description'))" 
+                              data-id="{{ categorie.id }}" 
+                              data-nom="{{ categorie.nom }}" 
+                              data-description="{{ categorie.description }}">
+                              Modifier
                           </button>
+
+                          <!-- Bouton "Voir" -->
                           <button class="btn btn-outline-primary btn-sm" onclick="viewCategorie('{{ categorie.id }}')">
                               <i class="fa fa-eye"></i>
                           </button>
-                          <button class="btn btn-outline-danger btn-sm" onclick="deleteCategorie('{{ categorie.id }}')">
+
+                          <!-- Bouton "Supprimer" -->
+                          <button type="button" class="btn btn-danger" onclick="confirmDeleteCategorie({{ categorie.id }})">
                               <i class="fa fa-trash"></i>
                           </button>
                       </td>
@@ -112,15 +138,64 @@
           </tbody>
       </table>
   </div>
+
+  <!-- Espace supplémentaire pour d'autres éléments -->
   <div class="mt-3">
-      <button class="btn btn-danger d-none" id="deleteMultipleButton" onclick="deleteMultiple()">
-          <i class="fa fa-trash"></i>
-      </button>
+<button id="deleteMultipleButton" class="btn btn-danger" onclick="confirmDeleteMultiple()" disabled>
+    🗑️ 
+</button>
   </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- Modal de création/modification -->
-<div class="modal fade" id="categorieModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="categorieModallle" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header custom-modal-header">
@@ -154,6 +229,193 @@
   </div>
 </div>
 
+<script>
+
+
+function saveCategorie() {
+    const id = document.getElementById('categorieId').value.trim();
+    const nom = document.getElementById('nom').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const errorContainer = document.getElementById('errorContainer');
+
+    errorContainer.classList.add('d-none');
+    errorContainer.innerHTML = '';
+
+   
+    const url = id ? `/categorie/produit/${id}/edit` : `/categorie/produit/new`; // URL dynamique
+    const method = id ? 'PUT' : 'POST'; // Déterminer la méthode HTTP
+
+    fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom, description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+$('#categorieModallle').modal('hide'); // Fermer le modal de création/modif
+
+// Déterminer le message de succès
+const successMessage = id ? "Catégorie modifiée avec succès !" : "Catégorie ajoutée avec succès !";
+document.getElementById('successMessage').innerText = successMessage;
+
+// Afficher le modal de succès
+var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+successModal.show();
+
+// Recharger la page après un court délai
+setTimeout(() => {
+    location.reload();
+}, 2000);
+            location.reload(); // Recharger la page pour voir les changements
+        } else {
+            errorContainer.innerHTML = data.message;
+            errorContainer.classList.remove('d-none');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        errorContainer.innerHTML = "Une erreur est survenue.";
+        errorContainer.classList.remove('d-none');
+    });
+}
+
+// Ouvrir le modal pour création ou modification
+function openModal(id = '', nom = '', description = '') {
+    document.getElementById('categorieId').value = id;
+    document.getElementById('nom').value = nom;
+    document.getElementById('description').value = description;
+
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.innerHTML = '';
+    errorContainer.classList.add('d-none');
+
+    document.getElementById('modalTitle').innerText = id ? "Modifier Catégorie" : "Ajouter Catégorie";
+
+    var modal = new bootstrap.Modal(document.getElementById('categorieModallle'));
+    modal.show();
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal de succès -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-success">
+          <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="successModalLabel">Succès</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              <p id="successMessage"></p>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Modal de vue -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="viewModalLabel">Détails de la catégorie</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+              <h6 id="viewModalNom"></h6>
+              <p id="viewModalDescription"></p>
+          </div>
+      </div>
+  </div>
+</div>
 <!-- Modal de confirmation de suppression -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -172,124 +434,34 @@
       </div>
   </div>
 </div>
-
-<!-- Modal de succès -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-success">
-          <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="successModalLabel">Succès</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-          </div>
-          <div class="modal-body">
-              <p id="successMessage"></p>
-          </div>
-      </div>
-  </div>
-</div>
-
-<!-- Modal de vue -->
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="viewModalLabel">Détails de la catégorie</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-          </div>
-          <div class="modal-body">
-              <h6 id="viewModalNom"></h6>
-              <p id="viewModalDescription"></p>
-          </div>
-      </div>
-  </div>
-</div>
-
 <script>
-  let currentDeletionAction = null;
+function confirmDeleteCategorie(id) {
+    currentDeletionAction = function() {
+        fetch(`/categorie/produit/${id}/delete`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccessModal(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la suppression:', error);
+        });
+    };
 
-  function openModal(id, nom, description) {
-      document.getElementById('categorieId').value = id || '';
-      document.getElementById('nom').value = nom || '';
-      document.getElementById('description').value = description || '';
-      const errorContainer = document.getElementById('errorContainer');
-      errorContainer.innerHTML = '';
-      errorContainer.classList.add('d-none');
+    // Affiche le modal de confirmation
+    var modalEl = document.getElementById('deleteConfirmModal');
+    var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    modal.show();
+}
 
-      const modalTitle = document.getElementById('modalTitle');
-      modalTitle.innerText = id ? "Modifier Catégorie" : "Ajouter Catégorie";
-      var modal = new bootstrap.Modal(document.getElementById('categorieModal'));
-      modal.show();
-  }
-
-  function saveCategorie() {
-      const id = document.getElementById('categorieId').value;
-      const nom = document.getElementById('nom').value;
-      const description = document.getElementById('description').value;
-      
-      const url = id ? `/categorie/produit/${id}/edit` : `/categorie/produit/new`;
-      fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nom, description })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              showSuccessModal(data.message);
-          } else {
-              const errorContainer = document.getElementById('errorContainer');
-              errorContainer.innerHTML = data.message;
-              errorContainer.classList.remove('d-none');
-          }
-      })
-      .catch(error => {
-          console.error('Erreur:', error);
-      });
-  }
-
-  function deleteCategorie(id) {
-      currentDeletionAction = function () {
-          fetch(`/categorie/produit/${id}/delete`, { method: 'DELETE' })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  showSuccessModal(data.message);
-              } else {
-                  alert('Erreur: ' + data.message);
-              }
-          });
-      };
-      document.getElementById('deleteConfirmMessage').innerText = "Êtes-vous sûr de vouloir supprimer cette catégorie ?";
-      var modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-      modal.show();
-  }
-
-  function deleteMultiple() {
-      const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
-      if (checkboxes.length === 0) {
-          showSuccessModal("Veuillez sélectionner au moins une catégorie à supprimer.");
-          return;
-      }
-      const ids = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-id'));
-      currentDeletionAction = function () {
-          fetch('/categorie/produit/delete-multiple', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ids: ids })
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  showSuccessModal(data.message);
-              } else {
-                  alert('Erreur: ' + data.message);
-              }
-          });
-      };
-      document.getElementById('deleteConfirmMessage').innerText = "Êtes-vous sûr de vouloir supprimer les catégories sélectionnées ?";
-      var modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-      modal.show();
-  }
+  
+  
 
   document.getElementById('confirmDeleteButton').addEventListener('click', function () {
       var modalEl = document.getElementById('deleteConfirmModal');
@@ -300,22 +472,70 @@
           currentDeletionAction = null;
       }
   });
+function toggleSelectAll(source) {
+    const checkboxes = document.querySelectorAll('.delete-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = source.checked;
+    });
+    toggleDeleteMultipleButton();
+}
 
-  function toggleDeleteMultipleButton() {
-      const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
-      const deleteMultipleButton = document.getElementById('deleteMultipleButton');
-      if (checkboxes.length > 0) {
-          deleteMultipleButton.classList.remove('d-none');
-      } else {
-          deleteMultipleButton.classList.add('d-none');
-      }
-  }
 
-  function toggleSelectAll(source) {
-      const checkboxes = document.querySelectorAll('.delete-checkbox');
-      checkboxes.forEach(checkbox => checkbox.checked = source.checked);
-      toggleDeleteMultipleButton();
-  }
+function toggleDeleteMultipleButton() {
+    const selected = document.querySelectorAll('.delete-checkbox:checked').length;
+    const deleteButton = document.getElementById('deleteMultipleButton');
+    
+    if (selected > 0) {
+        deleteButton.style.display = "inline-block"; // Affiche le bouton
+        deleteButton.disabled = false;
+    } else {
+        deleteButton.style.display = "none"; // Cache le bouton si aucune case cochée
+        deleteButton.disabled = true;
+    }
+}
+
+
+function confirmDeleteMultiple() {
+    const selectedCheckboxes = document.querySelectorAll('.delete-checkbox:checked');
+    const selectedIds = [...selectedCheckboxes].map(checkbox => checkbox.getAttribute('data-id'));
+
+    if (selectedIds.length === 0) {
+        alert("Veuillez sélectionner au moins une catégorie.");
+        return;
+    }
+
+    currentDeletionAction = function() {
+        fetch('/categorie/delete-multiple', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccessModal(`${selectedIds.length} catégorie(s) supprimée(s) avec succès !`);
+
+                // Supprimer les lignes du tableau après succès
+                selectedCheckboxes.forEach(checkbox => {
+                    checkbox.closest('tr').remove();
+                });
+
+            } else {
+                alert("Erreur lors de la suppression : " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la suppression multiple:', error);
+        });
+    };
+
+    // Affiche le modal de confirmation
+    let modalEl = document.getElementById('deleteConfirmModal');
+    let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
+
 
   function showSuccessModal(message) {
       document.getElementById('successMessage').innerText = message;
@@ -326,7 +546,6 @@
           location.reload();
       }, 2000);
   }
-
   function viewCategorie(id) {
       fetch(`/categorie/produit/${id}/view`)
       .then(response => response.json())
