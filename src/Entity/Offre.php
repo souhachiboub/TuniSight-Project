@@ -27,6 +27,7 @@ class Offre
 
 
     #[ORM\Column]
+    #[ORM\JoinColumn(nullable: true)]
     private ?string $nom = null;
 
 
