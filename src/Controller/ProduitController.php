@@ -260,7 +260,7 @@ public function boutique(ProduitRepository $produitRepository, CategorieProduitR
 
     $products = $queryBuilder->getQuery()->getResult();
 
-    return $this->render('boutique.html.twig', [
+    return $this->render('base/indexboutique.html.twig', [
         'products' => $products,
         'categories' => $categories,
         'selectedCategory' => $selectedCategorie,
@@ -296,4 +296,27 @@ public function deleteMultiple(Request $request, ProduitRepository $produitRepos
 
 
 
-} 
+
+
+
+
+
+#[Route('/boutique/{id}', name: 'afficherproduit')]
+     
+    public function afficher(ProduitRepository $produitRepository, int $id): Response
+    {
+        // Récupère le produit depuis la base de données
+        $produit = $produitRepository->find($id);
+
+        // Si le produit n'existe pas, renvoie une erreur 404
+        if (!$produit) {
+            throw $this->createNotFoundException('Produit non trouvé');
+        }
+
+        // Passe le produit à la vue
+        return $this->render('produit/detailproduit.html.twig', [
+            'produit' => $produit,
+        ]);
+    }
+}
+

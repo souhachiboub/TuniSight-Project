@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>TunisSight - Details</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{% block css %}
+			<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+			<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+
+			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+			<link rel="stylesheet" href="{{asset('client/css/animate.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.carousel.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.theme.default.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/magnific-popup.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/bootstrap-datepicker.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/flaticon.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/style.css')}}">
+		{% endblock %}
+		<style>
+			/* Global settings */
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				font-family: Poppins, sans-serif;
+				background-color: #f9f9f9;
+
+			}
+
+			.hero-wrap {
+				position: relative;
+				background-image: url('{{ asset('client/images/background33.jpg') }}');
+				height: 45vh;
+				background-size: cover;
+				background-position: center;
+			}
+
+			.hero-wrap .overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0, 0, 0, 0.5);
+			}
+
+			/* Container settings */
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+
+			/* Details page styling */
+			.details-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				padding: 40px;
+				background-color: #fff;
+				border-radius: 10px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+				margin: 30px auto;
+			}
+
+			.details-image {
+				width: 45%;
+				height: 400px;
+				background-size: cover;
+				background-position: center;
+				border-radius: 15px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+				transition: transform 0.3s ease-in-out;
+			}
+
+			.details-image:hover {
+				transform: scale(1.05);
+			}
+
+			.details-text {
+				width: 50%;
+			}
+
+			.details-text h3 {
+				font-size: 32px;
+				font-weight: bold;
+				color: #333;
+				margin-bottom: 15px;
+				line-height: 1.3;
+			}
+
+			.details-text p {
+				font-size: 16px;
+				color: #777;
+				line-height: 1.6;
+				margin: 15px 0;
+			}
+
+			.price {
+				color: #53d2dc;
+				font-size: 28px;
+				font-weight: bold;
+				margin-bottom: 15px;
+			}
+
+			.location {
+				font-size: 16px;
+				color: #555;
+				margin-top: 10px;
+				display: flex;
+				align-items: center;
+			}
+
+			.location .fa {
+				color: #53d2dc;
+				margin-right: 8px;
+			}
+
+			.btn-reserver {
+				padding: 12px 40px;
+				background-color: #53d2dc;
+				color: #fff;
+				border: none;
+				border-radius: 25px;
+				font-size: 18px;
+				cursor: pointer;
+				transition: background-color 0.3s ease, transform 0.3s ease;
+			}
+
+			.btn-reserver:hover {
+				background-color: #1a1a1a;
+				transform: translateY(-3px);
+			}
+
+			.details-container .container {
+				display: flex;
+				justify-content: space-between;
+			}
+			#btn-back {
+				background-color: black;
+			}
+			button {
+				appearance: none;
+				background-color: transparent;
+				border: 0.125em solid rgb(197, 189, 189);
+				border-radius: 0.9375em;
+				box-sizing: border-box;
+				color: #3B3B3B;
+				cursor: pointer;
+				display: inline-block;
+				font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.2;
+				margin: 0;
+				min-height: 2.5em;
+				min-width: 0;
+				outline: none;
+				padding: 0.5em 1.5em;
+				text-align: center;
+				text-decoration: none;
+				transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+				will-change: transform;
+			}
+			button:disabled {
+				pointer-events: none;
+			}
+
+			button:hover {
+				color: #fff;
+				background-color: #1A1A1A;
+				box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+				transform: translateY(-2px);
+			}
+
+			button:active {
+				box-shadow: none;
+				transform: translateY(0);
+			}
+			#btn-reserver:hover {
+				background-color: #53d2dc;
+			}
+			.overlay {
+				margin-top: 250px !important;
+				text-align: center;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: 1;
+			}
+			h1 {
+				color: black !important;
+				text-align: center !important
+			}
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+			<div class="container">
+				<img src="{{asset('admin/img/logo.png')}}" alt="Logo"/>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="oi oi-menu"></span>
+					Menu
+				</button>
+
+				<div class="collapse navbar-collapse" id="ftco-nav">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item active">
+							<a href="index.html" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="about.html" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="destination.html" class="nav-link">Destination</a>
+						</li>
+
+						<li class="nav-item">
+							<a href="blog.html" class="nav-link">Réseau social</a>
+						</li>
+						<li class="nav-item">
+							<a href="contact.html" class="nav-link">Se connecter</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="hero-wrap">
+			<div class="overlay"></div>
+		</div>
+		<h1 class=" mb-0 bread">Détails du produit 
+		</h1>
+
+		<section class="ftco-section details-container">
+
+			<div class="container">
+
+				<div class="details-image" style="background-image: url('{{ asset('uploads/produits/' ~ produit.image) }}');"></div>
+
+				<div class="details-text">
+					<span class="price">&nbsp;{{ produit.prix }}
+						TN/personne
+					</span>
+					<h3>{{ produit.libelle }}</h3>
+					<p>{{ produit.description }}</p>
+					<p class="location">
+						<span class="fa fa-map-marker"></span>
+						{{ produit.disponibilite }}</p>
+					<a href="{{ path('afficherproduit', { 'id': produit.id }) }}
+" class="btn-reserver" id="btn-back">Revenir</a>
+					<button class="btn-reserver">Acheter </button>
+
+				</div>
+			</div>
+		</section>
+	</body>
+</html>
