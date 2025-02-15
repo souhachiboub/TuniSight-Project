@@ -1,209 +1,224 @@
 {% block body %}
 
 <button class="btn-primary" data-modal="publicationModal">
-    <img src="{{ asset('client/images/write.png') }}" alt="Ajouter Publication" style="width: 30px; height: 30px;"  title="Ajouter une publication">
+    <img src="{{ asset('clients/images/write.png') }}" alt="Ajouter Publication" style="width: 30px; height: 30px;"  title="Ajouter une publication">
 </button>
 
-    <div id="publicationModal" class="modal">
-        <div class="modal-content">
-            <a href="#" class="close">&times;</a>
-            <div class="logo" style="text-align: center;">
-                <h2>Publier une nouvelle publication</h2>
-                {{ form_start(form, {'attr': {'id': 'publicationForm', 'novalidate': 'novalidate'}}) }}
+<div id="publicationModal" class="modal">
+    <div class="modal-content">
+        <a href="#" class="close">&times;</a>
+        <div class="logo" style="text-align: center;">
+            <h2>Publier une nouvelle publication</h2>
+            {{ form_start(form, {'attr': {'id': 'publicationForm', 'novalidate': 'novalidate'}}) }}
 
-                <div class="input-group">
-                    <label for="{{ form.contenu.vars.id }}"></label>
-                    {{ form_widget(form.contenu, {
-                        'attr': {
-                            'rows': '1',
-                            'cols': '33',
-                            'placeholder': 'Écrivez votre publication',
-                            'required': 'required',
-                            'class': 'textarea'
-                        }
-                    }) }}
-                </div>
-                    {% for error in form.contenu.vars.errors %}
-                        <p class="erroe" style="color: red;" class="text-danger mt-1">{{ error.message }}</p>
-                    {% endfor %}
-
-                    <label for="{{ form.images.vars.id }}"></label>
-                    {{ form_widget(form.images, {
-                        'attr': {
-                            'class': 'file-input',
-                            'style': 'display: none;'  
-                        }
-                    }) }}
-                    
-                    <button type="button" class="file-upload-btn" onclick="document.getElementById('{{ form.images.vars.id }}').click();">
-                        <img src="{{ asset('client/images/upload.png') }}" alt="Upload" style="width: 40px; height: 40px;">
-                    </button>
-                                    
-                    <div id="imagePreview" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
-                
-
-                <button type="submit" class="submit-btn">Publier</button>
-                {{ form_end(form) }}
+            <div class="input-group">
+                <label for="{{ form.contenu.vars.id }}"></label>
+                {{ form_widget(form.contenu, {
+                    'attr': {
+                        'rows': '1',
+                        'cols': '33',
+                        'placeholder': 'Écrivez votre publication',
+                        'required': 'required',
+                        'class': 'textarea'
+                    }
+                }) }}
             </div>
+
+            <label for="{{ form.images.vars.id }}"></label>
+            {{ form_widget(form.images, {
+                'attr': {
+                    'class': 'file-input',
+                    'style': 'display: none;'  
+                }
+            }) }}
+            
+            <button type="button" class="file-upload-btn" onclick="document.getElementById('{{ form.images.vars.id }}').click();">
+                <img src="{{ asset('clients/images/upload.png') }}" alt="Upload" style="width: 40px; height: 40px;">
+            </button>
+
+            <div id="imagePreview" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
+
+            <!-- Container for errors -->
+            <div id="errorContainer"></div>
+
+            <button type="submit" class="submit-btn">Publier</button>
+            {{ form_end(form) }}
         </div>
     </div>
+</div>
+
 {% endblock %}
-    
-    {%block js%}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modals = document.querySelectorAll('.modal');
-            const openModalButtons = document.querySelectorAll('[data-modal]');
-            const closeModalButtons = document.querySelectorAll('.close');
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('publicationForm');
         
-            function clearForm(modal) {
-                const form = modal.querySelector('form');
-                if (form) {
-                    // Réinitialiser les champs texte et textarea, mais pas le fichier
-                    form.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
-                        input.value = '';
-                    });
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche la soumission classique du formulaire
+
+            const formData = new FormData(form);
+            
+            fetch("{{ path('list_publications') }}", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#publicationModal').modal('hide');
+                    alert("Publication ajoutée avec succès !");
+                } else {
+                    displayErrors(data.errors);
+                }
+            })
+            .catch(error => {
+                console.error("Une erreur est survenue :", error);
+                alert("Une erreur est survenue lors de la soumission du formulaire.");
+            });
+        });
+
+        function displayErrors(errors) {
+            let errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = ''; // Vider les erreurs précédentes
+
+            errors.forEach(function(error) {
+                const errorMessage = document.createElement('p');
+                errorMessage.classList.add('text-danger', 'mt-1');
+                errorMessage.textContent = error;
+                errorContainer.appendChild(errorMessage);
+            });
+        }
+
+        const modals = document.querySelectorAll('.modal');
+        const openModalButtons = document.querySelectorAll('[data-modal]');
+        const closeModalButtons = document.querySelectorAll('.close');
         
-                    // Vider uniquement l'aperçu des images
-                    const previewContainer = modal.querySelector('#imagePreview');
-                    if (previewContainer) {
-                        previewContainer.innerHTML = '';
-                    }
+        function clearForm(modal) {
+            const form = modal.querySelector('form');
+            if (form) {
+                // Effacer les valeurs des champs (sauf pour les fichiers)
+                form.querySelectorAll('input:not([type="file"]), textarea').forEach(input => {
+                    input.value = '';
+                });
         
-                    // Réinitialiser l'input file sans affecter l'aperçu des images
-                    const imageInput = modal.querySelector('input[type="file"]');
-                    if (imageInput) {
-                        const newInput = imageInput.cloneNode();
-                        imageInput.replaceWith(newInput);
-                        setupImagePreview(newInput, previewContainer);
-                    }
-                    
+                let errorContainer = document.getElementById('errorContainer');
+                errorContainer.innerHTML = ''; // Vider les erreurs précédentes      
+                // Effacer l'aperçu des images (si présent)
+                const previewContainer = modal.querySelector('#imagePreview');
+                if (previewContainer) {
+                    previewContainer.innerHTML = '';
+                }
+        
+                // Réinitialiser le champ de fichier et l'aperçu des images
+                const imageInput = modal.querySelector('input[type="file"]');
+                if (imageInput) {
+                    const newInput = imageInput.cloneNode();
+                    imageInput.replaceWith(newInput);
+                    setupImagePreview(newInput, previewContainer);
                 }
             }
-            const form = document.getElementById('publicationForm');
+        }
         
-            function setupImagePreview(imageInput, previewContainer) {
-                imageInput.addEventListener('change', function(event) {
-                    let files = Array.from(event.target.files);
-                    let existingFiles = previewContainer.querySelectorAll('img').length;
-        
-                    files.forEach((file, index) => {
-                        let reader = new FileReader();
-        
-                        reader.onload = function(e) {
-                            let imgContainer = document.createElement('div');
-                            imgContainer.style.position = "relative";
-                            imgContainer.style.display = "inline-block";
-                            imgContainer.style.margin = "5px";
-        
-                            let img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.style.maxWidth = "120px";
-                            img.style.height = "120px";
-                            img.style.borderRadius = "5px";
-                            img.style.objectFit = "cover";
-        
-                            // Bouton de suppression
-                            let removeBtn = document.createElement('button');
-                            removeBtn.innerHTML = "&times;";
-                            removeBtn.style.position = "absolute";
-                            removeBtn.style.top = "5px";
-                            removeBtn.style.right = "5px";
-                            removeBtn.style.background = "rgba(0, 0, 0, 0.7)";
-                            removeBtn.style.color = "white";
-                            removeBtn.style.border = "none";
-                            removeBtn.style.cursor = "pointer";
-                            removeBtn.style.borderRadius = "50%";
-                            removeBtn.style.width = "20px";
-                            removeBtn.style.height = "20px";
-                            removeBtn.style.fontSize = "16px";
-                            removeBtn.style.display = "flex";
-                            removeBtn.style.alignItems = "center";
-                            removeBtn.style.justifyContent = "center";
-        
-                            removeBtn.addEventListener('click', function() {
-                                imgContainer.remove();
-                            });
-        
-                            imgContainer.appendChild(img);
-                            imgContainer.appendChild(removeBtn);
-                            previewContainer.appendChild(imgContainer);
-                        };
-        
-                        reader.readAsDataURL(file);
-                    });
-                });
-            }
-        
-            openModalButtons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const modalId = button.getAttribute('data-modal');
-        
-                    modals.forEach(modal => {
-                        modal.style.display = 'none';
-                        clearForm(modal);
-                    });
-        
-                    const modal = document.getElementById(modalId);
-                    if (modal) {
-                        modal.style.display = 'block';
-                    }
+
+        function setupImagePreview(imageInput, previewContainer) {
+            imageInput.addEventListener('change', function(event) {
+                let files = Array.from(event.target.files);
+                let existingFiles = previewContainer.querySelectorAll('img').length;
+
+                files.forEach((file, index) => {
+                    let reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        let imgContainer = document.createElement('div');
+                        imgContainer.style.position = "relative";
+                        imgContainer.style.display = "inline-block";
+                        imgContainer.style.margin = "5px";
+
+                        let img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = "120px";
+                        img.style.height = "120px";
+                        img.style.borderRadius = "5px";
+                        img.style.objectFit = "cover";
+
+                        let removeBtn = document.createElement('button');
+                        removeBtn.innerHTML = "&times;";
+                        removeBtn.style.position = "absolute";
+                        removeBtn.style.top = "5px";
+                        removeBtn.style.right = "5px";
+                        removeBtn.style.background = "rgba(0, 0, 0, 0.7)";
+                        removeBtn.style.color = "white";
+                        removeBtn.style.border = "none";
+                        removeBtn.style.cursor = "pointer";
+                        removeBtn.style.borderRadius = "50%";
+                        removeBtn.style.width = "20px";
+                        removeBtn.style.height = "20px";
+                        removeBtn.style.fontSize = "16px";
+                        removeBtn.style.display = "flex";
+                        removeBtn.style.alignItems = "center";
+                        removeBtn.style.justifyContent = "center";
+
+                        removeBtn.addEventListener('click', function() {
+                            imgContainer.remove();
+                        });
+
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(removeBtn);
+                        previewContainer.appendChild(imgContainer);
+                    };
+
+                    reader.readAsDataURL(file);
                 });
             });
-        
-            closeModalButtons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-        
-                    const modal = button.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                        clearForm(modal);
-                        
-                    }
-                });
-            });
-        
-            // Fermer le modal en cliquant en dehors
-            window.addEventListener('click', function(event) {
+        }
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const modalId = button.getAttribute('data-modal');
+
                 modals.forEach(modal => {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                        clearForm(modal);
-                    }
+                    modal.style.display = 'none';
+                    clearForm(modal);
                 });
-            });
-        
-            // Initialisation de la prévisualisation pour chaque input file
-            document.querySelectorAll('input[type="file"]').forEach(input => {
-                const previewContainer = document.getElementById('imagePreview');
-                setupImagePreview(input, previewContainer);
-            });
-        });
-        
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const textarea = document.querySelector("textarea");
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            });
+        });
 
-            textarea.addEventListener("input", function () {
-                this.style.height = "auto";
-                this.style.height = this.scrollHeight + "px";
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const modal = button.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    clearForm(modal);
+                }
             });
         });
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll("textarea").forEach(textarea => {
-                textarea.style.overflow = "hidden"; // Hide scrollbar
-                textarea.style.height = textarea.scrollHeight + "px"; // Ajuste la hauteur initiale
-                textarea.addEventListener("input", function() {
-                    this.style.height = "auto"; // Réinitialise la hauteur
-                    this.style.height = (this.scrollHeight) + "px"; // Ajuste selon le contenu
-                });
+
+        window.addEventListener('click', function(event) {
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    clearForm(modal);
+                }
             });
         });
-    </script>
-    {% endblock %}
-    {%block css%}
+
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            const previewContainer = document.getElementById('imagePreview');
+            setupImagePreview(input, previewContainer);
+        });
+    });
+</script>
+{% endblock %}
+{%block css%}
     <style>
         
         .modal {

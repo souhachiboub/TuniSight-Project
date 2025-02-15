@@ -35,6 +35,8 @@ class PublicationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Publication::class,
+            'csrf_protection' => false, 
         ]);
+        
     }
 }
