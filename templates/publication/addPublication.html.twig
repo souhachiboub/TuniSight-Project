@@ -8,7 +8,7 @@
     <div class="modal-content">
         <a href="#" class="close">&times;</a>
         <div class="logo" style="text-align: center;">
-            <h2>Publier une nouvelle publication</h2>
+            <p style="font-weight:bold ; font-size : 24px ; color: #2B3940;">Publier une nouvelle publication</p>
             {{ form_start(form, {'attr': {'id': 'publicationForm', 'novalidate': 'novalidate'}}) }}
 
             <div class="input-group">
@@ -52,6 +52,14 @@
 {% block js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll("textarea").forEach(textarea => {
+            textarea.style.overflow = "hidden"; // Hide scrollbar
+            textarea.style.height = textarea.scrollHeight + "px"; // Ajuste la hauteur initiale
+            textarea.addEventListener("input", function() {
+                this.style.height = "auto"; // Réinitialise la hauteur
+                this.style.height = (this.scrollHeight) + "px"; // Ajuste selon le contenu
+            });
+        });
         const form = document.getElementById('publicationForm');
         
         form.addEventListener('submit', function(event) {
@@ -246,11 +254,7 @@
             position: relative;
         }
 
-        h2 {
-            font-weight: normal;
-            color: #26648E;
-            text-align: center;
-        }
+       
 
         .input-group {
             margin-bottom: 20px;
