@@ -77,8 +77,8 @@ class User
     // #[Assert\Choice(choices: ['admin', 'prestataire', 'client'], message: "Le rôle choisi est invalide.")]
     private ?string $role;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Voucher $voucher = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voucher::class)]
+    private Collection $vouchers;
 
     /**
      * @var Collection<int, Notification>
@@ -151,6 +151,7 @@ class User
         $this->activites = new ArrayCollection();
         $this->publication = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->vouchers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -316,18 +317,31 @@ class User
         return $this;
     }
 
-    public function getVoucher(): ?Voucher
+    public function getVouchers(): Collection
     {
-        return $this->voucher;
+        return $this->vouchers;
     }
-
-    public function setVoucher(?Voucher $voucher): static
+    public function addVoucher(Voucher $voucher): static
     {
-        $this->voucher = $voucher;
-
+        if (!$this->vouchers->contains($voucher)) {
+            $this->vouchers->add($voucher);
+            $voucher->setUser($this);
+        }
+    
         return $this;
     }
-
+    
+    public function removeVoucher(Voucher $voucher): static
+    {
+        if ($this->vouchers->removeElement($voucher)) {
+            // set the owning side to null (unless already changed)
+            if ($voucher->getUser() === $this) {
+                $voucher->setUser(null);
+            }
+        }
+    
+        return $this;
+    }
     /**
      * @return Collection<int, Notification>
      */
@@ -609,6 +623,7 @@ class User
 
         return $this;
     }
+<<<<<<< HEAD
     // #[Assert\NotBlank(message: "Veuillez confirmer votre mot de passe.")]
     public function getConfirmpwd(): ?string
     {
@@ -630,4 +645,6 @@ class User
                 ->addViolation();
         }
     }
+=======
+>>>>>>> origin/gestion-vouchers-offres
 }

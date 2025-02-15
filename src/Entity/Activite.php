@@ -99,14 +99,17 @@ class Activite
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieActivite $categorie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activites')]
-    private ?Offre $offre = null;
-
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
-    private Collection $reservation;
+    #[ORM\OneToMany(mappedBy: 'activite', targetEntity: Reservation::class)]
+    private Collection $reservations;
+
+    /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'activitie')]
+    private Collection $offres;
 
 
     #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
@@ -149,7 +152,8 @@ class Activite
     {
         $this->avis = new ArrayCollection();
         $this->ville = new ArrayCollection();
-        $this->reservation = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -334,30 +338,19 @@ class Activite
         return $this;
     }
 
-    public function getOffre(): ?Offre
-    {
-        return $this->offre;
-    }
-
-    public function setOffre(?Offre $offre): static
-    {
-        $this->offre = $offre;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Reservation>
      */
     public function getReservation(): Collection
     {
-        return $this->reservation;
+        return $this->reservations;
     }
 
     public function addReservation(Reservation $reservation): static
     {
-        if (!$this->reservation->contains($reservation)) {
-            $this->reservation->add($reservation);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
         }
 
         return $this;
@@ -365,8 +358,42 @@ class Activite
 
     public function removeReservation(Reservation $reservation): static
     {
-        $this->reservation->removeElement($reservation);
+        $this->reservations->removeElement($reservation);
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setActivitie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getActivitie() === $this) {
+                $offre->setActivitie(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
+
+
 }

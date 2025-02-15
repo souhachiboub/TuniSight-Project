@@ -48,11 +48,18 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?LigneCommande $ligneCommande = null;
 
+    /**
+     * @var Collection<int, Pack>
+     */
+    #[ORM\ManyToMany(targetEntity: Pack::class, mappedBy: 'produit')]
+    private Collection $packs;
+
    
 
     public function __construct()
     {
         $this->listProduits = new ArrayCollection();
+        $this->packs = new ArrayCollection();
        
     }
 
@@ -177,6 +184,33 @@ class Produit
     public function setLigneCommande(?LigneCommande $ligneCommande): static
     {
         $this->ligneCommande = $ligneCommande;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pack>
+     */
+    public function getPacks(): Collection
+    {
+        return $this->packs;
+    }
+
+    public function addPack(Pack $pack): static
+    {
+        if (!$this->packs->contains($pack)) {
+            $this->packs->add($pack);
+            $pack->addProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removePack(Pack $pack): static
+    {
+        if ($this->packs->removeElement($pack)) {
+            $pack->removeProduit($this);
+        }
 
         return $this;
     }

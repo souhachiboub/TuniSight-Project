@@ -38,6 +38,7 @@ class Offre
     #[Assert\NotBlank(['message' => 'Veuillez sélectionner une activité.',])]
     private ?Activite $activitie = null;
 
+<<<<<<< HEAD
    
 
     #[ORM\Column]
@@ -57,6 +58,13 @@ class Offre
         return $this;
     }
 
+=======
+    /**
+     * @var Collection<int, Pack>
+     */
+    #[ORM\OneToMany(targetEntity: Pack::class, mappedBy: 'offre')]
+    private Collection $packs;
+>>>>>>> origin/gestion-vouchers-offres
 
 
 
@@ -107,6 +115,7 @@ class Offre
     }
 
     public function getActivitie(): ?Activite
+<<<<<<< HEAD
     {
         return $this->activitie;
     }
@@ -128,5 +137,48 @@ class Offre
 
    
 
+=======
+    {
+        return $this->activitie;
+    }
+
+    public function setActivitie(?Activite $activitie): static
+    {
+        $this->activitie = $activitie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pack>
+     */
+    public function getPacks(): Collection
+    {
+        return $this->packs;
+    }
+
+    public function addPack(Pack $pack): static
+    {
+        if (!$this->packs->contains($pack)) {
+            $this->packs->add($pack);
+            $pack->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removePack(Pack $pack): static
+    {
+        if ($this->packs->removeElement($pack)) {
+            // set the owning side to null (unless already changed)
+            if ($pack->getOffre() === $this) {
+                $pack->setOffre(null);
+            }
+        }
+
+        return $this;
+    }
+
+>>>>>>> origin/gestion-vouchers-offres
     
 }

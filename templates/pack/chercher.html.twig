@@ -1,0 +1,30 @@
+{# templates/pack/ajouter_produit.html.twig #}
+{%extends 'admin/index.html.twig'%}
+{%block body%}
+<h1>Ajouter des produits au pack: {{ pack.nom }}</h1>
+
+<!-- Formulaire de recherche de produit -->
+{{ form_start(produitRechercheForm) }}
+    {{ form_row(produitRechercheForm.libelle) }}
+    <button type="submit" class="btn btn-primary">Rechercher</button>
+{{ form_end(produitRechercheForm) }}
+
+{% if produits %}
+    <h3>Résultats de la recherche</h3>
+    <ul>
+        {% for produit in produits %}
+            <li>
+                {{ produit.libelle }} - {{ produit.prix }} €
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="produit_id" value="{{ produit.id }}">
+                    <button type="submit" class="btn btn-success">Ajouter au pack</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucun produit trouvé.</p>
+{% endif %}
+
+<a href="{{ path('app_pack') }}" class="btn btn-secondary">Retour à la liste des packs</a>
+{%endblock%}

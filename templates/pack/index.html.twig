@@ -1,0 +1,12 @@
+{%extends 'admin/index.html.twig'%}
+{%block body%}
+<h1>Créer un Pack Promotionnel</h1>
+<div class="container-fluid">
+{{ form_start(form) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.reductionTotal) }}
+    {{ form_row(form.produits) }}
+    {{ form_row(form.submit) }}
+{{ form_end(form) }}
+<div/>
+{%endblock%}
