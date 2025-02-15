@@ -63,8 +63,19 @@ class Produit
 
     private ?CategorieProduit $CategorieProduit = null;
 
-    #[ORM\ManyToMany(targetEntity: Panier::class, inversedBy: 'produits')]
-    private Collection $listProduits;
+
+
+
+
+
+   #[ORM\ManyToMany(targetEntity: Panier::class, mappedBy: 'produits')]
+private Collection $paniers;
+
+
+
+
+
+
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: true)]
@@ -87,6 +98,8 @@ class Produit
     public function __construct()
     {
         $this->listProduits = new ArrayCollection();
+        $this->paniers = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -274,4 +287,34 @@ class Produit
         return $this->quantite > 0;
     }
     
+
+
+
+
+
+
+    public function addPanier(Panier $panier): static
+    {
+        if (!$this->paniers->contains($panier)) {
+            $this->paniers->add($panier);
+        }
+        return $this;
+    }
+    
+    public function removePanier(Panier $panier): static
+    {
+        $this->paniers->removeElement($panier);
+        return $this;
+    }
+    
+
+
+
+
+
+
+
+
+
+
 }

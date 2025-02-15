@@ -296,16 +296,4 @@ public function deleteMultiple(Request $request, ProduitRepository $produitRepos
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 } 

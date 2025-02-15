@@ -1,20 +1,42 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello PanierController!{% endblock %}
-
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/bentr/Desktop/Projet-intégré/TuniSight-Project/src/Controller/PanierController.php</code></li>
-        <li>Your template at <code>C:/Users/bentr/Desktop/Projet-intégré/TuniSight-Project/templates/panier/index.html.twig</code></li>
+{% if app.session.flashbag.has('success') %}
+    <div class="alert alert-success">
+        {% for message in app.session.flashbag.get('success') %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4 text-primary">Mon Panier</h1>
+
+    {% if produitsPanier|length > 0 %}
+    <ul class="list-group">
+        {% for item in produitsPanier %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ item.produit.libelle }}</strong> - {{ item.produit.prix }} € (x{{ item.quantite }})
+            </div>
+            <div class="btn-group">
+                <!-- Bouton de suppression -->
+                <a href="{{ path('panier_supprimer', {'id': item.produit.id}) }}" class="btn btn-danger btn-sm">Supprimer</a>
+                <!-- Boutons d'incrémentation et de décrémentation -->
+                <a href="{{ path('panier_modifier', {'id': item.produit.id, 'action': 'increment'}) }}" class="btn btn-primary btn-sm">+</a>
+                <a href="{{ path('panier_modifier', {'id': item.produit.id, 'action': 'decrement'}) }}" class="btn btn-warning btn-sm">-</a>
+            </div>
+        </li>
+        {% endfor %}
     </ul>
+    
+    <div class="mt-4">
+        <!-- Bouton pour vider le panier -->
+        <a href="{{ path('panier_vider') }}" class="btn btn-danger btn-lg">Vider le panier</a>
+    </div>
+
+    {% else %}
+    <p>Votre panier est vide.</p>
+    {% endif %}
 </div>
 {% endblock %}

@@ -25,8 +25,24 @@ class Panier
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'listProduits')]
-    private Collection $produits;
+
+
+
+     
+     #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'paniers')]
+     #[ORM\JoinTable(name: 'produit_panier')]
+     private Collection $produits;
+     
+
+
+
+
+
+
+
+
+
+
 
     public function __construct()
     {
@@ -71,21 +87,20 @@ class Panier
     }
 
     public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->addListProduit($this);
-        }
-
-        return $this;
+{
+    if (!$this->produits->contains($produit)) {
+        $this->produits->add($produit);
+        $produit->addPanier($this); // Corriger ici
     }
+    return $this;
+}
 
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            $produit->removeListProduit($this);
-        }
-
-        return $this;
+public function removeProduit(Produit $produit): static
+{
+    if ($this->produits->removeElement($produit)) {
+        $produit->removePanier($this); // Corriger ici
     }
+    return $this;
+}
+
 }
