@@ -1,0 +1,90 @@
+{{ form_start(form) }}
+
+<div class="form-group">
+    {{ form_label(form.nom) }}
+    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.nom) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.prenom) }}
+    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.prenom) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.numTel) }}
+    {{ form_widget(form.numTel, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.numTel) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.cin) }}
+    {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.cin) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.email) }}
+    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.email) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.cartePro) }}
+    {{ form_widget(form.cartePro, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.cartePro) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.dateNaissance) }}
+    {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.dateNaissance) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.adresse) }}
+    {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.adresse) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.photoProfil) }}
+    {{ form_widget(form.photoProfil, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.photoProfil) }}
+    </div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.bio) }}
+    {{ form_widget(form.bio, {'attr': {'class': 'form-control'}}) }}
+    <div class="invalid-feedback">
+        {{ form_errors(form.bio) }}
+    </div>
+</div>
+
+<br>
+<center>
+						
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+</center>
+
+
+{{ form_end(form) }}

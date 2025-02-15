@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: OffreRepository::class)]
 class Offre
 {
@@ -17,14 +17,28 @@ class Offre
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $reduction = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateDebut = null;
 
+    #[Assert\NotBlank]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: "dateDebut",
+        message: "La date d'expiration doit être supérieure  à la date d'émission."
+    )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateExpiration = null;
 
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(['message' => 'Veuillez sélectionner une activité.',])]
+    private ?Activite $activitie = null;
+
+   
 
     #[ORM\Column]
     #[ORM\JoinColumn(nullable: true)]
@@ -43,15 +57,12 @@ class Offre
         return $this;
     }
 
-    /**
-     * @var Collection<int, Activite>
-     */
-    #[ORM\OneToMany(targetEntity: Activite::class, mappedBy: 'offre')]
-    private Collection $activites;
+
+
 
     public function __construct()
     {
-        $this->activites = new ArrayCollection();
+        $this->packs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,33 +106,27 @@ class Offre
         return $this;
     }
 
+    public function getActivitie(): ?Activite
+    {
+        return $this->activitie;
+    }
+
+    public function setActivitie(?Activite $activitie): static
+    {
+        $this->activitie = $activitie;
+
+        return $this;
+    }
+
     /**
-     * @return Collection<int, Activite>
+     * @return Collection<int, Pack>
      */
-    public function getActivites(): Collection
+    public function getPacks(): Collection
     {
-        return $this->activites;
+        return $this->packs;
     }
 
-    public function addActivite(Activite $activite): static
-    {
-        if (!$this->activites->contains($activite)) {
-            $this->activites->add($activite);
-            $activite->setOffre($this);
-        }
+   
 
-        return $this;
-    }
-
-    public function removeActivite(Activite $activite): static
-    {
-        if ($this->activites->removeElement($activite)) {
-            // set the owning side to null (unless already changed)
-            if ($activite->getOffre() === $this) {
-                $activite->setOffre(null);
-            }
-        }
-
-        return $this;
-    }
+    
 }
