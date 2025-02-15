@@ -1,0 +1,232 @@
+
+<!-- Bouton pour ouvrir le modal -->
+<button class="btn btn-primary" data-modal="reclamationModal">Ajouter une réclamation</button>
+
+<!-- Modal -->
+<div id="reclamationModal" class="modal">
+    <div class="modal-content">
+        <a href="#" class="close">&times;</a>
+        <div class="logo" style="text-align: center;">
+            <h2>Soumettre une réclamation</h2>
+            {{ form_start(form, {'attr': {'id': 'reclamationForm'}}) }}
+            <div class="input-group">
+                <label for="{{ form.description.vars.id }}"></label>
+                {{ form_widget(form.description, {
+                    'attr': {
+                        'rows': '5',
+                        'cols': '33',
+                        'placeholder': 'Décrivez votre réclamation',
+                        'required': 'required',
+                        'class': 'textarea'
+                    }
+                }) }}
+            <button type="submit" class="submit-btn">Soumettre</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modals = document.querySelectorAll('.modal');
+        const openModalButtons = document.querySelectorAll('[data-modal]');
+        const closeModalButtons = document.querySelectorAll('.close');
+
+        function clearForm(modal) {
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+            }
+        }
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const modalId = button.getAttribute('data-modal');
+
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
+                    clearForm(modal);
+                });
+
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            });
+        });
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const modal = button.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    clearForm(modal);
+                }
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const textarea = document.querySelector("textarea");
+
+        textarea.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = this.scrollHeight + "px";
+        });
+    });
+</script>
+
+<style>
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        overflow-y: auto;
+        font-family: system-ui;
+    }
+    
+    .modal-content {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        width: 90%;
+        max-width: 600px;
+        text-align: left;
+        position: relative;
+    }
+    
+    h2 {
+        font-weight: normal;
+        color: #26648E;
+        text-align: center;
+    }
+    
+    .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .input-group label {
+        color: #26648E;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+    
+    .input-group textarea {
+        font-family: system-ui;
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+        max-width: 100%;
+        line-height: 1.5;
+        border-radius: 5px;
+        background-color: #f7f7f7;
+        border: none;
+        outline: none;
+        resize: vertical;
+    }
+    
+    .input-group textarea:focus {
+        background-color: #f0f0f0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 12px 20px;
+        background-color: #26648E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: system-ui;
+    }
+    
+    .submit-btn:hover {
+        background-color: #4F8FC0;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal a.close {
+        text-decoration: none;
+        font-size: 30px;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: #26648E;
+        cursor: pointer;
+        font-weight: normal;
+    }
+    
+    .btn-primary {
+        background-color: #26648E;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #4F8FC0;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+        }
+        
+        h2 {
+            font-size: 1.4rem;
+        }
+    
+        .submit-btn {
+            font-size: 14px;
+            padding: 10px 15px;
+        }
+    
+        .input-group textarea {
+            font-size: 0.9rem;
+            padding: 8px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .modal-content {
+            margin: 20% auto;
+            padding: 15px;
+            width: 90%;
+        }
+    
+        h2 {
+            font-size: 1.2rem;
+        }
+    
+        .submit-btn {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+    
+        .input-group textarea {
+            font-size: 0.8rem;
+            padding: 6px;
+        }
+    }
+</style>

@@ -113,6 +113,18 @@ class User
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commentaires;
 
+    /**
+     * @var Collection<int, Likes>
+     */
+    #[ORM\OneToMany(targetEntity: Likes::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $likes;
+
+    /**
+     * @var Collection<int, LikesCommentaire>
+     */
+    #[ORM\OneToMany(targetEntity: LikesCommentaire::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $likesCommmentaire;
+
     public function __construct()
     {
         $this->notifications = new ArrayCollection();
@@ -124,6 +136,8 @@ class User
         $this->activites = new ArrayCollection();
         $this->publication = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->likesCommmentaire = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -367,7 +381,7 @@ class User
         return $this->avis;
     }
 
-    public function addAvi(Avis $avi): static
+    public function addAvis(Avis $avi): static
     {
         if (!$this->avis->contains($avi)) {
             $this->avis->add($avi);
@@ -377,7 +391,7 @@ class User
         return $this;
     }
 
-    public function removeAvi(Avis $avi): static
+    public function removeAvis(Avis $avi): static
     {
         if ($this->avis->removeElement($avi)) {
             // set the owning side to null (unless already changed)
@@ -563,6 +577,66 @@ class User
             // set the owning side to null (unless already changed)
             if ($commentaire->getUser() === $this) {
                 $commentaire->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Likes>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Likes $like): static
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Likes $like): static
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getUser() === $this) {
+                $like->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LikesCommentaire>
+     */
+    public function getLikesCommmentaire(): Collection
+    {
+        return $this->likesCommmentaire;
+    }
+
+    public function addLikesCommmentaire(LikesCommentaire $likesCommmentaire): static
+    {
+        if (!$this->likesCommmentaire->contains($likesCommmentaire)) {
+            $this->likesCommmentaire->add($likesCommmentaire);
+            $likesCommmentaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikesCommmentaire(LikesCommentaire $likesCommmentaire): static
+    {
+        if ($this->likesCommmentaire->removeElement($likesCommmentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($likesCommmentaire->getUser() === $this) {
+                $likesCommmentaire->setUser(null);
             }
         }
 

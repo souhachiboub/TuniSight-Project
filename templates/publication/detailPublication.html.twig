@@ -1,0 +1,825 @@
+{% extends "user/index.html.twig" %}
+
+{% block body %}
+<a class="retour" href="{{ path('list_publications') }}">➜</a>
+<div class="detail-container">
+    {% if publication is not empty %}
+        <div class="publication" data-id="{{ publication.id }}">
+            <!-- Affichage des images -->
+            {% if publication.images is not empty %}
+                <div class="image-grid">
+                    {% for image in publication.images %}
+                        {% if loop.index <= 3   %}
+                            <div class="image-grid-item">
+                                <img src="{{ asset(image.url) }}" alt="Image" data-image-index="{{ loop.index0 }}" data-publication-id="{{ publication.id }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if publication.images|length > 3 %}
+                        <div class="image-grid-item more-images" data-publication-id="{{ publication.id }}">
+                            +{{ publication.images|length - 3 }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div id="imageModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div class="carousel">
+                        <div class="carousel-images">
+                            {% for image in publication.images %}
+                                <div class="image-detail-container">
+                                    <img src="{{ asset(image.url) }}" alt="Image" class="carousel-img">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-prev">く</button>
+                        <button class="carousel-next">く</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations utilisateur et publication -->
+            <div class="user-name-detail-container">
+                <img src="{{ asset(publication.user.photoProfil) }}" alt="Photo de l'utilisateur" class="user-photo">
+                <div class="user-info">
+                    <a href="#" class="profile">
+                        <h2 class="user-name">{{ publication.user.nom }} {{ publication.user.prenom }}</h2>
+                    </a>
+                    <div class="publication-date">{{ publication.datePublication|date('Y-m-d') }}</div>
+                </div>
+            </div>
+
+            <!-- Contenu de la publication -->
+            <p class="publication-contenu">{{ publication.contenu }}</p>
+
+            <!-- Actions (like et commentaire) -->
+            <div class="publication-actions">
+                <button class="like-btn">
+                    <span class="like-icon">{{ publication.isLiked ? '♥️' : '♡' }}</span>
+                    <span class="like-count">{{ publication.nbrLike }}</span>
+                </button>
+                <button class="comment-btn" data-modal="commentaireModal-{{ publication.id }}" onclick="focusTextarea()">
+                    <img src="{{ asset('client/images/commentaire.png') }}" alt="Icône Commentaire" class="comment-icon" >
+                    <span class="comment-count">{{ publication.nbrComment }}</span>
+                </button>
+            </div>
+            <!-- Formulaire de commentaire sous chaque commentaire -->
+            <h1 style="font-size : 20px ; color: #2B3940;">Les Commentaires</h1>
+            <form method="post" class="comment-form">
+                 {{ form_start(formComment) }}
+                <div class="input-group">
+                    {{ form_widget(formComment.contenu, {'attr': {'placeholder': 'Votre commentaire...'}}) }}
+                    <button type="submit" class="submit-btn">Envoyer</button>
+                </div>
+                
+            {{ form_end(formComment) }}
+            </form>
+
+            <!-- Section des commentaires avec formulaire intégré sous chaque commentaire -->
+            <div id="commentaire-{{ publication.id }}" class="comment-section">
+                <div class="comments-list">
+                    {% for commentaire in commentaires %}
+    <div class="commentaire" data-id="{{ commentaire.id }}">
+        <div class="user-name-detail-container">
+            <img src="{{ asset(commentaire.user.photoProfil) }}" alt="Photo de l'utilisateur" class="user-photo">
+            <div class="user-info">
+                <a href="#" class="profile">
+                    <h2 class="user-name">{{ commentaire.user.nom }} {{ commentaire.user.prenom }}</h2>
+                </a>
+                <div class="publication-date">{{ commentaire.date|date('Y-m-d') }}</div>
+            </div>
+        </div>
+        
+        <div class="comment-actions">
+            <p class="comment-contenu">{{ commentaire.contenu }}</p>
+            <button class="like-btn-comment">
+                <span class="like-icon-comment">{{ commentaire.isLiked ? '♥️' : '♡' }}</span>
+                <span class="like-count-comment">{{ commentaire.nbrLike }}</span>
+            </button>
+        </div>
+    </div>
+    <hr class="comment-divider">
+{% else %}
+    <p>Soyez le premier à commenter </p>
+{% endfor %}
+
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block css %}<style>
+
+    body {
+        font-family: system-ui; 
+    }
+    .retour {
+        top : 70px ;
+        left : 210px ;
+        position : relative;
+        text-decoration : none ; 
+        color:#007bff ; 
+        font-size : 30px;
+        display: inline-block;
+        transform: rotate(180deg);
+        transition: transform 0.3s ease-in-out;
+    }
+    .retour:hover {
+        text-decoration : none ;
+        transform: rotate(180deg);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .input-group textarea {
+        width: 100%;
+        padding: 10px;
+        height : auto ; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-family: sans-serif; /* Police de caractères */
+        font-size: 16px; /* Taille de la police */
+        line-height: 1.5; /* Hauteur de ligne */overflow-y: auto; /* Scroll only inside the modal */
+        max-height: 90vh;
+        box-sizing: border-box; /* Pour inclure le padding et la bordure dans la largeur */
+        transition: border-color 0.3s ease; /* Animation sur la bordure */
+        resize: none;
+        overflow-y: auto;
+
+    }
+
+    .input-group textarea:focus {
+        border-color: #007bff; /* Couleur de la bordure au focus */
+        outline: none; /* Supprimer l'outline par défaut */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); /* Ombre légère au focus */
+        
+    }
+
+    .input-group textarea::placeholder {
+        color: #aaa; /* Couleur du placeholder */
+    }
+
+    .detail-container {
+        max-width: 900px; 
+        margin: 20px auto;
+        padding: 0; 
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        border-radius: 0; 
+    }
+    
+    .publication {
+        padding: 30px; 
+        border-bottom: 1px solid #eee;
+    }
+
+h2 {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+    .user-name-detail-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        justify-content: flex-start;
+    }
+    .user-photo {
+        width: 50px; 
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    .user-info {
+        text-align: left;
+    }
+    .user-name {
+        font-size: 1.1em;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    a.profile, h2.user-name {
+        text-decoration: none;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #2B3940;
+        cursor: pointer;
+    }
+    a.profile, h2.user-name:hover {
+        color: #26648E;
+    }
+    .premierCommentaire{
+        font-weight: normal;
+        color: #26648E;
+        text-align: center;}
+.publication-contenu {
+    color : #2B3940;
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.publication-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.publication-date {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: -10px;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.like-icon {
+    margin-right: 5px;
+}
+
+/* Carousel Styles */
+.image-detail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+.single-image, .carousel-img {
+    height: 500px; 
+    width: auto; 
+    max-width: 550px;
+    object-fit: contain; 
+}
+/* Carousel */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adaptable à la taille de l'écran */
+    gap: 2px;
+    margin : 15px;
+}
+
+.image-grid-item {
+    position: relative;
+    overflow: hidden; /* Pour gérer le dépassement des images */
+}
+
+.image-grid-item img {
+    width: 100%;
+    height: 200px; /* Ou une hauteur fixe si tu préfères */
+    object-fit: cover;
+    cursor: pointer; /* Indique que l'image est cliquable */
+}
+
+.more-images {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre pour l'indicateur */
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Styles pour le modal */
+.modal {
+    display: none; /* Masqué par défaut */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
+    vertical : none;
+}
+
+.modal-content {
+    background-color:rgba(0, 0, 0, 0.35);
+    margin: 5% auto; /* Ajuster la position verticale */
+    padding: 20px;
+    border: none;
+    width: 100%; /* Pourcentage de la largeur de l'écran */
+    max-width: 900px; /* Largeur maximale */
+    position: relative; /* Pour positionner le bouton de fermeture */
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    overflow: hidden;
+    margin: 10px auto;
+    border-radius: 10px;
+}
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+.carousel-images .image-detail-container {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.carousel-prev, .carousel-next {
+    position: absolute;
+    top: 50%;
+    align-items: center;
+    transform: translateY(-50%) rotate(180deg);
+    background: none;
+    color: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 30px;
+    font-family: 'Arial', sans-serif;
+}
+.carousel-prev {
+    left: 10px;
+    transform: translateY(-50%);
+}
+.carousel-next {
+    right: 10px;
+}
+.carousel-prev:hover, .carousel-next:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* Like and Comment Buttons */
+.publication-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.like-btn, .comment-btn {
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    background: none;
+    border: none;
+    cursor: pointer;
+    color : #2B3940;
+}
+.comment-btn img {
+    width: 30px;  
+    height: auto; 
+    margin-right: 0px; 
+    transition: transform 0.2s ease-in-out;
+}
+
+.comment-btn:hover img {
+    transform: scale(1.1); 
+}
+.like-icon :hover {
+    transition: transform 0.2s ease-in-out;
+}
+
+
+.like-icon , .comment-icon {
+    font-size: 35px;
+    transition: transform 0.2s ease-in-out;
+    color :#2B3940;
+}
+.comment-icon {
+    font-size: 25px;
+}
+
+.like-count , .comment-count {
+    font-size: 20px;
+    font-weight: normal;
+    color : #2B3940;
+}
+
+
+
+.like-btn:active .like-icon {
+    transform: scale(1.2);
+}
+.like-btn-comment {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2B3940;
+}
+.like-icon-comment {
+    font-size: 35px;
+    transition: transform 0.2s ease-in-out;
+    color: #2B3940;
+}
+.like-count-comment {
+    font-size: 20px;
+    font-weight: normal;
+    color: #2B3940;
+}
+   
+    .modal-content-comment {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        width: 90%;
+        max-width: 600px;
+        text-align: left;
+        position: relative;
+        
+    }
+   
+  
+    .liste-Commentaire {
+        max-height: 300px; /* Hauteur fixe pour le scroll */
+        overflow-y: auto;  /* Active le défilement vertical */
+        margin-bottom: 20px;
+        padding-right: 10px; /* Pour ajouter de l'espace pour le défilement */
+    }
+    /* Barre de défilement pour les navigateurs basés sur Webkit (Chrome, Safari) */
+    .liste-Commentaire::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre de défilement */
+}
+
+
+    .liste-Commentaire::-webkit-scrollbar-track {
+    background-color: #f1f1f1; 
+    border-radius: 10px;
+}
+
+
+    .liste-Commentaire::-webkit-scrollbar-thumb {
+    background-color: #53d2dc; 
+    border-radius: 10px;
+    border: 2px solid transparent; 
+    background-clip: content-box; 
+}
+
+    /* Quand on survole la barre de défilement */
+    .liste-Commentaire::-webkit-scrollbar-thumb:hover {
+    background-color: #26648e; 
+}
+    
+
+.comment-section {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.commentaire {
+    margin-bottom: 0px;
+    padding: 15px;
+    background : white ;
+        text-align: left;
+}
+
+
+.commentaire .user-name-detail-container {
+    display: flex;
+    align-items: center;
+}
+
+.commentaire .user-photo {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.commentaire .user-info {
+    font-size: 0.9em;
+}
+
+.commentaire p {
+    color : #2B3940;
+    font-size: 1em;
+    margin: 10px 0;
+}
+
+.comment-actions {
+    display: flex;
+}
+
+.comment-contenu{
+    position : relative;
+    width : 900px;
+}
+.like-btn-comment {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.like-icon-comment {
+    margin-right: 5px;
+}
+
+/* Comment Form */
+.comment-form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}
+
+.submit-btn {
+    position : absolute;
+    align-items: center;
+    appearance: none;
+    background-color:rgba(62, 61, 61, 0.12) ;
+    border: none;
+    border-radius: 0.375em;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #363636;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 1rem;
+    height: 2.5em;
+    justify-content: center;
+    line-height: 1.5;
+    padding: calc(.5em - 1px) 1em;
+    position: relative;
+    text-align: center;
+    user-select: none;
+    touch-action: manipulation;
+    vertical-align: top;
+    white-space: nowrap;
+    transition: all 0.3s ease-in-out; /* Transition fluide */
+  }
+  
+  .submit-btn:active {
+    border-color: #4a4a4a;
+    outline: 0;
+  }
+  
+  .submit-btn:focus {
+    border-color: #485fc7;
+    outline: 0;
+  }
+  
+  /* Effet Hover Bleu */
+  .submit-btn:hover {
+    border-color: #007bff;
+    background: #007bff;
+    color : white;
+  }
+    
+  /* Effet d'ombre au focus */
+  .submit-btn:focus:not(:active) {
+    box-shadow: rgba(0, 123, 255, 0.25) 0 0 0 .125em;
+  }
+  
+
+/* Placeholder Styling */
+input::placeholder, textarea::placeholder {
+    color: #ccc;
+    font-style: italic;
+}
+
+
+.like-btn:hover,
+.like-btn-comment:hover {
+    color: #007bff;
+}
+/* Personnalisation de la barre de défilement pour la section des commentaires */
+.comment-section {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+/* Style de la barre de défilement */
+.comment-section::-webkit-scrollbar {
+    width: 12px; /* Largeur de la barre de défilement */
+}
+
+/* Style du fond de la barre de défilement */
+.comment-section::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style de la "thumb" (partie cliquable) de la barre de défilement */
+.comment-section::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 2px solid #fff; /* Crée un effet de bordure autour du "thumb" */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Effet au survol du "thumb" de la barre de défilement */
+.comment-section::-webkit-scrollbar-thumb:hover {
+    background-color: #0056b3;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Style de la barre de défilement en état actif (lorsqu'on fait défiler) */
+.comment-section::-webkit-scrollbar:active {
+    background-color:rgb(255, 255, 255);
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .detail-container {
+        padding: 15px;
+    }
+
+    .publication-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .carousel-prev, .carousel-next {
+        font-size: 1.2em;
+    }
+
+    .carousel-images {
+        flex-direction: column;
+    }
+
+    .commentaire {
+        padding: 10px;
+    }
+    .comment-divider {
+        border: none;
+        height: 1px;
+        background-color: #ddd;
+        margin: 10px 0;
+    }
+    
+}
+
+</style>{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // ----- Carousel -----
+        document.querySelectorAll(".carousel").forEach(carousel => {
+            let index = 0;
+            const images = carousel.querySelector(".carousel-images");
+            const totalImages = images.children.length;  // Get image count *after* rendering
+            const prevButton = carousel.querySelector(".carousel-prev");
+            const nextButton = carousel.querySelector(".carousel-next");
+    
+            function updateCarousel() {
+                images.style.transform = `translateX(-${index * 100}%)`;
+            }
+    
+            if (prevButton && nextButton) {
+                nextButton.addEventListener("click", () => {
+                    index = (index + 1) % totalImages;
+                    updateCarousel();
+                });
+    
+                prevButton.addEventListener("click", () => {
+                    index = (index - 1 + totalImages) % totalImages;
+                    updateCarousel();
+                });
+            }
+        });
+    
+    
+        // Image Grid Click Handlers (for ALL grids)
+        document.querySelectorAll(".image-grid").forEach(grid => {
+            grid.addEventListener('click', function(event) {
+                const modal = document.getElementById('imageModal'); // Get the modal
+                if (event.target.tagName === 'IMG' || event.target.classList.contains('more-images')) {
+                    document.body.style.overflow = 'hidden';
+                    modal.style.display = 'block'; // Show the modal
+                }
+            });
+        });
+    
+        // Close Modal
+        const modal = document.getElementById('imageModal');
+        const closeButton = modal.querySelector('.close-modal');
+
+function closeModal() {
+    document.body.style.overflow = ''; // Restore body scroll
+    modal.style.display = 'none';
+}
+
+closeButton.addEventListener('click', closeModal);
+window.addEventListener('click', (event) => {
+    if (event.target == modal) {
+        closeModal();
+    }
+});
+
+        
+        // ----- Like sur les publications -----
+        document.querySelectorAll(".like-btn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.stopPropagation();
+                toggleLike(this);
+            });
+        });
+        document.querySelectorAll(".publication img").forEach(image => {
+            image.addEventListener("dblclick", function () {
+                const publication = this.closest(".publication");
+                if (publication) {
+                    const likeButton = publication.querySelector(".like-btn");
+                    if (likeButton) {
+                        toggleLike(likeButton);
+                    }
+                }
+            });
+        });
+     
+        function toggleLike(button) {
+            const publicationId = button.closest(".publication").dataset.id;
+            const icon = button.querySelector(".like-icon");
+            const likeCount = button.querySelector(".like-count");
+     
+            fetch(`/like/${publicationId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                icon.textContent = data.liked ? "♥️" : "♡";
+                likeCount.textContent = data.likes;
+            })
+            .catch(error => {
+                console.error("Erreur lors du like :", error);
+            });
+        }
+        
+        
+    });
+        
+    // ----- Like sur les commentaires -----
+        document.querySelectorAll(".like-btn-comment").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.stopPropagation();
+                toggleLikeComment(this);
+            });
+        });
+    function toggleLikeComment(button) {
+        const commentaireId = button.closest(".commentaire").dataset.id;
+        const icon = button.querySelector(".like-icon-comment");
+        const likeCount = button.querySelector(".like-count-comment");
+    
+        fetch(`/likeCommentaire/${commentaireId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            icon.textContent = data.liked ? "♥️" : "♡";
+            likeCount.textContent = data.likes;
+        })
+        .catch(error => {
+            console.error("Erreur lors du like sur le commentaire :", error);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll("textarea").forEach(textarea => {
+            textarea.style.overflow = "hidden"; // Hide scrollbar
+            textarea.style.height = textarea.scrollHeight + "px"; // Ajuste la hauteur initiale
+            textarea.addEventListener("input", function() {
+                this.style.height = "auto"; // Réinitialise la hauteur
+                this.style.height = (this.scrollHeight) + "px"; // Ajuste selon le contenu
+            });
+        });
+    });
+    function focusTextarea() {
+        document.querySelector("form textarea").focus();
+      }
+      
+    </script>
+{% endblock %}
+

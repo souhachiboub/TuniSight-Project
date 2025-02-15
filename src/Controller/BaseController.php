@@ -11,7 +11,7 @@ class BaseController extends AbstractController
     #[Route('/', name: 'app_base')]
     public function index(): Response
     {
-        return $this->render('base/index.html.twig', [
+        return $this->render('user/index.html.twig', [
             'controller_name' => 'BaseController',
         ]);
     }

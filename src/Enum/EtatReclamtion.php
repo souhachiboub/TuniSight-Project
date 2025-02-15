@@ -3,7 +3,7 @@ namespace App\Enum;
 
 enum EtatReclamtion: string
 {
-   case TRAITE='traite';
-   case ATTENTE='attente';
+   case TRAITE='traitée';
+   case ATTENTE='en attente';
    
 }
