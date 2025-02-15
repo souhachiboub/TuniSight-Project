@@ -18,24 +18,39 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
+    #[Assert\Length(min: 2, max: 50, minMessage: "Le nom doit contenir au moins {{ limit }} caractères.", maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le prénom ne peut pas être vide.")]
+    #[Assert\Length(min: 2, max: 50, minMessage: "Le prénom doit contenir au moins {{ limit }} caractères.", maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom d'utilisateur ne peut pas être vide.")]
+    #[Assert\Length(min: 3, max: 20, minMessage: "Le nom d'utilisateur doit contenir au moins {{ limit }} caractères.", maxMessage: "Le nom d'utilisateur ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le numéro de téléphone est obligatoire.")]
+    #[Assert\Regex(pattern: "/^\d{8}$/", message: "Le numéro de téléphone doit contenir exactement 8 chiffres.")]
     private ?int $numTel = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Regex(pattern: "/^\d{8}$/", message: "Le CIN doit contenir exactement 8 chiffres.")]
     private ?int $cin = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+
+>>>>>>> Stashed changes
     #[ORM\Column(length: 255)]
     private ?string $motdepasse = null;  // Champ ajouté pour le mot de passe
 
@@ -45,19 +60,29 @@ class User
     private ?string $cartePro = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank(message: "La date de naissance est obligatoire.")]
+    #[Assert\LessThan("-18 years", message: "Vous devez avoir au moins 18 ans.")]
     private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "L'adresse ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: "L'URL de la photo de profil n'est pas valide.")]
     private ?string $photoProfil = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: "La bio ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $bio = null;
 
     #[ORM\Column(length: 255)]
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+    #[Assert\NotBlank(message: "Le rôle est obligatoire.")]
+    #[Assert\Choice(choices: ['admin', 'prestataire', 'client'], message: "Le rôle choisi est invalide.")]
+>>>>>>> Stashed changes
     private ?string $role;
 =======
     private UserRole $role;
@@ -627,6 +652,10 @@ class User
                 ->addViolation();
         }
     }
+<<<<<<< Updated upstream
 =======
 >>>>>>> gestion-activites
 }
+=======
+}
+>>>>>>> Stashed changes

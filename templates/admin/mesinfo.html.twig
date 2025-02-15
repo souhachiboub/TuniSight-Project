@@ -42,6 +42,12 @@
     <hr class="sidebar-divider my-0">
 
     {% if role == 'admin' %}
+    <li class="nav-item active">
+            <a class="nav-link" href="{{ path('mesinfo', {'id': userId}) }}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Mes infos</span>
+            </a>
+        </li>
         <!-- Admin Menu -->
         <li class="nav-item active">
             <a class="nav-link" href="{{ path('app_admin') }}">
@@ -349,11 +355,13 @@
                     <!-- Content Row -->
                     <div class="row">
                     	{{ include('user/_infoform.html.twig') }}
+
                     </div>
-
+                      
                     <!-- Content Row -->
-
-                    <div class="row">
+                    <br>
+                    <div class="row" style="margin-left: 70px ">
+                            {{ include('user/_delete_formback.html.twig') }}
                     </div>
 
                     <!-- Content Row -->
