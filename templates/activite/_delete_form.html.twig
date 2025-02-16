@@ -1,0 +1,10 @@
+<form method="post" action="{{ path('app_activite_delete', {'id': activite.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');" style="display: inline;">
+	<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ activite.id) }}">
+	<button class="{{ button_class|default('btn') }}" style="{{ button_style|default('border: 1px solid black; background-color: #53d2dc; color: white;') }}">
+		{% if button_content is defined %}
+			{{ button_content|raw }}
+		{% else %}
+			Supprimer
+		{% endif %}
+	</button>
+</form>

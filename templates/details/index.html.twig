@@ -1,0 +1,44 @@
+{% extends 'base.html.twig'%}
+
+{% block listActivites %}
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center pb-4">
+				<div class="col-md-12 heading-section text-center ftco-animate">
+					<span class="subheading">Activités</span>
+					<h2 class="mb-4">Nos Activités</h2>
+				</div>
+			</div>
+			<div class="row">
+				{% for activite in activites %}
+					<div class="col-md-4 ftco-animate">
+						<div class="project-wrap">
+							<a href="#" class="img" style="background-image: url('{{ asset('uploads/images/' ~ activite.image) }}');">
+								<span class="price">TN &nbsp;{{ activite.prix }}/personne</span>
+							</a>
+							<div class="text p-4">
+								<span class="days">{{ activite.duree }}
+									jours</span>
+								<h3>
+									<a href="#">{{ activite.libelle }}</a>
+								</h3>
+								<p class="location">
+									<span class="fa fa-map-marker"></span>
+									{{ activite.localisation }}
+								</p>
+								<div style="display:flex">
+									<a href="{{ path('app_activite_show', {'id': activite.id}) }}">
+										<button>Voir détails</button>
+									</a>
+									&nbsp;
+									<button id="btn-reserver" >Réserver</button>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
+{% endblock %}

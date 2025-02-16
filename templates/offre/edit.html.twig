@@ -1,0 +1,40 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block title %}Modifier l'offre{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>Modifier </h1>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="mb-3">
+        {{ form_label(form.reduction) }}
+        {{ form_widget(form.reduction, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.reduction) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.dateDebut) }}
+        {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.dateDebut) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.dateExpiration) }}
+        {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.dateExpiration) }} 
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.activitie) }}
+        {{ form_widget(form.activitie, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.activitie) }}
+    </div>
+
+   
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+

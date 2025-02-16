@@ -28,11 +28,13 @@ class User
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Assert\NotBlank(message: "Le nom d'utilisateur ne peut pas être vide.")]
     #[Assert\Length(min: 3, max: 20, minMessage: "Le nom d'utilisateur doit contenir au moins {{ limit }} caractères.", maxMessage: "Le nom d'utilisateur ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[ORM\JoinColumn(nullable: true)]
     #[Assert\NotBlank(message: "Le numéro de téléphone est obligatoire.")]
     #[Assert\Regex(pattern: "/^\d{8}$/", message: "Le numéro de téléphone doit contenir exactement 8 chiffres.")]
     private ?int $numTel = null;

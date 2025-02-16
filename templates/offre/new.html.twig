@@ -1,0 +1,29 @@
+{% extends 'admin/index.html.twig' %}
+{% block title %}Ajouter une offre{% endblock %}
+{% block body %}
+<div class="container-fluid">
+    <h1>Ajouter une nouvelle offre</h1>
+   {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.reduction) }}
+        {{ form_widget(form.reduction, {'attr': {'class': 'form-control'}}) }}
+        <div class="invalid-feedback">Veuillez renseigner ce champ</div>
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.dateDebut) }}
+        {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+        <div class="invalid-feedback">Veuillez sélectionner une date de début.</div>
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.dateExpiration) }}
+        {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control'}}) }}
+        <div class="invalid-feedback">Veuillez sélectionner une date d'expiration.</div>
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.activitie) }}
+        {{ form_widget(form.activitie, {'attr': {'class': 'form-control'}}) }}
+        <div class="invalid-feedback">Veuillez choisir une activité.</div>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

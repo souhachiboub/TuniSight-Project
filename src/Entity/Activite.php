@@ -6,8 +6,10 @@ use App\Repository\ActiviteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 #[ORM\Entity(repositoryClass: ActiviteRepository::class)]
+#[Vich\Uploadable]
 class Activite
 {
     #[ORM\Id]
@@ -42,6 +44,76 @@ class Activite
     #[ORM\ManyToOne(inversedBy: 'activites')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+    #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+
+
+    // Ajoute un setter pour la propriété updatedAt
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    // Ajoute un getter pour la propriété updatedAt
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateDebut;
+
+    /**
+     * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     */
+    private $dateFin;
+
+    public function getDateDebut(): ?\DateTimeInterface
+    {
+        return $this->dateDebut;
+    }
+
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    {
+        $this->dateDebut = $dateDebut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(\DateTimeInterface $dateFin): self
+    {
+        $this->dateFin = $dateFin;
+
+        return $this;
+    }
 
     /**
      * @var Collection<int, Avis>
@@ -59,8 +131,11 @@ class Activite
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieActivite $categorie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activites')]
-    private ?Offre $offre = null;
+     /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'activitie')]
+    private Collection $offres;
 
     /**
      * @var Collection<int, Reservation>
@@ -254,17 +329,7 @@ class Activite
         return $this;
     }
 
-    public function getOffre(): ?Offre
-    {
-        return $this->offre;
-    }
-
-    public function setOffre(?Offre $offre): static
-    {
-        $this->offre = $offre;
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection<int, Reservation>
@@ -286,6 +351,36 @@ class Activite
     public function removeReservation(Reservation $reservation): static
     {
         $this->reservation->removeElement($reservation);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setActivitie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getActivitie() === $this) {
+                $offre->setActivitie(null);
+            }
+        }
 
         return $this;
     }

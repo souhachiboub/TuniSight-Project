@@ -4,29 +4,31 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Form\InscriptionuserType;
-use App\Form\InfoFormType;
 use App\Form\LoginType;
+use App\Form\InfoFormType;
+use App\Form\InscriptionuserType;
 use App\Repository\UserRepository;
+use App\Repository\ActiviteRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class BaseController extends AbstractController
 {
         #[Route('/', name: 'app_base')]
-        public function index(SessionInterface $session): Response
+        public function index(SessionInterface $session,ActiviteRepository $activiteRepository): Response
         {
-            return $this->render('base/index.html.twig', [
+            return $this->render('details/index.html.twig', [
             'role' => $session->get('user_role'),
                 'nom' => $session->get('user_nom'),
                 'prenom' => $session->get('user_prenom'),
                 'userId' => $session->get('user_id'),
                 'controller_name' => 'BaseController',
+                'activites' => $activiteRepository->findAll()
             ]);
         }
 

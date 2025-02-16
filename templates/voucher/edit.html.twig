@@ -1,0 +1,23 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>Modifier le Coupon</h1>
+    {% for flash in app.flashes('error') %}
+        <div class="alert alert-danger">{{ flash }}</div>
+    {% endfor %}
+
+    {{ form_start(voucherForm, {'attr': {'novalidate': 'novalidate'}}) }}
+       {{ form_errors(voucherForm.dateExpiration) }}
+        {{ form_errors(voucherForm.valeurReduction) }}
+
+        {% if voucherForm.user is defined %}
+          <div class="mb-3">
+            {{ form_label(voucherForm.user) }}
+            {{ form_widget(voucherForm.user, {'attr': {'class': 'form-control' ~ (voucherForm.user.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            {{ form_errors(voucherForm.user) }}
+        </div>
+        {% endif %}
+    {{ form_end(voucherForm) }}
+</div>
+{% endblock %}

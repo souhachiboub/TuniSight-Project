@@ -1,0 +1,97 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block title %}Liste des Offres{% endblock %}
+
+{% block body %}
+  
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Liste des Offres</h1>
+        <div class="mb-4">
+            <a href="{{ path('offer_create') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
+        </div>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Liste des Offres</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Réduction (%)</th>
+                                <th>Date de début</th>
+                                <th>Date d'expiration</th>
+                                <th>Activité</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Réduction (%)</th>
+                                <th>Date de début</th>
+                                <th>Date d'expiration</th>
+                                <th>Activité</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            {% for offre in offres %}
+                            <tr>
+                                <td>{{ offre.id }}</td>
+                                <td>{{ offre.reduction }}</td>
+                                <td>{{ offre.dateDebut|date('d/m/Y') }}</td>
+                                <td>{{ offre.dateExpiration|date('d/m/Y') }}</td>
+                                <td>{{ offre.activitie.libelle }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <form method="post" action="{{ path('offre_delete', {id: offre.id}) }}" style="display:inline-block;" class="delete-form">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                                            <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+                                        </form>
+                                        <a href="{{ path('offre_edit', {id: offre.id}) }}" class="btn btn-warning btn-sm ms-2">Modifier</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucune offre disponible.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{%block js%}
+
+{# JavaScript pour la confirmation avant suppression #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForms = document.querySelectorAll('.delete-form');
+
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();  // Empêche la soumission classique du formulaire
+
+                // Afficher une alerte de confirmation avant de soumettre le formulaire
+                const confirmation = confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');
+                
+                if (confirmation) {
+                    form.submit();  // Si l'utilisateur confirme, on soumet le formulaire
+                } else {
+                    // Si l'utilisateur annule, on ne fait rien
+                    console.log('Suppression annulée');
+                }
+            });
+        });
+    });
+</script>
+{%endblock%}
