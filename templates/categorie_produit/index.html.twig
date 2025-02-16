@@ -9,6 +9,7 @@
 
 <!-- Vos styles personnalisés ici ... -->
 <style>
+
   /* ... Vos styles déjà définis ... */
   .modal-content {
       border-radius: 10px;
@@ -42,24 +43,7 @@
       height: auto;
       display: block;
   }
-  .btn-add-category {
-      background: linear-gradient(45deg, #007bff, #66b3ff);
-      border: none;
-      color: #fff;
-      font-weight: bold;
-      padding: 0.75rem 1.5rem;
-      border-radius: 5px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-add-category:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-  }
-  .btn-add-category:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(0,123,255,0.5);
-  }
+ 
   .form-control::placeholder {
       font-size: 1rem;
       color: #aaa;
@@ -68,83 +52,77 @@
       max-width: 600px;
   }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <div class="container mt-5">
   <!-- Bouton "Ajouter Catégorie" -->
   <div class="d-flex justify-content-end mb-3">
-      <button class="btn btn-add-category" onclick="openModal(null, '', '')">
-          ➕ Ajouter Catégorie
+      <button class="btn btn-primary" onclick="openModal(null, '', '')">
+          Ajouter Catégorie
       </button>
   </div>
+<!-- Table de catégories -->
+<div class="table-responsive">
+<table class="table table-bordered text-center">
+        <!-- En-tête du tableau -->
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-  <!-- Table de catégories -->
-  <div class="table-responsive">
-      <table class="table text-center">
-          <!-- En-tête du tableau -->
-          <thead>
-              <tr>
-                  <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
-                  <th>Nom</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-              </tr>
-          </thead>
+        <!-- Corps du tableau -->
+        <tbody>
+            {% for categorie in categories %}
+                <tr>
+                    <!-- Case à cocher pour la sélection -->
+                    <td>
+                        <input type="checkbox" class="delete-checkbox" data-id="{{ categorie.id }}" onchange="toggleDeleteMultipleButton()">
+                    </td>
 
-          <!-- Corps du tableau -->
-          <tbody>
-              {% for categorie in categories %}
-                  <tr>
-                      <!-- Case à cocher pour la sélection -->
-                      <td>
-                          <input type="checkbox" class="delete-checkbox" data-id="{{ categorie.id }}" onchange="toggleDeleteMultipleButton()">
-                      </td>
+                    <!-- Nom de la catégorie -->
+                    <td>{{ categorie.nom }}</td>
 
-                      <!-- Nom de la catégorie -->
-                      <td>{{ categorie.nom }}</td>
+                    <!-- Description de la catégorie (tronquée) -->
+                    <td>
+                        {{ categorie.description|length > 50 ? categorie.description|slice(0, 50) ~ '...' : categorie.description }}
+                    </td>
 
-                      <!-- Description de la catégorie (tronquée si trop longue) -->
-                      <td>
-                          {% set words = categorie.description|split(' ') %}
-                          {% if words|length > 8 %}
-                              {{ words|slice(0, 8)|join(' ') }}...
-                          {% else %}
-                              {{ categorie.description }}
-                          {% endif %}
-                      </td>
+                    <!-- Actions (Modifier, Voir, Supprimer) -->
+                    <td>
+                        <!-- Bouton "Modifier" -->
+                        <button class="btn btn-outline-primary btn-sm" 
+                            onclick="openModal(this.getAttribute('data-id'), this.getAttribute('data-nom'), this.getAttribute('data-description'))" 
+                            data-id="{{ categorie.id }}" 
+                            data-nom="{{ categorie.nom }}" 
+                            data-description="{{ categorie.description }}">
+                            <i class="fa fa-pencil"></i>
+                        </button>
 
-                      <!-- Actions (Modifier, Voir, Supprimer) -->
-                      <td>
-                          <!-- Bouton "Modifier" -->
-                          <button class="btn btn-warning btn-sm" 
-                              onclick="openModal(this.getAttribute('data-id'), this.getAttribute('data-nom'), this.getAttribute('data-description'))" 
-                              data-id="{{ categorie.id }}" 
-                              data-nom="{{ categorie.nom }}" 
-                              data-description="{{ categorie.description }}">
-                              Modifier
-                          </button>
+                        <!-- Bouton "Voir" -->
+                        <button class="btn btn-outline-primary btn-sm" onclick="viewCategorie('{{ categorie.id }}')">
+                            <i class="fa fa-eye"></i>
+                        </button>
 
-                          <!-- Bouton "Voir" -->
-                          <button class="btn btn-outline-primary btn-sm" onclick="viewCategorie('{{ categorie.id }}')">
-                              <i class="fa fa-eye"></i>
-                          </button>
+                        <!-- Bouton "Supprimer" -->
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteCategorie({{ categorie.id }})">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-                          <!-- Bouton "Supprimer" -->
-                          <button type="button" class="btn btn-danger" onclick="confirmDeleteCategorie({{ categorie.id }})">
-                              <i class="fa fa-trash"></i>
-                          </button>
-                      </td>
-                  </tr>
-              {% endfor %}
-          </tbody>
-      </table>
-  </div>
-
-  <!-- Espace supplémentaire pour d'autres éléments -->
-  <div class="mt-3">
-<button id="deleteMultipleButton" class="btn btn-danger" onclick="confirmDeleteMultiple()" disabled>
-    🗑️ 
-</button>
-  </div>
+<!-- Espace supplémentaire pour d'autres éléments -->
+<div class="mt-3">
+    <button id="deleteMultipleButton" class="btn btn-danger" onclick="confirmDeleteMultiple()" disabled>
+        <i class="fa fa-trash"></i>
+    </button>
 </div>
 
 

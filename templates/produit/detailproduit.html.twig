@@ -242,14 +242,23 @@
 
 				<div class="details-text">
 					<span class="price">&nbsp;{{ produit.prix }}
-						TN/personne
+						TN
 					</span>
 					<h3>{{ produit.libelle }}</h3>
 					<p>{{ produit.description }}</p>
 					<p class="location">
-						<span class="fa fa-map-marker"></span>
-						{{ produit.disponibilite }}</p>
-					<a href="{{ path('afficherproduit', { 'id': produit.id }) }}
+						<span class="fa fa-hashtag"></span>
+						{{ produit.Reference }}</p>
+
+
+<p class="stock-status"> 
+    <span class="badge text-white px-3 py-2 fs-5" style="background-color: {% if produit.disponibilite %}#198754{% else %}#dc3545{% endif %};">
+        {{ produit.disponibilite ? 'En stock' : 'Rupture de stock' }}
+    </span>
+</p>
+
+
+					<a href="{{ path('app_boutique') }}
 " class="btn-reserver" id="btn-back">Revenir</a>
 					<button class="btn-reserver">Acheter </button>
 

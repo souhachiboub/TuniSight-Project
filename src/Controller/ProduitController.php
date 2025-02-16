@@ -40,9 +40,6 @@ class ProduitController extends AbstractController
     }
 
 
-
-
-    
     #[Route('/produit/create', name: 'produit_create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -56,9 +53,13 @@ class ProduitController extends AbstractController
                 $produit->setImageFile($imageFile);
             }
             $produit->setDisponibilite($produit->getQuantite() > 0);
+            error_log('Début création du produit : ' . $produit->getLibelle());
 
+    
             $entityManager->persist($produit);
             $entityManager->flush();
+            error_log('Produit créé: ' . $produit->getLibelle() . ' avec l\'ID: ' . $produit->getId());
+
     
             return new JsonResponse([
                 'success' => true,
@@ -66,10 +67,12 @@ class ProduitController extends AbstractController
             ]);
         }
     
-        // 🔹 Récupération des erreurs uniquement si le formulaire est invalide
+        // 🔹 Récupération des erreurs par champ
         $errors = [];
-        foreach ($form->getErrors(true) as $error) {
-            $errors[] = $error->getMessage();
+        foreach ($form->all() as $fieldName => $formField) {
+            foreach ($formField->getErrors() as $error) {
+                $errors[$fieldName][] = $error->getMessage();
+            }
         }
     
         return new JsonResponse([
@@ -77,7 +80,16 @@ class ProduitController extends AbstractController
             'errors' => $errors
         ], Response::HTTP_BAD_REQUEST);
     }
-    
+
+
+
+
+
+
+
+
+
+
 
     
     #[Route('/produit/{id}', name: 'produit_show', methods: ['GET'], requirements: ['id' => '\d+'])]
@@ -173,15 +185,21 @@ class ProduitController extends AbstractController
 
     
     #[Route('/produit/{id}/delete', name: 'produit_delete', methods: ['POST'])]
-    public function delete(Request $request, Produit $produit, EntityManagerInterface $em): Response
+    public function delete(Request $request, Produit $produit, EntityManagerInterface $em): JsonResponse
     {
         if ($this->isCsrfTokenValid('delete' . $produit->getId(), $request->request->get('_token'))) {
             $em->remove($produit);
             $em->flush();
+    
+            return new JsonResponse(['success' => true ,
+            
+        
+        ]);
+            
         }
-
-        return $this->redirectToRoute('app_produit');
-    }
+    
+        return new JsonResponse(['success' => false, 'message' => 'Jeton CSRF invalide'], 400); }
+    
 
 
 
