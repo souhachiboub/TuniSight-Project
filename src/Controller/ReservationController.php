@@ -236,21 +236,100 @@ class ReservationController extends AbstractController
 //         ]);
 //     }
 
-#[Route('/apply-voucher/{id}', name: 'apply_voucher')]
-public function applyCoupon(int $id, Request $request, EntityManagerInterface $entityManager,SessionInterface $session): Response
+// #[Route('/apply-voucher/{id}', name: 'apply_voucher')]
+// public function applyCoupon(int $id, Request $request, EntityManagerInterface $entityManager,SessionInterface $session): Response
+// {
+//     // Récupérer l'activité à partir de l'ID
+//     $activity = $entityManager->getRepository(Activite::class)->find($id);
+
+//     // Vérifier si l'activité existe
+//     if (!$activity) {
+//         $this->addFlash('error', 'L\'activité n\'a pas été trouvée.');
+//         return $this->redirectToRoute('some_route'); // Redirigez vers une autre page si l'activité n'est pas trouvée
+//     }
+
+//     // Récupérer le prix initial de l'activité
+//     $prixInitial = $activity->getPrix(); // Assurez-vous que getPrix() retourne le prix actuel de l'activité
+
+//     $form = $this->createForm(ReservationType::class);
+//     $form->handleRequest($request);
+
+//     if ($form->isSubmitted() && $form->isValid()) {
+//         $code = $form->get('codeVoucher')->getData();
+//         $voucher = $entityManager->getRepository(Voucher::class)->findOneBy(['codeVoucher' => $code]);
+
+//         if (!$voucher) {
+//             $this->addFlash('error', 'Ce coupon est invalide.');
+//         } elseif ($voucher->getIsUsed()) {
+//             $this->addFlash('error', 'Ce coupon a déjà été utilisé.');
+//         } elseif ($voucher->getDateExpiration() < new \DateTimeImmutable()) {
+//             $this->addFlash('error', 'Ce coupon a expiré.');
+//         } else {
+            
+//             $reduction = $voucher->getValeurReduction(); 
+//             $prixAvecReduction = $prixInitial - ($prixInitial * $reduction / 100);
+
+          
+//             $activity->setPrix($prixAvecReduction);
+//             $entityManager->flush(); 
+
+//             $this->addFlash('success', 'Coupon appliqué avec succès ! Réduction : ' . $reduction . '% - Nouveau prix : ' . $prixAvecReduction . 'TND');
+            
+
+//             $voucher->setIsUsed(true);
+//             $entityManager->flush();
+//         }
+//     }
+
+//     return $this->render('reservation/apply_voucher.html.twig', [
+//         'voucherForm' => $form->createView(),
+//         'activity' => $activity, 
+//         'userId' => $session->get('user_id'),
+//         'nom' => $session->get('user_nom'),
+//         'prenom' => $session->get('user_prenom'),
+            
+//     ]);
+    
+// }
+
+
+#[Route('/load-voucher-form/{id}', name: 'load_voucher_form')]
+public function loadVoucherForm(int $id, EntityManagerInterface $entityManager): Response
 {
     // Récupérer l'activité à partir de l'ID
     $activity = $entityManager->getRepository(Activite::class)->find($id);
 
-    // Vérifier si l'activité existe
     if (!$activity) {
-        $this->addFlash('error', 'L\'activité n\'a pas été trouvée.');
-        return $this->redirectToRoute('some_route'); // Redirigez vers une autre page si l'activité n'est pas trouvée
+        throw $this->createNotFoundException('Activité non trouvée');
+    }
+
+    // Créer le formulaire
+    $form = $this->createForm(ReservationType::class);
+
+    // Renvoyer uniquement le formulaire (sans le layout complet)
+    return $this->render('reservation/apply_voucher.html.twig', [
+        'voucherForm' => $form->createView(),
+        'activity' => $activity,
+    ]);
+}
+
+#[Route('/apply-voucher/{id}', name: 'apply_voucher', methods: ['POST'])]
+public function applyVoucher(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
+{
+    // Récupérer l'activité à partir de l'ID
+    $activity = $entityManager->getRepository(Activite::class)->find($id);
+
+    if (!$activity) {
+        return $this->json([
+            'status' => 'error',
+            'message' => 'L\'activité n\'a pas été trouvée.',
+        ], Response::HTTP_NOT_FOUND);
     }
 
     // Récupérer le prix initial de l'activité
-    $prixInitial = $activity->getPrix(); // Assurez-vous que getPrix() retourne le prix actuel de l'activité
+    $prixInitial = $activity->getPrix();
 
+    // Créer et gérer le formulaire
     $form = $this->createForm(ReservationType::class);
     $form->handleRequest($request);
 
@@ -259,39 +338,54 @@ public function applyCoupon(int $id, Request $request, EntityManagerInterface $e
         $voucher = $entityManager->getRepository(Voucher::class)->findOneBy(['codeVoucher' => $code]);
 
         if (!$voucher) {
-            $this->addFlash('error', 'Ce coupon est invalide.');
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Ce coupon est invalide.',
+            ], Response::HTTP_BAD_REQUEST);
         } elseif ($voucher->getIsUsed()) {
-            $this->addFlash('error', 'Ce coupon a déjà été utilisé.');
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Ce coupon a déjà été utilisé.',
+            ], Response::HTTP_BAD_REQUEST);
         } elseif ($voucher->getDateExpiration() < new \DateTimeImmutable()) {
-            $this->addFlash('error', 'Ce coupon a expiré.');
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Ce coupon a expiré.',
+            ], Response::HTTP_BAD_REQUEST);
         } else {
-            
-            $reduction = $voucher->getValeurReduction(); 
+            // Appliquer la réduction
+            $reduction = $voucher->getValeurReduction();
             $prixAvecReduction = $prixInitial - ($prixInitial * $reduction / 100);
 
-          
+            // Mettre à jour le prix de l'activité
             $activity->setPrix($prixAvecReduction);
-            $entityManager->flush(); 
+            $entityManager->flush();
 
-            $this->addFlash('success', 'Coupon appliqué avec succès ! Réduction : ' . $reduction . '% - Nouveau prix : ' . $prixAvecReduction . 'TND');
-            
-
+            // Marquer le voucher comme utilisé
             $voucher->setIsUsed(true);
             $entityManager->flush();
+
+            // Renvoyer une réponse JSON de succès
+            return $this->json([
+                'status' => 'success',
+                'message' => 'Coupon appliqué avec succès ! Réduction : ' . $reduction . '% - Nouveau prix : ' . $prixAvecReduction . 'TND',
+                'newPrice' => $prixAvecReduction,
+            ]);
         }
     }
 
-    return $this->render('reservation/apply_voucher.html.twig', [
-        'voucherForm' => $form->createView(),
-        'activity' => $activity, 
-        'userId' => $session->get('user_id'),
-        'nom' => $session->get('user_nom'),
-        'prenom' => $session->get('user_prenom'),
-            
-    ]);
-    
-}
+    // Si le formulaire n'est pas valide, renvoyer les erreurs
+    $errors = [];
+    foreach ($form->getErrors(true) as $error) {
+        $errors[] = $error->getMessage();
+    }
 
+    return $this->json([
+        'status' => 'error',
+        'message' => 'Le formulaire contient des erreurs.',
+        'errors' => $errors,
+    ], Response::HTTP_BAD_REQUEST);
+}
 
 
 

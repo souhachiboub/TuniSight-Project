@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use App\Enum\EtatReclamtion;
 use App\Repository\ReclamationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
@@ -14,7 +17,7 @@ class Reclamation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 5000)]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
@@ -23,6 +26,18 @@ class Reclamation
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $dateEnvoie = null;
+
+    #[ORM\OneToOne(mappedBy: 'reclamation', cascade: ['persist', 'remove'])]
+    private ?Reponse $reponse = null;
+
+   
+
+   
+
+   
 
     public function getId(): ?int
     {
@@ -41,12 +56,12 @@ class Reclamation
         return $this;
     }
 
-    public function getEtat(): EtatReclamtion
+    public function getEtat(): ?string
     {
-        return $this->etat;
+        return $this->etat->value;
     }
 
-    public function setEtat(string $etat): static
+    public function setEtat(EtatReclamtion $etat): static
     {
         $this->etat = $etat;
 
@@ -64,4 +79,36 @@ class Reclamation
 
         return $this;
     }
+
+    public function getDateEnvoie(): ?\DateTimeInterface
+    {
+        return $this->dateEnvoie;
+    }
+
+    public function setDateEnvoie(\DateTimeInterface $dateEnvoie): static
+    {
+        $this->dateEnvoie = $dateEnvoie;
+
+        return $this;
+    }
+
+    public function getReponse(): ?Reponse
+    {
+        return $this->reponse;
+    }
+
+    public function setReponse(Reponse $reponse): static
+    {
+        // set the owning side of the relation if necessary
+        if ($reponse->getReclamation() !== $this) {
+            $reponse->setReclamation($this);
+        }
+
+        $this->reponse = $reponse;
+
+        return $this;
+    }
+
+    
+
 }

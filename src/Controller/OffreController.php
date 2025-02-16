@@ -10,8 +10,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 class OffreController extends AbstractController
 {
     
@@ -58,19 +60,19 @@ public function create(Request $request, EntityManagerInterface $em): Response
         'offres' => $offreRepository->findAll(),
     ]);
     }
-    #[Route('/{id}/delete', name: 'offre_delete')]
+    #[Route('/{id}/delete', name: 'offre_delete', methods: ['POST'])]
     public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
-    if ($this->isCsrfTokenValid('delete'.$offre->getId(), $request->request->get('_token'))) {
+    if ($this->isCsrfTokenValid('delete' . $offre->getId(), $request->request->get('_token'))) {
         $entityManager->remove($offre);
         $entityManager->flush();
         $this->addFlash('success', 'L\'offre a été supprimée avec succès.');
-    } else {
-        $this->addFlash('error', 'Token CSRF invalide, suppression échouée.');
+        return $this->redirectToRoute('offre_show');
     }
-
+    $this->addFlash('error', 'Token CSRF invalide, suppression échouée.');
     return $this->redirectToRoute('offre_show');
     }
+    
 
     #[Route('/offre/{id}/edit', name: 'offre_edit')]
     public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response

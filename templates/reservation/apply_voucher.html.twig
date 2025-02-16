@@ -1,16 +1,7 @@
-<div class="modal-body">
-                {# Affichage des messages flash #}
-                {% for message in app.flashes('error') %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                {% endfor %}
+{# Affichage des messages flash (erreurs ou succès) #}
 
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success">{{ message }}</div>
-                {% endfor %}
 
-                {# Formulaire d'application du voucher #}
-                {{ form_start(voucherForm, {'attr': {'id': 'form-container', 'novalidate': 'novalidate'}}) }}
-                    {{ form_row(voucherForm.codeVoucher) }}
-                    <button type="submit" class="btn btn-success">Appliquer</button>
-                {{ form_end(voucherForm) }}
-            </div>
+{# Affichage du formulaire #}
+{{ form_start(voucherForm, {'attr': {'id': 'voucherForm', 'novalidate': 'novalidate'}}) }}
+    {{ form_row(voucherForm.codeVoucher) }}
+{{ form_end(voucherForm) }}

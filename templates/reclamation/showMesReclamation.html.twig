@@ -1,0 +1,259 @@
+{% block title %}<title>TuniSight</title>{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="reclamations-list">
+            <h1>Mes réclamations</h1>
+            <form id="filterForm" method="get" action="{{ path('app_reclamation_mes') }}">
+                <label for="etatFilter">Filtrer par état:</label>
+                <select id="etatFilter" name="etat" onchange="this.form.submit()">
+                    <option value="tout" {% if etatFilter == 'tout' %}selected{% endif %}>Tout</option>
+                    <option value="en attente" {% if etatFilter == 'en attente' %}selected{% endif %}>En attente</option>
+                    <option value="traitée" {% if etatFilter == 'traitée' %}selected{% endif %}>Traité</option>
+                </select>
+            </form>
+            <div class="reclamations-container">
+                {% for reclamation in reclamations %}
+                <div class="reclamation-card" data-id="{{ reclamation.id }}" onclick="showReclamationDetails({{ reclamation.id }})">
+                    <div class="card-content">
+                            <div class="reclamation-details">
+                                <div class="user-name-container">
+                                    <img src="{{ asset(reclamation.user.photoProfil ) }}" alt="Photo de l'utilisateur" class="user-photo">
+                                    <a href="#" class = "profile"><h2 class="user-name">{{ reclamation.user.nom }} {{ reclamation.user.prenom }}</h2></a>
+                                </div>
+                                <p class="reclamation-description">
+                                    {{ reclamation.description }}
+                                    
+                                </p>
+                                <p class="reclamation-info">
+                                    {{ reclamation.dateEnvoie|date('Y-m-d') }} - {{ reclamation.etat }}
+                                </p>
+                                <form action="{{ path('app_reclamation_delete',{'id': reclamation.id}) }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="{{ reclamation.id }}">
+                                    <button type="submit" class="btn btn-delete">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Aucune réclamation trouvée.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="reclamationModal" class="modal">
+            <div class="modal-content">
+                <a href="" class="close">&times;</a>
+                <div id="reclamationDetails"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{%block css%}
+<style>
+    body {
+        font-family: system-ui;
+        color: #2B3940;
+    }
+    #etatFilter {
+        background-color: #f1f1f1; 
+        border: none; 
+        padding: 10px 15px;
+        font-size: 1em; 
+        cursor: pointer; 
+        
+    }
+    
+    #etatFilter:hover {
+        background-color: #e2e2e2; 
+    }
+    #etatFilter option {
+        background-color: #f1f1f1; 
+        padding: 10px; 
+        font-size: 1em;
+    }
+    
+    #etatFilter option:hover {
+        background-color: #e2e2e2; 
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 80vh;
+        padding: 5px;
+        background-color: #f8f9fa;
+    }
+
+    .reclamations-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .reclamation-card {
+        border: 1px solid #ccc;
+        width : 600px;
+        padding: 20px;
+        display: flex; 
+        gap: 15px;
+        cursor : default;
+    }
+    .reclamation-card:hover {
+        background-color:rgb(235, 233, 233);; 
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-photo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .reclamation-details {
+        flex-grow: 1;
+    }
+
+    .user-name-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .user-name {
+        font-size: 1.1em;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .reclamation-description {
+        overflow: hidden;
+        text-overflow: auto;
+        white-space: nowrap;
+        max-width: 600px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        white-space: normal;
+    }
+
+    .reclamation-info {
+        font-size: 0.8em;
+        color: #777;
+    }
+
+    .btn-delete {
+        background-color: transparent;
+        border: 1px solid #888;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background-color 0.3s, color 0.3s;
+        color: #2B3940;
+    }
+    
+    .btn-delete:hover {
+        background-color: #f1f1f1; 
+        color: #555; 
+    }
+    
+    .btn-delete:focus {
+        outline: none; 
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        width: 90%;
+        max-width: 600px;
+        text-align: left;
+        position: relative;
+    }
+
+    a.profile , h2 {
+        text-decoration: none;
+        font-size: 1.1em;
+        margin-right: 100px;
+        font-weight: bold;
+        color : #2B3940 ;
+        cursor: pointer;
+    }
+
+    a.profile , h2:hover {
+        color: #26648E;
+    }
+
+    .modal a.close {
+        text-decoration: none;
+        font-size: 30px;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: #26648E;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+<script>
+    function showReclamationDetails(id) {
+        const modal = document.getElementById('reclamationModal');
+        const reclamationDetails = document.getElementById('reclamationDetails');
+        
+        fetch('/reclamation/detail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'id': id
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                reclamationDetails.innerHTML = `
+                    <div class="user-name-container">
+                        <img src="{{ asset('${data.user.photoProfil}') }}" alt="Photo de l'utilisateur" class="user-photo">
+                        <h2>${data.user.nom} ${data.user.prenom}</h2>
+                    </div>
+                    <p><strong>Date d'envoi:</strong> ${data.dateEnvoie}</p>
+                    <p><strong>État:</strong> ${data.etat}</p>
+                    <p><strong>Description:</strong> ${data.description}</p>
+                `;
+                modal.style.display = 'block';
+            } else {
+                alert('Erreur lors du traitement de la réclamation.');
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+    
+    document.querySelector('.close').addEventListener('click', function() {
+        document.getElementById('reclamationModal').style.display = 'none';
+        event.preventDefault()
+    });
+    
+</script>

@@ -18,6 +18,7 @@ class Offre
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\GreaterThanOrEqual(10, message: "La réduction doit être supérieure à 10.")]
     private ?int $reduction = null;
 
     #[Assert\NotBlank]
@@ -99,6 +100,9 @@ class Offre
 
         return $this;
     }
+
+
+    
 
    
 

@@ -1,0 +1,333 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Publication;
+use App\Entity\Image;
+use App\Entity\Likes;
+use App\Entity\User;
+use App\Entity\Commentaire;
+use App\Entity\LikesCommentaire;
+use App\Form\CommentaireType;
+use App\Form\PublicationType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Repository\LikesRepository;
+
+class PublicationController extends AbstractController
+{
+    #[Route('/publications', name: 'list_publications')]
+    public function listPublications(Request $request, EntityManagerInterface $entityManager, LikesRepository $likesRepository): Response
+    {
+        $publication = new Publication();
+        $form = $this->createForm(PublicationType::class, $publication);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                // Formulaire invalide, renvoyer les erreurs
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+    
+                // Retourner les erreurs sous forme de JSON
+                return $this->json([
+                    'success' => false,
+                    'errors' => $errors,
+                ]);
+            } else {
+                $publication->setDatePublication(new \DateTime());
+                $user = $entityManager->getRepository(User::class)->find(1); // Assuming user with ID 1
+                $publication->setUser($user);
+    
+                $entityManager->persist($publication);
+    
+                // --- Gestion des images ---
+                $imageFiles = $form->get('images')->getData();
+                if ($imageFiles) {
+                    $uploadDir = $this->getParameter('kernel.project_dir') . '/public/publication';
+                    foreach ($imageFiles as $imageFile) {
+                        if ($imageFile) {
+                            // Validation du type de fichier (images seulement)
+                            if (!in_array($imageFile->guessExtension(), ['jpg', 'png', 'jpeg', 'gif'])) {
+                                // Retourner une erreur si le fichier n'est pas une image
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Seuls les fichiers images sont autorisés.'],
+                                ]);
+                            }
+    
+                            $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                            try {
+                                $imageFile->move($uploadDir, $newFilename);
+                            } catch (FileException $e) {
+                                // Gérer l'exception pour éviter des erreurs serveur visibles
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Erreur lors du téléchargement de l\'image.'],
+                                ]);
+                            }
+    
+                            $image = new Image();
+                            $image->setUrl('/publication/' . $newFilename); // Chemin relatif
+                            $image->setPublication($publication);
+                            $entityManager->persist($image);
+                        }
+                    }
+                }
+    
+                // Persister les images et publier la publication
+                $entityManager->flush();
+    
+                // Retourner un succès avec redirection pour recharger
+                return $this->json([
+                    'success' => true,
+                    'redirectUrl' => $this->generateUrl('list_publications'), 
+                ]);
+            }
+        }
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy([], ['datePublication' => 'DESC']);
+        $user = $entityManager->getRepository(User::class)->find(1);
+
+        // Gestion des likes pour chaque publication
+        foreach ($publications as $pub) {
+            $isLiked = $entityManager->getRepository(Likes::class)->findOneBy([
+                'user' => $user,
+                'publication' => $pub
+            ]);
+            $pub->isLiked = $isLiked !== null;
+        }
+
+        // Rendu de la page
+        return $this->render('publication/list.html.twig', [
+            'publications' => $publications,
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/MesPublications', name: 'list_mes_publications')]
+    public function listMesPublications(Request $request, EntityManagerInterface $entityManager, LikesRepository $likesRepository): Response
+    {
+        $publication = new Publication();
+        $form = $this->createForm(PublicationType::class, $publication);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                // Formulaire invalide, renvoyer les erreurs
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+    
+                // Retourner les erreurs sous forme de JSON
+                return $this->json([
+                    'success' => false,
+                    'errors' => $errors,
+                ]);
+            } else {
+                $publication->setDatePublication(new \DateTime());
+                $user = $entityManager->getRepository(User::class)->find(1); // Assuming user with ID 1
+                $publication->setUser($user);
+    
+                $entityManager->persist($publication);
+    
+                // --- Gestion des images ---
+                $imageFiles = $form->get('images')->getData();
+                if ($imageFiles) {
+                    $uploadDir = $this->getParameter('kernel.project_dir') . '/public/publication';
+                    foreach ($imageFiles as $imageFile) {
+                        if ($imageFile) {
+                            // Validation du type de fichier (images seulement)
+                            if (!in_array($imageFile->guessExtension(), ['jpg', 'png', 'jpeg', 'gif'])) {
+                                // Retourner une erreur si le fichier n'est pas une image
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Seuls les fichiers images sont autorisés.'],
+                                ]);
+                            }
+    
+                            $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                            try {
+                                $imageFile->move($uploadDir, $newFilename);
+                            } catch (FileException $e) {
+                                // Gérer l'exception pour éviter des erreurs serveur visibles
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Erreur lors du téléchargement de l\'image.'],
+                                ]);
+                            }
+    
+                            $image = new Image();
+                            $image->setUrl('/publication/' . $newFilename); // Chemin relatif
+                            $image->setPublication($publication);
+                            $entityManager->persist($image);
+                        }
+                    }
+                }
+    
+                // Persister les images et publier la publication
+                $entityManager->flush();
+    
+                // Retourner un succès avec redirection pour recharger
+                return $this->json([
+                    'success' => true,
+                    'redirectUrl' => $this->generateUrl('list_publications'), 
+                ]);
+            }
+        }
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy(['user' => 1], ['datePublication' => 'DESC']);
+        $user = $entityManager->getRepository(User::class)->find(1);
+
+        // Gestion des likes pour chaque publication
+        foreach ($publications as $pub) {
+            $isLiked = $entityManager->getRepository(Likes::class)->findOneBy([
+                'user' => $user,
+                'publication' => $pub
+            ]);
+            $pub->isLiked = $isLiked !== null;
+        }
+
+        // Rendu de la page
+        return $this->render('publication/showMesPublication.html.twig', [
+            'publications' => $publications,
+            'form' => $form->createView(),
+        ]);
+    }
+
+#[Route('/publications/details/{id}', name: 'detail_publications')]
+public function DetailsPublications($id, Request $request, EntityManagerInterface $entityManager, LikesRepository $likesRepository): Response
+{
+    $publication = $entityManager->getRepository(Publication::class)->find($id);
+    if (!$publication) {
+        throw $this->createNotFoundException('La publication n\'existe pas.');
+    }
+
+    $user = $entityManager->getRepository(User::class)->find(1); // Assume user ID is 1
+    $isLiked = $entityManager->getRepository(Likes::class)->findOneBy([
+        'user' => $user,
+        'publication' => $publication
+    ]);
+    $publication->isLiked = $isLiked !== null;
+
+    $commentaires = $entityManager->getRepository(Commentaire::class)->findBy(['publication' => $publication], ['date' => 'DESC']);
+
+    foreach ($commentaires as $commentaire) {
+        $isLikedComment = $entityManager->getRepository(LikesCommentaire::class)->findOneBy([
+            'user' => $user,
+            'commentaire' => $commentaire
+        ]);
+        $commentaire->isLiked = $isLikedComment !== null;
+    }
+
+    // Créer un formulaire pour ajouter un commentaire
+    $formComment = $this->createForm(CommentaireType::class);
+
+    // Gérer la soumission du formulaire de commentaire
+    $formComment->handleRequest($request);
+    if ($formComment->isSubmitted() && $formComment->isValid()) {
+        $commentaire = $formComment->getData();
+        $commentaire->setPublication($publication);
+        $commentaire->setUser($user);
+        $commentaire->setDate(new \DateTime());
+
+        $entityManager->persist($commentaire);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Commentaire ajouté avec succès !');
+        return $this->redirectToRoute('detail_publications', ['id' => $publication->getId()]);
+    }
+
+    return $this->render('publication/detailPublication.html.twig', [
+        'publication' => $publication,
+        'commentaires' => $commentaires,
+        'formComment' => $formComment->createView(),
+    ]);
+}
+#[Route('/publication/{publicationId}/images', name: 'get_images_for_publication')]
+public function getImagesForPublication($publicationId, EntityManagerInterface $entityManager): Response
+{
+    $publication = $entityManager->getRepository(Publication::class)->find($publicationId);
+
+    if (!$publication) {
+        throw $this->createNotFoundException('La publication n\'existe pas.');
+    }
+
+    $images = $entityManager->getRepository(Image::class)->findBy(['publication' => $publication]);
+
+    foreach ($images as $image) {
+        // Use the absolute path or asset() if available
+        $imageUrl = $this->getParameter('/publication/'). $image->getUrl(); // Assuming you have this parameter
+
+        $imageData = [
+            'url' => $imageUrl, // Or use asset() if you can
+        ];
+    }
+
+    return $this->json($imageData);
+}
+#[Route('/publication/delete/{id}', name: 'delete_publication', methods: ['POST'])]
+    public function deletePublication($id, EntityManagerInterface $entityManager): Response
+    {
+        $publication = $entityManager->getRepository(Publication::class)->find($id);
+
+        if (!$publication) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Publication non trouvée.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Suppression des images associées
+        $images = $publication->getImages();
+        foreach ($images as $image) {
+            $entityManager->remove($image);
+        }
+
+        $entityManager->remove($publication);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Publication supprimée avec succès.'
+        ]);
+    }
+
+    #[Route('/publication/update/{id}', name: 'update_publication', methods: ['POST'])]
+public function updatePublication($id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $publication = $entityManager->getRepository(Publication::class)->find($id);
+
+    if (!$publication) {
+        return $this->json([
+            'success' => false,
+            'message' => 'Publication non trouvée.'
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    $newContent = $request->request->get('contenu');
+
+    if ($newContent !== null) { // Check if content was actually sent
+        $publication->setContenu($newContent);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Publication mise à jour avec succès.'
+        ]);
+    } else {
+         return $this->json([
+            'success' => false,
+            'message' => 'Aucun contenu fourni pour la mise à jour.'
+        ]);
+    }
+}
+    }
+
+  

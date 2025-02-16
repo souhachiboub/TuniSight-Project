@@ -1,0 +1,232 @@
+{% extends "admin/templateadmin.html.twig" %}
+{% block body %}
+
+<!-- Begin Page Content -->
+                <div class="container-fluid">
+                    
+
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h4 class="m-0 font-weight-bold text-primary">Listes des réclamations</h4>
+                        </div>
+                        <form id="filterForm" method="get" action="{{ path('app_reclamation') }}">
+                            <div class="select-container">
+                                <label for="etatFilter">Filtrer par état:</label>
+                                <select id="etatFilter" name="etat" onchange="this.form.submit()">
+                                    <option value="tout" {% if etatFilter == 'tout' %}selected{% endif %}>Tout</option>
+                                    <option value="en attente" {% if etatFilter == 'en attente' %}selected{% endif %}>En attente</option>
+                                    <option value="traitée" {% if etatFilter == 'traitée' %}selected{% endif %}>traitée</option>
+                                </select>
+                        </div>
+                        </form>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Utilisateur</th>
+                                            <th>Réclamation</th>
+                                            <th>Date</th>
+                                            <th>Etat</th>
+                                            <th>Réponse</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for reclamation in reclamations %}
+                                    <tr class="reclamation-card" data-id="{{ reclamation.id }}" onclick="showReclamationDetails({{ reclamation.id }})">
+                                                <td>{{ reclamation.user.nom }} {{ reclamation.user.prenom }}</td>
+                                                <td>
+                                                    
+                                                {% if reclamation.etat == 'en attente' %}
+                                                    {% if reclamation.description|length > 60 %} 
+                                                        <strong>{{ reclamation.description|slice(0, 60) }} ...</strong>
+                                                    {% else %}
+                                                        <strong>{{ reclamation.description }}</strong>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if reclamation.description|length > 60 %} 
+                                                        {{ reclamation.description|slice(0, 60) }} ...
+                                                    {% else %}
+                                                        {{ reclamation.description }}
+                                            {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{ reclamation.dateEnvoie|date('Y-m-d') }}
+                                                </td>
+                                                <td>{{ reclamation.etat }}</td>
+                                                
+                                                <td>
+                                                        {% if reclamation.reponse is empty %} 
+                                                            <a href="{{ path('app_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-primary">Répondre</a>
+                                                        {% else %}
+                                                            <a href="{{ path('app_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-success">Voir réponse</a>
+                                                        {% endif %}
+                                                    
+                                                </td>
+                                                
+                                            </tr>
+                                {% else %}
+                                    <p>Aucune réclamation trouvée.</p>
+                                {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="reclamationModal" class="modal">
+                        <div class="modal-content">
+                            <a href="javascript:void(0)" class="close" onclick="closeModal()" style="align-items : center">&times;</a>
+                            <div id="reclamationDetails"></div>
+                        </div>
+                    </div>
+
+                </div>
+               
+               
+{% endblock %}
+{% block js %}<script>
+    function showReclamationDetails(id) {
+        const modal = document.getElementById('reclamationModal');
+        const reclamationDetails = document.getElementById('reclamationDetails');
+        
+        
+        fetch('/reclamation/details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'id': id
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                
+                reclamationDetails.innerHTML = `
+                    <p><strong>Utilisateur:</strong> ${data.user.nom} ${data.user.prenom}</p>
+                    <p><strong>Date d'envoi:</strong> ${data.dateEnvoie}</p>
+                    <p><strong>État:</strong> ${data.etat}</p>
+                    <p><strong>Description:</strong> ${data.description}</p>
+
+                `;
+                modal.style.display = 'block';
+            } else {
+                alert('Erreur lors du traitement de la réclamation.');
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('reclamationModal');
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('reclamationModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+   
+</script>{% endblock %}
+{% block css %}
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    font-family: system-ui;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 600px;
+    text-align: left;
+    position: relative;
+    
+}
+.modal a.close {
+    text-decoration: none;
+    font-size: 30px;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: #26648E;
+    cursor: pointer;
+}
+#etatFilter {
+    appearance: none; /* Supprime le style par défaut */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background-color: #ffffff;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 5px 10px 5px 15px; /* Espacement interne */
+    font-size: 16px;
+    color: #333;
+    margin-left : 10px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.2);
+    width: 200px;
+    position: relative;
+}
+
+#etatFilter:hover {
+    border-color: #0056b3;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Effet au focus */
+#etatFilter:focus {
+    border-color: #004085;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Conteneur pour le select pour gérer la flèche personnalisée */
+#filterForm {
+    margin:20px;
+    display: inline-block;
+    position: relative;
+}
+
+/* Flèche personnalisée */
+#filterForm::after {
+    font-size: 14px;
+    color: #007bff;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#etatFilter option {
+    background: #ffffff;
+    color: #333;
+    padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    #etatFilter {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

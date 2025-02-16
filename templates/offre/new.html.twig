@@ -7,22 +7,26 @@
     <div class="mb-3">
         {{ form_label(form.reduction) }}
         {{ form_widget(form.reduction, {'attr': {'class': 'form-control'}}) }}
-        <div class="invalid-feedback">Veuillez renseigner ce champ</div>
+        {{ form_errors(form.reduction) }}
+        
     </div>
     <div class="mb-3">
         {{ form_label(form.dateDebut) }}
         {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
-        <div class="invalid-feedback">Veuillez sélectionner une date de début.</div>
+         {{ form_errors(form.dateDebut) }}
+        
     </div>
     <div class="mb-3">
         {{ form_label(form.dateExpiration) }}
         {{ form_widget(form.dateExpiration, {'attr': {'class': 'form-control'}}) }}
-        <div class="invalid-feedback">Veuillez sélectionner une date d'expiration.</div>
+         {{ form_errors(form.dateExpiration) }}
+        
     </div>
     <div class="mb-3">
         {{ form_label(form.activitie) }}
         {{ form_widget(form.activitie, {'attr': {'class': 'form-control'}}) }}
-        <div class="invalid-feedback">Veuillez choisir une activité.</div>
+         {{ form_errors(form.activitie) }}
+       
     </div>
     {{ form_end(form) }}
 </div>

@@ -384,4 +384,24 @@ class Activite
 
         return $this;
     }
+
+    public function getPrixReduit(): float
+{
+    $offreActive = null;
+    
+    foreach ($this->offres as $offre) {
+        $now = new \DateTime();
+        if ($offre->getDateDebut() <= $now && $offre->getDateExpiration() >= $now) {
+            $offreActive = $offre;
+            break;
+        }
+    }
+
+    if ($offreActive) {
+        return $this->prix * (1 - $offreActive->getReduction() / 100);
+    }
+
+    return $this->prix;
+}
+
 }
