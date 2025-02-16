@@ -46,9 +46,7 @@ class VoucherType extends AbstractType
             'required' => false,
             'placeholder' => 'Aucun', 
         ])
-        ->add('save', SubmitType::class, [
-            'label' => 'Enregistrer'
-        ]);
+       
     ;
     }
 

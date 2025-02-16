@@ -34,6 +34,11 @@
             {{ form_widget(voucherForm.user, {'attr': {'class': 'form-control' ~ (voucherForm.user.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
             {{ form_errors(voucherForm.user) }}
         </div>
+
+        <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Ajouter l'offre</button>
+        </div>
+
     {{ form_end(voucherForm) }}
 </div>
 {% endblock %}

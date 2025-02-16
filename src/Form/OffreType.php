@@ -43,9 +43,7 @@ class OffreType extends AbstractType
                 'placeholder' => 'Choisir une activité', // Optionnel, permet d'ajouter un message placeholder
                 'disabled' => $options['is_edit'], 
         ])
-        ->add('save', SubmitType::class, [
-            'label' => 'Enregistrer'
-        ]);
+       
            
             
         ;
