@@ -187,7 +187,6 @@ class AdminController extends AbstractController
         if (!in_array($role, ['admin', 'artisant', 'prestataire'])) {
             return $this->redirectToRoute('app_login'); // Redirect to login page
         }
-        
         $form = $this->createForm(InfoFormType::class, $user);
         $form->handleRequest($request);
 

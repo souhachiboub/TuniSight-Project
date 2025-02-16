@@ -48,10 +48,10 @@ class ActiviteType extends AbstractType
                 'choice_label' => 'nom',
 
             ])
-            ->add('offre', EntityType::class, [
-                'class' => Offre::class,
-                'choice_label' => 'nom',
-            ])
+            // ->add('offre', EntityType::class, [
+            //     'class' => Offre::class,
+            //     'choice_label' => 'nom',
+            // ])
             ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],

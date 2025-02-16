@@ -1,79 +1,84 @@
-{{ form_start(form) }}
 
+<style>
+.form-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 15px;
+			margin-bottom: 15px;
+		}
+		.invalid-feedback {
+			color: red;
+			font-size: 12px;
+		}
+</style>
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+<h1>Inscrivez-vous</h1>
+<div class="form-row">
 
-<div class="field-group">
-    <div class="field">
-        {{ form_label(form.nom) }}
-        {{ form_widget(form.nom, {'attr': {'class': 'input'}}) }}
-        <div class="invalid-feedback">
-            {{ form_errors(form.nom) }}
-        </div>
-    </div>
+		<div class="field input-field">
+			{{ form_widget(form.nom, {'attr': {'class': 'input', 'placeholder': 'Nom'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(form.nom) }}
+			</div>
+		</div>
+		
 
-    <div class="field">
-        {{ form_label(form.prenom) }}
-        {{ form_widget(form.prenom, {'attr': {'class': 'input'}}) }}
-        <div class="invalid-feedback">
-            {{ form_errors(form.prenom) }}
-        </div>
-    </div>
-</div>
-
+		<div class="field input-field">
+			{{ form_widget(form.prenom, {'attr': {'class': 'input', 'placeholder': 'Prénom'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(form.prenom) }}
+			</div>
+		</div>
+	</div>
+            <br/>
+		
 <div class="field button-field">
-    {{ form_label(form.email) }}
-    {{ form_widget(form.email, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.email, {'attr': {'class': 'input', 'placeholder': 'Email'}}) }}
     <div class="invalid-feedback">
         {{ form_errors(form.email) }}
     </div>
 </div>
+<br/>
 
 <div class="field button-field">
-    {{ form_label(form.motdepasse) }}
-    {{ form_widget(form.motdepasse, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.motdepasse, {'attr': {'class': 'input', 'placeholder': 'Mot de passe'}}) }}
     <div class="invalid-feedback">
         {{ form_errors(form.motdepasse) }}
     </div>
 </div>
-
+<br/>
 <div class="field button-field">
-    {{ form_label(form.confirmpwd) }}
-    {{ form_widget(form.confirmpwd, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.confirmpwd, {'attr': {'class': 'input', 'placeholder': 'Confirmer le mot de passe'}}) }}
     <div class="invalid-feedback">
         {{ form_errors(form.confirmpwd) }}
     </div>
 </div>
-
+<br/>
 <div class="field button-field">
-    {{ form_label(form.dateNaissance) }}
-    {{ form_widget(form.dateNaissance, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.dateNaissance, {'attr': {'class': 'input', 'placeholder': 'Date de naissance'}}) }}
     <div class="invalid-feedback">
         {{ form_errors(form.dateNaissance) }}
     </div>
 </div>
-
+<br/>
 <div class="field button-field">
-    {{ form_label(form.cin) }}
-    {{ form_widget(form.cin, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.cin, {'attr': {'class': 'input', 'placeholder': 'CIN'}}) }}
     <div class="invalid-feedback">
         {{ form_errors(form.cin) }}
     </div>
 </div>
-<br>
+<br/>
 <div class="field button-field">
-    {{ form_label(form.role) }}
-    {{ form_widget(form.role, {'attr': {'class': 'input'}}) }}
+    {{ form_widget(form.role, {'attr': {'class': 'input', 'placeholder': 'Rôle'}}) }}
     <div class="invalid-feedback">
-        {{ form_errors(form.role) }}
+    {{ form_errors(form.role) }}
     </div>
 </div>
-
-
-<br>
-
 <div class="field button-field">
     <center>
         <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
     </center>
 </div>
+<br/>
 
 {{ form_end(form) }}

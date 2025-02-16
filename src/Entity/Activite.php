@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+
 #[ORM\Entity(repositoryClass: ActiviteRepository::class)]
 #[Vich\Uploadable]
 class Activite
@@ -23,7 +24,7 @@ class Activite
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column]
@@ -44,40 +45,6 @@ class Activite
     #[ORM\ManyToOne(inversedBy: 'activites')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
-    #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
-    private ?File $imageFile = null;
-
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if ($imageFile) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-
-
-    // Ajoute un setter pour la propriété updatedAt
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    // Ajoute un getter pour la propriété updatedAt
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
 
     /**
      * @ORM\Column(type="date")
@@ -118,6 +85,7 @@ class Activite
     /**
      * @var Collection<int, Avis>
      */
+
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'activite', orphanRemoval: true)]
     private Collection $avis;
 
@@ -131,17 +99,51 @@ class Activite
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieActivite $categorie = null;
 
-     /**
-     * @var Collection<int, Offre>
-     */
-    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'activitie')]
-    private Collection $offres;
+    #[ORM\ManyToOne(inversedBy: 'activites')]
+    private ?Offre $offre = null;
 
     /**
      * @var Collection<int, Reservation>
      */
     #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'activites')]
     private Collection $reservation;
+
+
+    #[Vich\UploadableField(mapping: 'activite_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+
+
+    // Ajoute un setter pour la propriété updatedAt
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    // Ajoute un getter pour la propriété updatedAt
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
 
     public function __construct()
     {
@@ -184,7 +186,7 @@ class Activite
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
 
@@ -208,9 +210,12 @@ class Activite
         return $this->duree;
     }
 
-    public function setDuree(?int $duree): static
+    public function setDuree(): static
     {
-        $this->duree = $duree;
+        if ($this->dateDebut && $this->dateFin) {
+            $interval = $this->dateDebut->diff($this->dateFin);
+            $this->duree = $interval->days;
+        }
 
         return $this;
     }
@@ -329,7 +334,17 @@ class Activite
         return $this;
     }
 
-   
+    public function getOffre(): ?Offre
+    {
+        return $this->offre;
+    }
+
+    public function setOffre(?Offre $offre): static
+    {
+        $this->offre = $offre;
+
+        return $this;
+    }
 
     /**
      * @return Collection<int, Reservation>
@@ -354,54 +369,4 @@ class Activite
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Offre>
-     */
-    public function getOffres(): Collection
-    {
-        return $this->offres;
-    }
-
-    public function addOffre(Offre $offre): static
-    {
-        if (!$this->offres->contains($offre)) {
-            $this->offres->add($offre);
-            $offre->setActivitie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOffre(Offre $offre): static
-    {
-        if ($this->offres->removeElement($offre)) {
-            // set the owning side to null (unless already changed)
-            if ($offre->getActivitie() === $this) {
-                $offre->setActivitie(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getPrixReduit(): float
-{
-    $offreActive = null;
-    
-    foreach ($this->offres as $offre) {
-        $now = new \DateTime();
-        if ($offre->getDateDebut() <= $now && $offre->getDateExpiration() >= $now) {
-            $offreActive = $offre;
-            break;
-        }
-    }
-
-    if ($offreActive) {
-        return $this->prix * (1 - $offreActive->getReduction() / 100);
-    }
-
-    return $this->prix;
-}
-
 }

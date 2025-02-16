@@ -69,50 +69,45 @@ final class ReclamationController extends AbstractController
         return $queryBuilder->getQuery()->getResult();
     }
 
-    #[Route('/reclamation/mes-reclamations', name: 'app_reclamation_mes')]
-    public function showMyReclamations(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $user = $entityManager->getRepository(User::class)->find(2); 
+    #[Route('/reclamation/mes-reclamations', name: 'app_reclamation_mes')] // Combined route
+public function showMyReclamations(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $user = $entityManager->getRepository(User::class)->find(2); // Get the user (replace 2 with actual user logic)
 
-        $etatFilter = $request->query->get('etat', 'tout'); 
+    // 1. Handle Reclamation Form (Add Reclamation)
+    $reclamation = new Reclamation();
+    $reclamation->setUser($user);
+    $reclamation->setEtat(EtatReclamtion::ATTENTE);
+    $reclamation->setDateEnvoie(new \DateTime());
 
-        $criteria = ['user' => $user];
+    $form = $this->createForm(ReclamationType::class, $reclamation);
+    $form->handleRequest($request);
 
-        if ($etatFilter !== 'tout') {
-            $criteria['etat'] = $etatFilter;
-        }
-
-        $reclamations = $entityManager->getRepository(Reclamation::class)->findBy($criteria, ['dateEnvoie' => 'DESC']); // Tri par date
-
-        return $this->render('reclamation/showMesReclamation.html.twig', [
-            'reclamations' => $reclamations,
-            'etatFilter' => $etatFilter, 
-        ]);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($reclamation);
+        $entityManager->flush();
+        $this->addFlash('success', 'Votre réclamation a été soumise avec succès !');
+        return $this->redirectToRoute('app_reclamation_mes'); // Redirect to the same page
     }
 
-    #[Route('/reclamation/new', name: 'app_reclamation_new')]
-    public function addReclamation(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $reclamation = new Reclamation();
-        $user = $entityManager->getRepository(User::class)->find(2); // Test
-        $reclamation->setUser($user);
-        $reclamation->setEtat(EtatReclamtion::ATTENTE);
 
-        $reclamation->setDateEnvoie(new \DateTime());
-        $form = $this->createForm(ReclamationType::class, $reclamation);
-        $form->handleRequest($request);
+    // 2. Fetch Reclamations (Show My Reclamations)
+    $etatFilter = $request->query->get('etat', 'tout');
+    $criteria = ['user' => $user];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($reclamation);
-            $entityManager->flush();
-            $this->addFlash('success', 'Votre réclamation a été soumise avec succès !');
-            return $this->redirectToRoute('app_reclamation_mes');
-        }
-
-        return $this->render('reclamation/addReclamation.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    if ($etatFilter !== 'tout') {
+        $criteria['etat'] = $etatFilter;
     }
+
+    $reclamations = $entityManager->getRepository(Reclamation::class)->findBy($criteria, ['dateEnvoie' => 'DESC']);
+
+
+    return $this->render('reclamation/showMesReclamation.html.twig', [ // Combined template
+        'reclamations' => $reclamations,
+        'etatFilter' => $etatFilter,
+        'form' => $form->createView(), // Pass the form to the template
+    ]);
+}
 
     #[Route('/reclamation/delete/{id}', name: 'app_reclamation_delete', methods: ['POST'])]
     public function deleteReclamation(Request $request, EntityManagerInterface $entityManager): Response
@@ -155,7 +150,8 @@ final class ReclamationController extends AbstractController
             'dateEnvoie' => $reclamation->getDateEnvoie()->format('Y-m-d'),
             'etat' => $reclamation->getEtat(),
             'description' => $reclamation->getDescription(),
-            'id'=>$reclamation->getId()
+            'id'=>$reclamation->getId(),
+            'reponse'=> $reclamation->getReponse()->getReponse()
         ]);
     }
 
@@ -181,7 +177,9 @@ final class ReclamationController extends AbstractController
             ],
             'dateEnvoie' => $reclamation->getDateEnvoie()->format('Y-m-d'),
             'etat' => $reclamation->getEtat(),
-            'description' => $reclamation->getDescription()
+            'description' => $reclamation->getDescription(),
+            'reponse'=> $reclamation->getReponse()->getReponse()
+
         ]);
     }
 }

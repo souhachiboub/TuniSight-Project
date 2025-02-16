@@ -1,27 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Login and Signup Form</title>
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ asset('loginfront/style.css') }}">
-  
-  <!-- Boxicons CSS -->
-  <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
-</head>
-<body>
-  <section class="container forms">
-    <div class="form login">
-      <div class="form-content">
-        {% block content %}
-        {% endblock %}
-        <!-- Block body content -->
-      </div>
-    </div>
-  </section>
-  <!-- JavaScript -->
-</body>
-</html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>S'inscrire</title>
+
+		<!-- CSS -->
+		<link
+		rel="stylesheet" href="{{ asset('loginfront/style.css') }}">
+
+		<!-- Boxicons CSS -->
+		<link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+
+		<style>
+			/* Appliquer l'image de fond avec un effet de transparence */
+			body {
+				position: relative;
+				background-image: url('{{ asset('client/images/background33.jpg') }}');
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				height: 100vh; /* Assure que l'image couvre toute la hauteur de la fenêtre */
+			}
+
+			/* Optionnel : Ajoutez un fond plus clair pour les éléments de formulaire */
+			.container.forms {
+				background-color: rgba(255, 255, 255, 0.8); /* Fond clair avec 80% d'opacité */
+				border-radius: 10px;
+				padding: 30px;
+				width: 100%;
+				max-width: 450px; /* Limiter la taille du formulaire */
+				margin: 0 auto; /* Centrer le formulaire */
+				box-sizing: border-box; /* Assurer que la largeur inclut les marges et les bordures */
+			}
+
+			/* Formulaire avec fond clair et un effet de transparence */
+			.form {
+				padding: 40px;
+				background-color: rgba(255, 255, 255, 0.95); /* Formulaire clair avec un fond légèrement transparent */
+				border-radius: 12px;
+			}
+
+			/* Pour les champs du formulaire */
+			input,
+			select,
+			textarea {
+				width: 100%;
+				padding: 12px;
+				margin-bottom: 15px;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				background-color: rgba(255, 255, 255, 0.8);
+				font-size: 16px;
+			}
+
+			input:focus,
+			select:focus,
+			textarea:focus {
+				outline: none;
+				border-color: #007bff; /* Change border color when focused */
+			}
+
+			/* Améliorer la lisibilité du texte dans le formulaire */
+			.form-content {
+				color: #333;
+				font-family: 'Arial', sans-serif;
+				font-size: 18px;
+			}
+
+			/* Bouton d'inscription */
+			button {
+				width: 100%;
+				padding: 15px;
+				background-color: #007bff; /* Couleur bleue */
+				color: white;
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+			}
+
+			button:hover {
+				background-color: #0056b3;
+			}
+		</style>
+	</head>
+	<body>
+		<section class="container forms">
+			<div class="form login">
+				<div class="form-content"> {% block content %}{% endblock %}
+					</div>
+				</div>
+			</section>
+		</body>
+	</html>

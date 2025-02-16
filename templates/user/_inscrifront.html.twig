@@ -1,70 +1,132 @@
-{{ form_start(form) }}
+{% extends 'baseLoginInscriFront.html.twig' %}
 
-<h1> Inscrivez-vous </h1>
+{% block title %}Inscription
+{% endblock %}
 
-<div class="field input-field">
-    {{ form_label(form.nom) }}
-    {{ form_widget(form.nom, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.nom) }}
-    </div>
-</div>
+{% block content %}
+	<style>
+		.form-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 15px;
+			margin-bottom: 15px;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.prenom) }}
-    {{ form_widget(form.prenom, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.prenom) }}
-    </div>
-</div>
+		.field {
+			flex-basis: 45%;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.email) }}
-    {{ form_widget(form.email, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.email) }}
-    </div>
-</div>
+		.input {
+			width: 100%;
+			padding: 10px;
+			margin-bottom: 8px;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			font-size: 14px;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.motdepasse) }}
-    {{ form_widget(form.motdepasse, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.motdepasse) }}
-    </div>
-</div>
+		.btn {
+			padding: 10px 18px;
+			background-color: #53d2dc;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 14px;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.confirmpwd) }}
-    {{ form_widget(form.confirmpwd, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.confirmpwd) }}
-    </div>
-</div>
+		.btn:hover {
+			background-color: #53d2dc;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.dateNaissance) }}
-    {{ form_widget(form.dateNaissance, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.dateNaissance) }}
-    </div>
-</div>
+		.invalid-feedback {
+			color: red;
+			font-size: 12px;
+		}
 
-<div class="field input-field">
-    {{ form_label(form.cin) }}
-    {{ form_widget(form.cin, {'attr': {'class': 'input'}}) }}
-    <div class="invalid-feedback">
-        {{ form_errors(form.cin) }}
-    </div>
-</div>
+		h1 {
+			text-align: center;
+			font-size: 24px;
+		}
+	</style>
 
-<br>
-<center>
-    <div class="field button-field">
+	
 
-    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
-        </div>
+	{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+	<h1>Inscrivez-vous</h1>
+	<div class="form-row">
+		<div class="field input-field">
+			{{ form_widget(form.nom, {'attr': {'class': 'input', 'placeholder': 'Nom'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(form.nom) }}
+			</div>
+		</div>
+		<br/>
 
-</center>
+		<div class="field input-field">
+			{{ form_widget(form.prenom, {'attr': {'class': 'input', 'placeholder': 'Prénom'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(form.prenom) }}
+			</div>
+		</div>
+		
+	</div>
 
-{{ form_end(form) }}
+	<br/>
+
+	<div class="field input-field">
+		{{ form_widget(form.email, {'attr': {'class': 'input', 'placeholder': 'Email'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(form.email) }}
+		</div>
+	</div>
+
+	<br/>
+
+	<div class="field input-field">
+		{{ form_widget(form.motdepasse, {'attr': {'class': 'input', 'placeholder': 'Mot de passe', 'type': 'password'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(form.motdepasse) }}
+		</div>
+	</div>
+
+	<br/>
+
+	<div class="field input-field">
+		{{ form_widget(form.confirmpwd, {'attr': {'class': 'input', 'placeholder': 'Confirmer le mot de passe', 'type': 'password'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(form.confirmpwd) }}
+		</div>
+	</div>
+	<br/>
+
+	<div class="field input-field">
+		{{ form_widget(form.dateNaissance, {'attr': {'class': 'input', 'placeholder': 'Date de naissance'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(form.dateNaissance) }}
+		</div>
+	</div>
+	<br/>
+
+	<div class="field input-field">
+		{{ form_widget(form.cin, {'attr': {'class': 'input', 'placeholder': 'CIN'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(form.cin) }}
+		</div>
+	</div>
+	<br/>
+
+	<br>
+	<center>
+		<div class="field button-field">
+			<button class="btn btn-primary">{{ button_label|default("S'inscrire") }}</button>
+		</div>
+		<a href="{{ path('app_login_front') }}" style="color: black; margin-right: 300px;">
+			Retour
+			<i class="bx bx-arrow-right"></i>
+			<!-- Icône flèche -->
+		</a>
+	</center>
+
+	{{ form_end(form) }}
+{% endblock %}

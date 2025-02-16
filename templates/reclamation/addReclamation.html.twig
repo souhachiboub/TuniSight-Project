@@ -1,13 +1,13 @@
 
-<!-- Bouton pour ouvrir le modal -->
-<button class="btn btn-primary" data-modal="reclamationModal">Ajouter une réclamation</button>
+{% block body %}
+<button class="btn btn-primary" data-modal="addReclamationModal">
+        <img src="{{ asset('clients/images/write.png') }}" alt="Ajouter une réclamation" style="width: 30px; height: 30px;"  title="Ajouter une publication">
+</button>
 
-<!-- Modal -->
-<div id="reclamationModal" class="modal">
-    <div class="modal-content">
+<div id="addReclamationModal" class="modal">  <div class="modal-content">
         <a href="#" class="close">&times;</a>
         <div class="logo" style="text-align: center;">
-            <h2>Soumettre une réclamation</h2>
+            <p style="font-weight:bold ; font-size : 24px ; color: #2B3940;">Soumettre une réclamation</p>
             {{ form_start(form, {'attr': {'id': 'reclamationForm'}}) }}
             <div class="input-group">
                 <label for="{{ form.description.vars.id }}"></label>
@@ -20,17 +20,25 @@
                         'class': 'textarea'
                     }
                 }) }}
-            <button type="submit" class="submit-btn">Soumettre</button>
-            {{ form_end(form) }}
+                {% for error in form.description.vars.errors %}
+                    <p style= "color : red;"class="error">{{ error.message }}</p>
+                {% endfor %}
+                <button type="submit" class="submit-btn">Soumettre</button>
+                {{ form_end(form) }}
+            </div>
         </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const modals = document.querySelectorAll('.modal');
-        const openModalButtons = document.querySelectorAll('[data-modal]');
-        const closeModalButtons = document.querySelectorAll('.close');
+        const addReclamationModal = document.getElementById('addReclamationModal'); // Get the specific modal
+        const openModalButton = document.querySelector('[data-modal="addReclamationModal"]'); // Get the specific button
+        const closeModalButton = addReclamationModal.querySelector('.close'); //Close button of the specific modal
+
 
         function clearForm(modal) {
             const form = modal.querySelector('form');
@@ -39,47 +47,41 @@
             }
         }
 
-        openModalButtons.forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                const modalId = button.getAttribute('data-modal');
+        openModalButton.addEventListener('click', function(event) {
+            event.preventDefault();
 
-                modals.forEach(modal => {
+            // Hide other modals (if any) - Important if you have more modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (modal.id !== 'addReclamationModal') { // Exclude the target modal
                     modal.style.display = 'none';
-                    clearForm(modal);
-                });
-
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.style.display = 'block';
                 }
             });
+
+            addReclamationModal.style.display = 'block'; // Show ONLY the target modal
         });
 
-        closeModalButtons.forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                const modal = button.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    clearForm(modal);
-                }
-            });
+        closeModalButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            addReclamationModal.style.display = 'none';
+            clearForm(addReclamationModal);
         });
-    });
 
-    document.addEventListener("DOMContentLoaded", function () {
+        // Textarea auto-resize (unchanged)
         const textarea = document.querySelector("textarea");
-
         textarea.addEventListener("input", function () {
             this.style.height = "auto";
             this.style.height = this.scrollHeight + "px";
         });
     });
 </script>
+{% endblock %}
+{% block css %}
 
 <style>
-    
+    .error {
+        display: none; 
+    }
     .modal {
         display: none;
         position: fixed;
@@ -172,14 +174,17 @@
     }
     
     .btn-primary {
-        background-color: #26648E;
+        background-color:white;
         color: white;
         border: none;
-        padding: 10px 15px;
+        padding: 20px 20px;
         font-size: 16px;
-        border-radius: 5px;
+        border-radius: 50%;
         cursor: pointer;
         transition: all 0.3s ease;
+        bottom: -120px; /* Distance du bas de l'écran */
+        right: 300px; /* Distance du côté gauche de l'écran */
+        position : absolute ;
     }
     
     .btn-primary:hover {
@@ -230,3 +235,4 @@
         }
     }
 </style>
+{% endblock %}

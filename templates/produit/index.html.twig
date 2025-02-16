@@ -3,11 +3,13 @@
 {% block body %}
 <div class="container mt-5">
     <h2 class="mb-4">Liste des Produits</h2>
+
+
+   <div class="d-flex justify-content-end">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajoutProduitModal">
         Ajouter un Produit
     </button>
-
-
+</div>
 
     <!-- Modal d'ajout -->
     <div class="modal fade" id="ajoutProduitModal" tabindex="-1" aria-labelledby="ajoutProduitModalLabel" aria-hidden="true">
@@ -26,27 +28,41 @@
                         <div class="mb-3">
                             {{ form_label(formProduit.libelle, 'Libellé') }}
                             {{ form_widget(formProduit.libelle, {'attr': {'class': 'form-control'}}) }}
+    <div id="error-libelle" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
                         <div class="mb-3">
                             {{ form_label(formProduit.description, 'Description') }}
                             {{ form_widget(formProduit.description, {'attr': {'class': 'form-control'}}) }}
+                                <div id="error-description" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
                         <div class="mb-3">
                             {{ form_label(formProduit.prix, 'Prix') }}
                             {{ form_widget(formProduit.prix, {'attr': {'class': 'form-control', 'min': '0'}}) }}
+                                <div id="error-prix" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
                         <div class="mb-3">
                             {{ form_label(formProduit.categorieProduit, 'Catégorie') }}
                             {{ form_widget(formProduit.categorieProduit, {'attr': {'class': 'form-control'}}) }}
+                                <div id="error-CategorieProduit" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
                         <div class="mb-3">
                             {{ form_label(formProduit.quantite, 'Quantité') }}
                             {{ form_widget(formProduit.quantite, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                                <div id="error-quantite" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
                         <div class="mb-3">
                             {{ form_label(formProduit.imageFile, 'Image') }}
                             {{ form_widget(formProduit.imageFile, {'attr': {'class': 'form-control'}}) }}
+                                <div id="error-imageFile" class="text-danger"></div> <!-- Div d'erreur -->
+
                         </div>
+                        <div id="errorMessage" class="alert alert-danger d-none"></div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                             <button type="submit" class="btn btn-success">Ajouter</button>
@@ -56,9 +72,7 @@
             </div>
         </div>
     </div>
-
-
-    <div class="container mt-5">
+<div class="container mt-5">
     <!-- Tableau des produits -->
     <table class="table table-bordered shadow-sm mt-3">
         <!-- En-tête du tableau -->
@@ -97,30 +111,33 @@
                     <td>
                         <!-- Bouton "Voir" -->
                         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#voirProduitModal{{ produit.id }}">
-                            <i class="bi bi-eye"></i> Voir
+                            <i class="bi bi-eye"></i>
                         </button>
 
                         <!-- Bouton "Modifier" -->
-                        <button class="btn btn-warning edit-produit-btn" data-id="{{ produit.id }}" data-bs-toggle="modal" data-bs-target="#editProduitModal">
-                            Modifier
+                        <button class="btn btn-primary btn-sm edit-produit-btn" data-id="{{ produit.id }}" data-bs-toggle="modal" data-bs-target="#editProduitModal">
+                            <i class="bi bi-pencil"></i>
                         </button>
 
                         <!-- Bouton "Stock" -->
-                        <button type="button" class="btn btn-primary edit-product-btn"
+                        <button type="button" class="btn btn-info btn-sm edit-product-btn"
                                 data-id="{{ produit.id }}" 
                                 data-quantite="{{ produit.quantite }}" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#editProductModal">
-                            Stock
+                            <i class="bi bi-box"></i>
                         </button>
 
                         <!-- Bouton "Supprimer" -->
-                        <form method="post" action="{{ path('produit_delete', {'id': produit.id}) }}" class="d-inline delete-form">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                <i class="bi bi-trash"></i> Supprimer
-                            </button>
-                        </form>
+           <form method="post" action="{{ path('produit_delete', {'id': produit.id}) }}" class="d-inline delete-form"
+      data-libelle="{{ produit.libelle }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+    <button type="submit" class="btn btn-danger btn-sm">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>
+
+
                     </td>
                 </tr>
             {% endfor %}
@@ -130,19 +147,33 @@
     <!-- Icône de poubelle pour la suppression multiple -->
     <div id="deleteMultipleButton" class="d-none">
         <button class="btn btn-danger" onclick="deleteSelectedProducts()">
-            <i class="bi bi-trash"></i> Supprimer les éléments sélectionnés
+            <i class="bi bi-trash"></i>
         </button>
     </div>
 </div>
 
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmLabel">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmMessage">Êtes-vous sûr de vouloir supprimer ce produit ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-
-
 
 
 $(document).ready(function() {
@@ -194,6 +225,48 @@ $(document).ready(function() {
 
 });
 
+});
+
+let deleteForm; // Stocker le formulaire à soumettre après confirmation
+
+document.querySelectorAll(".delete-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Empêcher la soumission immédiate
+        deleteForm = form; // Stocker le formulaire actuel
+        let produitLibelle = form.dataset.libelle || "ce produit"; // Récupérer le libellé
+        document.getElementById("deleteConfirmMessage").textContent =
+            `Êtes-vous sûr de vouloir supprimer ${produitLibelle} ?`;
+        let deleteModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+        deleteModal.show();
+    });
+});
+
+// Gérer la confirmation de suppression
+document.getElementById("confirmDeleteButton").addEventListener("click", function () {
+    if (deleteForm) {
+        fetch(deleteForm.action, {
+            method: "POST",
+            body: new FormData(deleteForm)
+        })
+        .then(response => response.json()) // Supposant que le serveur renvoie un JSON
+        .then(data => {
+            if (data.success) {
+                let successModal = new bootstrap.Modal(document.getElementById("successModalsup"));
+                successModal.show();
+
+                // Attendre 2 secondes et recharger la page
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                alert("Une erreur est survenue lors de la suppression.");
+            }
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            alert("Une erreur est survenue lors de la suppression.");
+        });
+    }
 });
 
 </script>
@@ -259,7 +332,6 @@ function deleteSelectedProducts() {
         alert("Aucun produit sélectionné.");
     }
 }
-
 // Fonction pour confirmer la suppression
 function confirmDelete() {
     const selectedIds = window.selectedIds;
@@ -280,7 +352,7 @@ function confirmDelete() {
             $('#confirmDeleteModal').modal('hide');
 
             // Afficher le modal de succès
-            $('#successModal').modal('show');
+            $('#successModalsupmul').modal('show');
 
             // Recharger la page après 2 secondes
             setTimeout(() => {
@@ -344,13 +416,6 @@ function confirmDelete() {
         </div>
     {% endfor %}
 </div>
-
-
-
-
-
-
-
 <!-- Modal de succès -->
 <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -374,6 +439,49 @@ function confirmDelete() {
   </div>
 </div>
 
+<!-- Modal de succès -->
+<div class="modal fade" id="successModalsupmul" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête du modal -->
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">Succès</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="modal-body">
+        <p id="successMessage">Produits supprimés  avec succès.</p>
+      </div>
+
+      <!-- Pied du modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="successModalsup" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête du modal -->
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">Succès</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="modal-body">
+        <p id="successMessage">Produit supprimé avec succès.</p>
+      </div>
+
+      <!-- Pied du modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -392,7 +500,6 @@ document.addEventListener("DOMContentLoaded", function () {
             form.submit();  // Soumet le formulaire
         });
     });
-
     // 2. Soumission des formulaires dans les modals
     const forms = document.querySelectorAll('.modal form');  // Sélectionne tous les formulaires à l'intérieur des modals
     forms.forEach(form => {
@@ -425,6 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
+
     // 3. Soumission des formulaires de mise à jour du stock (class '.stock-form')
     document.querySelectorAll("form.stock-form").forEach(form => {
         form.addEventListener("submit", function(e) {
@@ -478,110 +586,56 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // 4. Gestion AJAX pour le formulaire d'ajout de produit (ID : 'form-produit')
 const formProduit = document.getElementById("form-produit");
+
 if (formProduit) {
     formProduit.addEventListener("submit", function (e) {
-        e.preventDefault();  // Empêche la soumission classique du formulaire
+          console.log("Submit produit");
+        e.preventDefault();
+  const submitButton = formProduit.querySelector("button[type='submit']");
+        submitButton.disabled = true;
 
-        const formData = new FormData(this);  // Récupère les données du formulaire
-        const url = this.getAttribute("action");  // Récupère l'URL d'action du formulaire
+        const formData = new FormData(this);
+        const url = this.getAttribute("action");
 
-        // Envoie les données via une requête AJAX avec fetch
+        // 🔹 Supprime les anciens messages d'erreur
+        document.querySelectorAll(".text-danger").forEach(el => el.textContent = "");
+
         fetch(url, {
             method: "POST",
-            body: formData,  // Corps de la requête : les données du formulaire
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }  // Indique qu'il s'agit d'une requête AJAX
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(response => response.json())  // Convertit la réponse en JSON
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Mettre à jour le texte du modal avec le message de succès
                 document.getElementById("successMessage").textContent = "Produit ajouté avec succès !";
-
-                // Afficher le modal de succès
                 let successModalEl = document.getElementById("successModal");
                 let successModal = bootstrap.Modal.getInstance(successModalEl) || new bootstrap.Modal(successModalEl);
                 successModal.show();
 
-                // Recharger la page après quelques secondes pour afficher le nouveau produit
                 setTimeout(() => {
                     location.reload();
-                }, 2000); // Recharge après 2 secondes
+                }, 2000);
             } else {
-                alert("Erreur : " + (data.errors ? data.errors.join("\n") : "Une erreur est survenue."));
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        let errorDiv = document.getElementById(`error-${field}`);
+                        if (errorDiv) {
+                            errorDiv.innerHTML = data.errors[field].map(err => `<p>${err}</p>`).join("");
+                        }
+                    });
+                }
+                                submitButton.disabled = false;
+
             }
         })
-        .catch(error => console.error("Erreur :", error));  // Affiche l'erreur dans la console en cas de problème
-    });
-} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 5. Confirmation avant la suppression d'un produit
-    document.querySelectorAll(".delete-form").forEach(form => {
-        form.addEventListener("submit", function (e) {
-            if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) {
-                e.preventDefault();  // Si l'utilisateur annule, la soumission est empêchée
-            }
+        .catch(error => {
+            console.error("Erreur :", error);
         });
     });
-
+}
 
 });
 
@@ -632,7 +686,6 @@ function showSuccessModal(message) {
     let successModal = new bootstrap.Modal(document.getElementById("successModal"));
     successModal.show();
 }
-
 // Soumission du formulaire via AJAX
 document.addEventListener("submit", function(e) {
     if (e.target && e.target.id === "form-edit-produit") {

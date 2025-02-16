@@ -67,7 +67,7 @@ class ProduitType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Produit::class,
             'is_edit' => false,
-            'csrf_protection' => false, // Désactive la protection CSRF
+           'csrf_protection' => true, // Désactive la protection CSRF
 
         ]);
     }

@@ -88,13 +88,13 @@
     {% elseif role == 'Prestataire' %}
         <!-- Prestataire Menu -->
         <li class="nav-item active">
-            <a class="nav-link" href="{{ path('app_categorie_activite_index', {'id': userId}) }}">
+            <a class="nav-link" href="{{ path('mesinfo', {'id': userId}) }}">
                 <i class="fas fa-fw fa-user"></i>
                 <span>Mes infos</span>
             </a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{path('app_categorie_activite_index')}}">
                 <i class="fas fa-fw fa-briefcase"></i>
                 <span>Gérer Activité Touristique</span>
             </a>
@@ -114,13 +114,13 @@
             </a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{path('app_produit')}}">
                 <i class="fas fa-fw fa-box"></i>
                 <span>Gérer les Produits</span>
             </a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{path('app_categorie_produit')}}">
                 <i class="fas fa-fw fa-list"></i>
                 <span>Gérer les Catégories de Produit</span>
             </a>

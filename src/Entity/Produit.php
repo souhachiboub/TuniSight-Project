@@ -22,7 +22,7 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le libellé ne peut pas être vide ririiii.", groups: ['Default'])]
+    #[Assert\NotBlank(message: "Le libellé ne peut pas être vide.", groups: ['Default'])]
     #[Assert\Length(
     max: 255,
     maxMessage: "Le libellé ne peut pas dépasser 255 caractères."
@@ -38,7 +38,7 @@ class Produit
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Le prix est obligatoire.")]
-#[Assert\PositiveOrZero(message: "Le prix ne peut pas être négatif rourorrrrr.")]
+#[Assert\PositiveOrZero(message: "Le prix ne peut pas être négatif.")]
     private ?float $prix = null;
 
     #[ORM\Column(length: 255, nullable: true)]

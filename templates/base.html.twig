@@ -17,7 +17,7 @@
 			<link rel="stylesheet" href="{{asset('client/css/magnific-popup.css')}}">
 
 			<link rel="stylesheet" href="{{asset('client/css/bootstrap-datepicker.css')}}">
-
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 			<link rel="stylesheet" href="{{asset('client/css/flaticon.css')}}">
 			<link rel="stylesheet" href="{{asset('client/css/style.css')}}">
@@ -160,13 +160,17 @@
 			.ml-2 {
 				color: black !important
 			}
+			.icons {
+				background-color: #53d2dc !important;
+
+			}
 		</style>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 			<div class="container">
-				<img class="img" src="{{asset('admin/img/logo.png')}}"/>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+				<img class="img" src="{{asset('admin/img/logo.png')}}" href=" {{ path('app_index') }} "/>
+				<button class=" navbar-toggler" type=" button" data-toggle=" collapse" data-target=" #ftco-nav" aria-controls=" ftco-nav" aria-expanded=" false" aria-label=" toggle navigation">
 					<span class="oi oi-menu"></span>
 					Menu
 				</button>
@@ -174,380 +178,166 @@
 				<div class="collapse navbar-collapse" id="ftco-nav">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item active">
-							<a href="index.html" class="nav-link">Accueil</a>
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
 						</li>
 						<li class="nav-item">
 							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
 						</li>
 						<li class="nav-item">
-							<a href="destination.html" class="nav-link">Destination</a>
+							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
 						</li>
 
-						
 
 					</li>
 					<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i style="font-size:30px" class="fa fa-user-circle"></i>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i style="font-size:30px" class="fa fa-user-circle"></i>
+						</a>
+						<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
 
-        {% if userId is not null %}
-            <a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
-                <i class="fa fa-user text-primary"></i>
-                <span class="ml-2">👤 {{ nom }} {{ prenom }}</span>
-            </a>
-            <a class="dropdown-item" href="{{ path('app_logout_front') }}">
-                <i class="fa fa-sign-out-alt text-danger"></i>
-                <span class="ml-2">Logout</span>
-            </a>
-        {% else %}
-            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
-                <i class="fa fa-sign-in-alt text-primary"></i>
-                <span class="ml-2">Login</span>
-            </a>
-            <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
-                <i class="fa fa-user-plus"></i>
-                <span class="ml-2">Créer un compte</span>
-            </a>
-        {% endif %}
+							{% if userId is not null %}
+								<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+									<i class="fa fa-user text-primary"></i>
+									<span class="ml-2">👤
+										{{ nom }}
+										{{ prenom }}</span>
+								</a>
+								<a class="dropdown-item" href="{{ path('app_logout_front') }}">
+									<i class="fas fa-sign-out-alt"></i>
+									<span class="ml-2">Se déconnecter</span>
+								</a>
+							{% else %}
+								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+									<i class="fas fa-user"></i>
+									<span class="ml-2">Se connecter</span>
+								</a>
 
-    		</div>
-		</li>
+								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
+									<i class="fa fa-user-plus"></i>
+									<span class="ml-2">Devenez-Prestataire</span>
+								</a>
+								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+									<i class="fa fa-user-plus"></i>
+									<span class="ml-2">Créer un compte</span>
+								</a>
+
+								
+							{% endif %}
+
+						</div>
+					</li>
 
 				</ul>
 			</div>
-		</div>
+		</body>
 	</body>
-</html></nav><!-- END nav --><div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('client/images/background33.jpg') }}');">
-<div class="overlay"></div>
-<div class="container">
-	<div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
-		<div class="col-md-7 ftco-animate">
-			<span class="subheading">Welcome to TunisSight</span>
-			<h1 class="mb-4">Discover Your Favorite Place with Us</h1>
-			<p class="caps">Travel to the any corner of the world, without going around in circles</p>
-		</div>
-
+</html></div></body></html></nav><!-- END nav --><div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('client/images/background33.jpg') }}');"><div class="overlay"></div><div class="container"><div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true"><div class="col-md-7 ftco-animate">
+<span class="subheading">Bienvenue sur TunisSight</span>
+<h1 class="mb-4">Découvrez les meilleurs endroits avec nous</h1>
+<p class="caps">Voyagez à travers les coins les plus beaux de la Tunisie, sans perdre votre chemin</p></div></div></div></div>{% block listActivites %}{% endblock %}<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image:<section class=" ftco-section img ftco-select-destination" style=" background-image: url('{{ asset('client/images/bg_3.jpg') }}');">;"><div class="container"><div class="row mb-5">
+<div class="col-md pt-5">
+	<div class="ftco-footer-widget pt-md-5 mb-4">
+		<h2 class="ftco-heading-2">À propos de Tunisight</h2>
+		<p>Bienvenue sur Tunisight, votre plateforme de réservation touristique en Tunisie. Découvrez les trésors cachés du pays, des plages paradisiaques aux sites historiques fascinants.</p>
+		<ul class="ftco-footer-social list-unstyled float-md-left float-lft">
+			<li class="ftco-animate">
+				<a href="#" class="icons">
+					<span class="fa fa-twitter"></span>
+				</a>
+			</li>
+			<li class="ftco-animate">
+				<a href="#" class="icons">
+					<span class="fa fa-facebook"></span>
+				</a>
+			</li>
+			<li class="ftco-animate">
+				<a href="#" class="icons">
+					<span class="fa fa-instagram"></span>
+				</a>
+			</li>
+		</ul>
 	</div>
-</div></div><section class="ftco-section ftco-no-pb ftco-no-pt">
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="ftco-search d-flex justify-content-center">
-				<div class="row">
-					<div class="col-md-12 nav-link-wrap">
-						<div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-							<a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Search Tour</a>
+</div>
+<div class="col-md pt-5 border-left">
+	<div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5">
+		<h2 class="ftco-heading-2">Informations</h2>
+		<ul class="list-unstyled">
 
-							<a class="nav-link" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Hotel</a>
+			<li>
+				<a href="#" class="py-2 d-block">Questions générales</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 d-block">Politique de confidentialité</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 d-block">Contactez-nous
+				</a>
+			</li>
 
-						</div>
-					</div>
-					<div class="col-md-12 tab-wrap">
+		</ul>
+	</div>
+</div>
+<div class="col-md pt-5 border-left">
+	<div class="ftco-footer-widget pt-md-5 mb-4">
+		<h2 class="ftco-heading-2">Experience</h2>
+		<ul class="list-unstyled">
+			<li>
+				<a href="#" class="py-2 d-block">Aventure</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 d-block">Nature</a>
+			</li>
 
-						<div class="tab-content" id="v-pills-tabContent">
+			<li>
+				<a href="#" class="py-2 d-block">Camping</a>
+			</li>
 
-							<div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-nextgen-tab">
-								<form action="#" class="search-property-1">
-									<div class="row no-gutters">
-										<div class="col-md d-flex">
-											<div class="form-group p-4 border-0">
-												<label for="#">Destination</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-search"></span>
-													</div>
-													<input type="text" class="form-control" placeholder="Search place">
-												</div>
-											</div>
-										</div>
-										<div class="col-md d-flex">
-											<div class="form-group p-4">
-												<label for="#">Check-in date</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-calendar"></span>
-													</div>
-													<input type="text" class="form-control checkin_date" placeholder="Check In Date">
-												</div>
-											</div>
-										</div>
-										<div class="col-md d-flex">
-											<div class="form-group p-4">
-												<label for="#">Check-out date</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-calendar"></span>
-													</div>
-													<input type="text" class="form-control checkout_date" placeholder="Check Out Date">
-												</div>
-											</div>
-										</div>
-										<div class="col-md d-flex">
-											<div class="form-group p-4">
-												<label for="#">Price Limit</label>
-												<div class="form-field">
-													<div class="select-wrap">
-														<div class="icon">
-															<span class="fa fa-chevron-down"></span>
-														</div>
-														<select name="" id="" class="form-control">
-															<option value="">$100</option>
-															<option value="">$10,000</option>
-															<option value="">$50,000</option>
-															<option value="">$100,000</option>
-															<option value="">$200,000</option>
-															<option value="">$300,000</option>
-															<option value="">$400,000</option>
-															<option value="">$500,000</option>
-															<option value="">$600,000</option>
-															<option value="">$700,000</option>
-															<option value="">$800,000</option>
-															<option value="">$900,000</option>
-															<option value="">$1,000,000</option>
-															<option value="">$2,000,000</option>
-														</select>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-md d-flex">
-											<div class="form-group d-flex w-100 border-0">
-												<div class="form-field w-100 align-items-center d-flex">
-													<input type="submit" value="Search" class="align-self-stretch form-control btn btn-primary">
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-
-							<div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-performance-tab">
-								<form action="#" class="search-property-1">
-									<div class="row no-gutters">
-										<div class="col-lg d-flex">
-											<div class="form-group p-4 border-0">
-												<label for="#">Destination</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-search"></span>
-													</div>
-													<input type="text" class="form-control" placeholder="Search place">
-												</div>
-											</div>
-										</div>
-										<div class="col-lg d-flex">
-											<div class="form-group p-4">
-												<label for="#">Check-in date</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-calendar"></span>
-													</div>
-													<input type="text" class="form-control checkin_date" placeholder="Check In Date">
-												</div>
-											</div>
-										</div>
-										<div class="col-lg d-flex">
-											<div class="form-group p-4">
-												<label for="#">Check-out date</label>
-												<div class="form-field">
-													<div class="icon">
-														<span class="fa fa-calendar"></span>
-													</div>
-													<input type="text" class="form-control checkout_date" placeholder="Check Out Date">
-												</div>
-											</div>
-										</div>
-										<div class="col-lg d-flex">
-											<div class="form-group p-4">
-												<label for="#">Price Limit</label>
-												<div class="form-field">
-													<div class="select-wrap">
-														<div class="icon">
-															<span class="fa fa-chevron-down"></span>
-														</div>
-														<select name="" id="" class="form-control">
-															<option value="">$100</option>
-															<option value="">$10,000</option>
-															<option value="">$50,000</option>
-															<option value="">$100,000</option>
-															<option value="">$200,000</option>
-															<option value="">$300,000</option>
-															<option value="">$400,000</option>
-															<option value="">$500,000</option>
-															<option value="">$600,000</option>
-															<option value="">$700,000</option>
-															<option value="">$800,000</option>
-															<option value="">$900,000</option>
-															<option value="">$1,000,000</option>
-															<option value="">$2,000,000</option>
-														</select>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-lg d-flex">
-											<div class="form-group d-flex w-100 border-0">
-												<div class="form-field w-100 align-items-center d-flex">
-													<input type="submit" value="Search" class="align-self-stretch form-control btn btn-primary p-0">
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+		</ul>
+	</div>
+</div>
+<div class="col-md pt-5 border-left">
+	<div class="ftco-footer-widget pt-md-5 mb-4">
+		<h2 class="ftco-heading-2">Vous avez une question ?</h2>
+		<div class="block-23 mb-3">
+			<ul>
+				<li>
+					<span class="icon fa fa-map-marker" style="color: #53d2dc !important"></span>
+					<span class="text">Tunis, Tunisie</span>
+				</li>
+				<li>
+					<a href="#">
+						<span class="icon fa fa-phone" style="color: #53d2dc !important"></span>
+						<span class="text">+216 71 100 750</span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<span class="icon fa fa-paper-plane" style="color: #53d2dc !important"></span>
+						<span class="text">contact@tunisight.com</span>
+					</a>
+				</li>
+			</ul>
 		</div>
 	</div>
-</section>
-{% block listActivites %}{% endblock %}
+</div></div><div class="row">
+<div class="col-md-12 text-center">
 
-<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image:<section class=" ftco-section img ftco-select-destination" style=" background-image: url('{{ asset('client/images/bg_3.jpg') }}');">;">
-	<div class="container">
-		<div class="row mb-5">
-			<div class="col-md pt-5">
-				<div class="ftco-footer-widget pt-md-5 mb-4">
-					<h2 class="ftco-heading-2">About</h2>
-					<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-					<ul class="ftco-footer-social list-unstyled float-md-left float-lft">
-						<li class="ftco-animate">
-							<a href="#">
-								<span class="fa fa-twitter"></span>
-							</a>
-						</li>
-						<li class="ftco-animate">
-							<a href="#">
-								<span class="fa fa-facebook"></span>
-							</a>
-						</li>
-						<li class="ftco-animate">
-							<a href="#">
-								<span class="fa fa-instagram"></span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md pt-5 border-left">
-				<div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5">
-					<h2 class="ftco-heading-2">Infromation</h2>
-					<ul class="list-unstyled">
-						<li>
-							<a href="#" class="py-2 d-block">Online Enquiry</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">General Enquiries</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Booking Conditions</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Privacy and Policy</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Refund Policy</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Call Us</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md pt-5 border-left">
-				<div class="ftco-footer-widget pt-md-5 mb-4">
-					<h2 class="ftco-heading-2">Experience</h2>
-					<ul class="list-unstyled">
-						<li>
-							<a href="#" class="py-2 d-block">Adventure</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Hotel and Restaurant</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Beach</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Nature</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Camping</a>
-						</li>
-						<li>
-							<a href="#" class="py-2 d-block">Party</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md pt-5 border-left">
-				<div class="ftco-footer-widget pt-md-5 mb-4">
-					<h2 class="ftco-heading-2">Have a Questions?</h2>
-					<div class="block-23 mb-3">
-						<ul>
-							<li>
-								<span class="icon fa fa-map-marker"></span>
-								<span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span>
-							</li>
-							<li>
-								<a href="#">
-									<span class="icon fa fa-phone"></span>
-									<span class="text">+2 392 3929 210</span>
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<span class="icon fa fa-paper-plane"></span>
-									<span class="text">info@yourdomain.com</span>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 text-center">
+	<p>
+		Copyright  &copy;<script>
+			document.write(new Date().getFullYear());
+		</script>
+		Tunisight . Tous droits réservés.
+		<i class="fa fa-heart" aria-hidden="true"></i>
 
-				<p>
-					Copyright &copy;<script>
-						document.write(new Date().getFullYear());
-					</script>
-					All rights reserved |
-					<i class="fa fa-heart" aria-hidden="true"></i>
-					by
-					<a target="_blank">TunisSight</a>
-				</p>
-			</div>
-		</div>
-	</div>
-</footer>
-
-
-{% block js %}
-<script src="{{asset('client/js/jquery.min.js')}}"></script>
-<script src="{{asset('client/js/jquery-migrate-3.0.1.min.js')}}"></script>
-<script src="{{asset('client/js/popper.min.js')}}"></script>
-<script src="{{asset('client/js/bootstrap.min.js')}}"></script>
-<script src="{{asset('client/js/jquery.easing.1.3.js')}}"></script>
-<script src="{{asset('client/js/jquery.waypoints.min.js')}}"></script>
-<script src="{{asset('client/js/jquery.stellar.min.js')}}"></script>
-<script src="{{asset('client/js/owl.carousel.min.js')}}"></script>
-<script src="{{asset('client/js/jquery.magnific-popup.min.js')}}"></script>
-<script src="{{asset('client/js/jquery.animateNumber.min.js')}}"></script>
-<script src="{{asset('client/js/bootstrap-datepicker.js')}}"></script>
-<script src="{{asset('client/js/scrollax.min.js')}}"></script>
-<script src="{{asset('client/js/main.js')}}"></script>
-{% endblock%}</body>{% block javascript %}
-<script>
-	window.addEventListener('scroll', function () {
+	</p>
+</div></div></div></footer>{% block js %}<script src="{{asset('client/js/jquery.min.js')}}"></script><script src="{{asset('client/js/jquery-migrate-3.0.1.min.js')}}"></script><script src="{{asset('client/js/popper.min.js')}}"></script><script src="{{asset('client/js/bootstrap.min.js')}}"></script><script src="{{asset('client/js/jquery.easing.1.3.js')}}"></script><script src="{{asset('client/js/jquery.waypoints.min.js')}}"></script><script src="{{asset('client/js/jquery.stellar.min.js')}}"></script><script src="{{asset('client/js/owl.carousel.min.js')}}"></script><script src="{{asset('client/js/jquery.magnific-popup.min.js')}}"></script><script src="{{asset('client/js/jquery.animateNumber.min.js')}}"></script><script src="{{asset('client/js/bootstrap-datepicker.js')}}"></script><script src="{{asset('client/js/scrollax.min.js')}}"></script><script src="{{asset('client/js/main.js')}}"></script>{% endblock%}</body>{% block javascript %}<script>window.addEventListener('scroll', function () {
 var navbar = document.getElementById('ftco-navbar');
 if (window.scrollY > 50) {
 navbar.classList.add('scrolled');
 } else {
 navbar.classList.remove('scrolled');
 }
-});
-</script>{% endblock %}<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></body></html>
+});</script>{% endblock %}<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></body></html>
