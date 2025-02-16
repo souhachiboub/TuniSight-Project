@@ -1,0 +1,686 @@
+{% extends "user/index.html.twig" %}
+{% block body %}
+{% include "publication/addPublication.html.twig" %}
+
+<div class="container">
+    <p class="experience-text" ><span style="font-size : 40px ; color: #2B3940;" >Partagez votre expérience</span><br>Inspirez la communauté et laissez votre empreinte à travers vos récits inoubliables </p>
+    {% if publications is not empty %}
+        <div class="publications-grid">
+            {% for publication in publications %}
+            <div class="publication" data-id="{{ publication.id }}">
+                <!-- Date de publication -->
+                <div class="publication-date-container">
+                    <div class="date-box">
+                        <span class="date-day">{{ publication.datePublication|date('d') }}</span>
+                        <div class="date-month-year">
+                            <span class="date-year">{{ publication.datePublication|date('Y') }}</span>
+                            <span class="date-month">{{ publication.datePublication|date('F') }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- Image de la publication -->
+                {% if publication.images is not empty %}
+                    <div class="image-container">
+                        <img src="{{ asset(publication.images[0].url) }}" alt="Image" class="publication-image">
+                    </div>
+                {%else %}
+                    <div class="image-container">
+                        <img src="{{ asset("publication/default.png") }}" alt="Image" class="publication-image">
+                    </div>
+                {% endif %}
+
+                <!-- Contenu de la publication -->
+                <div class="publication-content">
+                    <div class="user-name-container">
+                        <img src="{{ asset(publication.user.photoProfil) }}" alt="Photo de l'utilisateur" class="user-photo">
+                        <div class="user-info">
+                            <a href="#" class="profile"><h2 class="user-name">{{ publication.user.nom }} {{ publication.user.prenom }}</h2></a>
+                    
+                        </div>
+                        <div class="dropdown">  {# Use Bootstrap dropdown #}
+                            <button class="dropdown-toggle dots-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                ...
+                            </button>
+                            <ul class="dropdown-menu action-select">  {# Use dropdown-menu and remove custom select #}
+                                <li><a class="dropdown-item edit-link" href="#" data-id="{{ publication.id }}" data-description="{{ publication.contenu }}">Modifier</a></li>
+                                <li><a class="dropdown-item delete-link" href="#" data-id="{{ publication.id }}">Supprimer</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% set contenuLimit = publication.contenu|slice(0, 70) %}
+                    <p class="publication-text">
+                        {{ contenuLimit }}{% if publication.contenu|length > 70 %}...{% endif %}
+                    </p>
+                    
+                    <!-- Nouveau placement des boutons -->
+                    <div class="publication-actions">
+                        
+                
+                        <button class="like-btn" data-id="{{ publication.id }}">
+                            <span class="like-icon">{{ publication.isLiked ? '♥️' : '♡' }}</span>
+                            <span class="like-count">{{ publication.nbrLike }}</span>
+                        </button>
+                        <a href="{{ path('detail_publications', {'id': publication.id}) }}" class="read-more-btn">Lire plus</a>
+                    </div>
+                
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune publication pour le moment.</p>
+    {% endif %}
+    <div class="pagination-buttons"></div>
+    <br><br>
+    
+    {# ... (rest of the code) #}
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modifier la publication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <textarea  id="editDescription" class="form-control" rows="5"></textarea>
+                    <input type="hidden" id="publicationId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="saveChanges">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block css %}
+<style>
+    body {
+        font-family: system-ui; 
+        background: white;
+    }
+    button.btn-close{
+        text-decoration: none;
+        font-size: 30px;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: #26648E;
+        cursor: pointer;
+        font-weight: normal;
+        border : none ; 
+        background : white ;
+    }
+    .container {
+        width: 70%;
+        margin: auto;
+        
+    }
+    .experience-text {
+        text-align: left;
+        font-size: 1.2em;
+        font-weight: bold;
+        color : #555; 
+        margin-top: 20px;
+        padding: 10px;
+    }
+    
+    
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+    
+    .publication {
+        height : 450px;
+        background: #fff;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    
+    .publication:hover {
+        transform: translateY(-7px);
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Date de publication */
+    
+    /* Conteneur de la date */
+.publication-date-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #53d2dc;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Boîte de date */
+.date-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #53d2dc;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Jour */
+.date-day {
+    font-size: 24px;
+    font-weight: bold;
+    display: block;
+}
+
+/* Mois et année */
+.date-month-year {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.date-year {
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.date-month {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+    
+    /* Image */
+    .image-container {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        border-bottom: 5px solid #26648e;
+    }
+    
+    .publication-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    
+    .publication-image:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Contenu */
+    .publication-content {
+        padding: 20px;
+        text-align: left;
+    }
+    
+    /* Profil de l'utilisateur */
+    .user-name-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .user-photo {
+        width: 45px; 
+        height: 45px;
+        border-radius: 50%;
+        margin-right: 12px;
+        border: 2px solid #26648e;
+    }
+    
+    .user-info {
+        text-align: left;
+    }
+    
+    .user-name {
+        font-size: 1.1em;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    a.profile, h2.user-name {
+        text-decoration: none;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #2B3940;
+        cursor: pointer;
+    }
+    a.profile, h2.user-name:hover {
+        color: #26648E;
+    }
+    
+    /* Texte */
+    .publication-text {
+        position: relative;
+        background: white;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+    
+    /* Bouton Lire Plus */
+    a.read-more-btn {
+        display: inline-block;
+        height : 40px;
+        padding: 2px 16px 0px 16px;
+        color :  #26648E;
+        background:rgba(0, 0, 0, 0.03);
+        text-decoration: none;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    
+    a.read-more-btn:hover {
+        background:rgba(0, 0, 0, 0.05);
+    }
+    .publication-actions{
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: white;
+    }
+    /* Boutons d'interaction */
+    .actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        border-top: 1px solid #eee;
+        margin-top: 10px;
+    }
+    
+    .like-btn {
+        display: flex; 
+        align-items: center; 
+        gap: 5px; 
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #2B3940;
+        font-size: 18px;
+        transition: color 0.3s ease;
+    }
+    
+    .like-btn:hover {
+        color: #26648e;
+    }
+    
+    .like-icon {
+        font-size: 30px;
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .like-btn:active .like-icon {
+        transform: scale(1.2);
+    }
+    
+    
+    .comment-btn:hover {
+        color: #26648e;
+    }
+    .pagination-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .pagination-buttons button {
+        text-align: center;
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid #e6e6e6;
+    }
+    
+    .pagination-buttons button.active {
+        background: #4f8fc0;
+        color : white ;
+    
+    }
+    
+    .pagination-buttons button:hover {
+        background: #4f8fc0;
+        color : white ;
+    }
+    
+    .pagination-buttons button:disabled {
+        background: #ddd;
+        cursor: not-allowed;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        margin-left: auto; /* Push to the right */
+    }
+
+    .dots-btn {
+        background: none; /* Remove background */
+        border: none;
+        padding: 0;
+        font-size: 1.5em;
+        cursor: pointer;
+        /* Remove default dropdown arrow */
+        appearance: none; /* For most browsers */
+        -webkit-appearance: none; /* For Safari */
+        /* Optional: Add custom styling for the "..." */
+        /* Example: */
+        font-weight: bold;
+        color: #2B3940; /* Or any color you prefer */
+    }
+    .dropdown-toggle::after {
+        display: none; /* Hide the default arrow */
+    }
+    
+    .form-control {
+        width: 100%;
+            min-height : 45px;
+            padding: 10px;
+            height : auto ; 
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            overflow-y: auto;
+    }
+    @media screen and (max-width: 1024px) {
+        .container {
+            width: 95%;
+        }
+        .publication {
+            height: auto; /* Ajuster la hauteur pour s'adapter au contenu */
+        }
+    }
+    
+    /* Ajustement pour tablettes */
+    @media screen and (max-width: 768px) {
+        .publications-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Colonnes plus petites */
+        }
+    
+        .publication {
+            padding-bottom: 10px;
+        }
+    
+        .publication-content {
+            padding: 15px;
+        }
+    
+        .image-container {
+            height: 180px;
+        }
+        
+        .publication-text {
+            font-size: 14px;
+        }
+    
+        .actions {
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+        }
+    }
+    
+    /* Ajustement pour mobiles */
+    @media screen and (max-width: 480px) {
+        .publications-grid {
+            grid-template-columns: 1fr; /* Une seule colonne */
+        }
+    
+        .publication {
+            height: auto;
+        }
+    
+        .publication-content {
+            padding: 10px;
+        }
+    
+        .image-container {
+            height: 150px;
+        }
+    
+        .publication-text {
+            font-size: 13px;
+        }
+    
+        .like-btn {
+            font-size: 16px;
+        }
+    
+        .pagination-buttons button {
+            width: 35px;
+            height: 35px;
+        }
+    }
+    
+    
+</style>
+{% endblock %}
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+<script>
+    
+
+    // ----- Like sur les publications -----
+    document.querySelectorAll(".like-btn").forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleLike(this);
+        });
+    });
+    document.querySelectorAll(".publication img").forEach(image => {
+        image.addEventListener("dblclick", function () {
+            const publication = this.closest(".publication");
+            if (publication) {
+                const likeButton = publication.querySelector(".like-btn");
+                if (likeButton) {
+                    toggleLike(likeButton);
+                }
+            }
+        });
+    });
+ 
+    function toggleLike(button) {
+        const publicationId = button.closest(".publication").dataset.id;
+        const icon = button.querySelector(".like-icon");
+        const likeCount = button.querySelector(".like-count");
+ 
+        fetch(`/like/${publicationId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            icon.textContent = data.liked ? "♥️" : "♡";
+            likeCount.textContent = data.likes;
+            
+        })
+        .catch(error => {
+            console.error("Erreur lors du like :", error);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".form-control").forEach(element => {
+            // Appliquez la redimension du texte uniquement aux éléments de type 'textarea'
+            if (element.tagName.toLowerCase() === 'textarea') {
+                // Ajuster la hauteur au chargement de la page
+                adjustTextareaHeight(element);
+    
+                // Ajuster la hauteur dynamiquement pendant la saisie
+                element.addEventListener("input", function() {
+                    adjustTextareaHeight(this);
+                });
+            }
+        });
+    
+        function adjustTextareaHeight(textarea) {
+            // Réinitialiser la hauteur à auto pour qu'elle rétrécisse si nécessaire, puis définir la hauteur en fonction de scrollHeight
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        const publicationsPerPage = 9;
+        let currentPage = 1;
+        const publications = document.querySelectorAll(".publication");
+        const totalPages = Math.ceil(publications.length / publicationsPerPage);
+    
+        function showPage(page) {
+            const startIndex = (page - 1) * publicationsPerPage;
+            const endIndex = page * publicationsPerPage;
+    
+            publications.forEach((publication, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    publication.style.display = "block";
+                } else {
+                    publication.style.display = "none";
+                }
+            });
+    
+            updatePagination(page);
+        }
+    
+        function updatePagination(page) {
+            const paginationButtons = document.querySelector(".pagination-buttons");
+            paginationButtons.innerHTML = "";
+    
+            // Précédente page
+            if (page > 1) {
+                const prevButton = document.createElement("button");
+                prevButton.textContent = "ᐸ";
+                prevButton.addEventListener("click", () => showPage(page - 1));
+                paginationButtons.appendChild(prevButton);
+            }
+    
+            // Numéros des pages
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement("button");
+                pageButton.textContent = i;
+                pageButton.classList.toggle("active", i === page);
+                pageButton.addEventListener("click", () => showPage(i));
+                paginationButtons.appendChild(pageButton);
+            }
+    
+            // Suivante page
+            if (page < totalPages) {
+                const nextButton = document.createElement("button");
+                nextButton.textContent = "ᐳ";
+                nextButton.addEventListener("click", () => showPage(page + 1));
+                paginationButtons.appendChild(nextButton);
+            }
+        }
+    
+        // Initialisation
+        showPage(currentPage);
+        document.querySelectorAll('.edit-link').forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const publicationId = link.dataset.id;
+                const description = link.dataset.description;
+    
+                document.getElementById('publicationId').value = publicationId;
+                document.getElementById('editDescription').value = description;
+    
+                const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                editModal.show();
+            });
+        });
+    
+        document.getElementById('saveChanges').addEventListener('click', () => {
+            const publicationId = document.getElementById('publicationId').value;
+            const newDescription = document.getElementById('editDescription').value;
+    
+            fetch(`/publication/update/${publicationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'contenu': newDescription,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editModal')); // Get the instance
+                    editModal.hide();
+    
+                    // Update the publication content on the page (without reloading)
+                    const publicationElement = document.querySelector(`.publication[data-id="${publicationId}"] .publication-text`);
+                    if (publicationElement) {
+                        publicationElement.textContent = newDescription.length > 70 ? newDescription.slice(0, 70) + '...' : newDescription;
+                    }
+                } else {
+                    // Handle errors (display error message, etc.)
+                    alert('Error updating publication: ' + data.errors.join('\n')); // Example error handling
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    
+        // Delete functionality (using AJAX)
+        document.querySelectorAll('.delete-link').forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const publicationId = link.dataset.id;
+    
+                
+                    fetch(`/publication/delete/${publicationId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the publication element from the page
+                            const publicationElement = document.querySelector(`.publication[data-id="${publicationId}"]`);
+                            if (publicationElement) {
+                                publicationElement.remove();
+                            }
+                        } else {
+                            // Handle errors
+                            alert('Error deleting publication: ' + data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                
+            });
+        });
+    
+    });
+    
+</script>
+{% endblock %}

@@ -105,7 +105,97 @@ class PublicationController extends AbstractController
         }
 
         // Rendu de la page
-        return $this->render('publication/test.html.twig', [
+        return $this->render('publication/list.html.twig', [
+            'publications' => $publications,
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/MesPublications', name: 'list_mes_publications')]
+    public function listMesPublications(Request $request, EntityManagerInterface $entityManager, LikesRepository $likesRepository): Response
+    {
+        $publication = new Publication();
+        $form = $this->createForm(PublicationType::class, $publication);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                // Formulaire invalide, renvoyer les erreurs
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+    
+                // Retourner les erreurs sous forme de JSON
+                return $this->json([
+                    'success' => false,
+                    'errors' => $errors,
+                ]);
+            } else {
+                $publication->setDatePublication(new \DateTime());
+                $user = $entityManager->getRepository(User::class)->find(1); // Assuming user with ID 1
+                $publication->setUser($user);
+    
+                $entityManager->persist($publication);
+    
+                // --- Gestion des images ---
+                $imageFiles = $form->get('images')->getData();
+                if ($imageFiles) {
+                    $uploadDir = $this->getParameter('kernel.project_dir') . '/public/publication';
+                    foreach ($imageFiles as $imageFile) {
+                        if ($imageFile) {
+                            // Validation du type de fichier (images seulement)
+                            if (!in_array($imageFile->guessExtension(), ['jpg', 'png', 'jpeg', 'gif'])) {
+                                // Retourner une erreur si le fichier n'est pas une image
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Seuls les fichiers images sont autorisés.'],
+                                ]);
+                            }
+    
+                            $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                            try {
+                                $imageFile->move($uploadDir, $newFilename);
+                            } catch (FileException $e) {
+                                // Gérer l'exception pour éviter des erreurs serveur visibles
+                                return $this->json([
+                                    'success' => false,
+                                    'errors' => ['Erreur lors du téléchargement de l\'image.'],
+                                ]);
+                            }
+    
+                            $image = new Image();
+                            $image->setUrl('/publication/' . $newFilename); // Chemin relatif
+                            $image->setPublication($publication);
+                            $entityManager->persist($image);
+                        }
+                    }
+                }
+    
+                // Persister les images et publier la publication
+                $entityManager->flush();
+    
+                // Retourner un succès avec redirection pour recharger
+                return $this->json([
+                    'success' => true,
+                    'redirectUrl' => $this->generateUrl('list_publications'), 
+                ]);
+            }
+        }
+
+        $publications = $entityManager->getRepository(Publication::class)->findBy(['user' => 1], ['datePublication' => 'DESC']);
+        $user = $entityManager->getRepository(User::class)->find(1);
+
+        // Gestion des likes pour chaque publication
+        foreach ($publications as $pub) {
+            $isLiked = $entityManager->getRepository(Likes::class)->findOneBy([
+                'user' => $user,
+                'publication' => $pub
+            ]);
+            $pub->isLiked = $isLiked !== null;
+        }
+
+        // Rendu de la page
+        return $this->render('publication/showMesPublication.html.twig', [
             'publications' => $publications,
             'form' => $form->createView(),
         ]);
@@ -182,6 +272,62 @@ public function getImagesForPublication($publicationId, EntityManagerInterface $
 
     return $this->json($imageData);
 }
+#[Route('/publication/delete/{id}', name: 'delete_publication', methods: ['POST'])]
+    public function deletePublication($id, EntityManagerInterface $entityManager): Response
+    {
+        $publication = $entityManager->getRepository(Publication::class)->find($id);
 
+        if (!$publication) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Publication non trouvée.'
+            ], Response::HTTP_NOT_FOUND);
+        }
 
-}    
+        // Suppression des images associées
+        $images = $publication->getImages();
+        foreach ($images as $image) {
+            $entityManager->remove($image);
+        }
+
+        $entityManager->remove($publication);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Publication supprimée avec succès.'
+        ]);
+    }
+
+    #[Route('/publication/update/{id}', name: 'update_publication', methods: ['POST'])]
+public function updatePublication($id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $publication = $entityManager->getRepository(Publication::class)->find($id);
+
+    if (!$publication) {
+        return $this->json([
+            'success' => false,
+            'message' => 'Publication non trouvée.'
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    $newContent = $request->request->get('contenu');
+
+    if ($newContent !== null) { // Check if content was actually sent
+        $publication->setContenu($newContent);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Publication mise à jour avec succès.'
+        ]);
+    } else {
+         return $this->json([
+            'success' => false,
+            'message' => 'Aucun contenu fourni pour la mise à jour.'
+        ]);
+    }
+}
+    }
+
+  
