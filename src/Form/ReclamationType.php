@@ -15,7 +15,7 @@ class ReclamationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('reponse', TextareaType::class, [
+            ->add('description', TextareaType::class, [
                 'attr' => [
                     'placeholder' => 'Réponse à la réclamation',
                     'rows' => 5,
@@ -31,6 +31,8 @@ class ReclamationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Reclamation::class,
+            'csrf_protection' => false, 
+
         ]);
     }
 }
