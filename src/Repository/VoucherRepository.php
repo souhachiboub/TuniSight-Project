@@ -16,6 +16,36 @@ class VoucherRepository extends ServiceEntityRepository
         parent::__construct($registry, Voucher::class);
     }
 
+
+    public function filterVouchers(?bool $expired, ?bool $assigned)
+    {
+        $qb = $this->createQueryBuilder('v');
+    
+        // Si expired est défini, appliquer le filtre correspondant
+        if ($expired !== null) {
+            if ($expired) {
+                $qb->andWhere('v.dateExpiration < :now');
+            } else {
+                $qb->andWhere('v.dateExpiration >= :now');
+            }
+            $qb->setParameter('now', new \DateTime());
+        }
+    
+        // Si assigned est défini, appliquer le filtre correspondant
+        if ($assigned !== null) {
+            if ($assigned) {
+                $qb->andWhere('v.user IS NOT NULL');
+            } else {
+                $qb->andWhere('v.user IS NULL');
+            }
+        }
+    
+        return $qb->getQuery()->getResult();
+    }
+    
+
+
+
 //    /**
 //     * @return Voucher[] Returns an array of Voucher objects
 //     */

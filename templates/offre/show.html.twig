@@ -1,9 +1,43 @@
-{% extends 'admin/index.html.twig' %}
+ {% extends 'admin/index.html.twig' %}
+
+   
 
 {% block title %}Liste des Offres{% endblock %}
 
 {% block body %}
-
+ <title>Liste des Offres</title>
+    
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination ul {
+            list-style: none;
+            padding: 0;
+        }
+        .pagination li {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        .pagination a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #007bff;
+            border-radius: 3px;
+        }
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination .active a {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
     <div class="container-fluid">
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Liste des Offres</h1>
@@ -20,12 +54,27 @@
             {% endfor %}
         </div>
 
+
         <!-- Bouton d'ajout -->
         <div class="mb-4">
-            <a href="{{ path('offer_create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ajouter une nouvelle offre
-            </a>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOffreModal">
+            <i class="fas fa-plus"></i> Ajouter une nouvelle offre
+            </button>
+
         </div>
+
+           <!-- Formulaire de filtrage par état d'expiration -->
+    <form method="get" action="{{ path('offre_show') }}">
+        <div class="form-group">
+            <label for="expirée">Filtrer par état d'expiration :</label>
+            <select class="form-control" id="expirée" name="expirée">
+                <option value="">Sélectionner...</option>
+                <option value="non_expirée" {% if app.request.get('expirée') == 'non_expirée' %}selected{% endif %}>Non expirée</option>
+                <option value="expirée" {% if app.request.get('expirée') == 'expirée' %}selected{% endif %}>Expirée</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+    </form>
 
         <!-- Tableau des Offres -->
         <div class="card shadow mb-4">
@@ -55,9 +104,10 @@
                                 <td>{{ offre.activitie.libelle }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ path('offre_edit', {id: offre.id}) }}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </a>
+                                        <a href="#" class="edit-btn" data-id="{{ offre.id }}">
+												<img src="{{asset('admin/img/editIcone.png')}}"/>
+											</a>
+
 
                                         <!-- Formulaire de suppression -->
                                         <form action="{{ path('offre_delete', {id: offre.id}) }}" method="POST" class="d-inline">
@@ -102,7 +152,65 @@
         </div>
     </div>
 
+
+  <!-- Modal de modification -->
+<div class="modal fade" id="editOffreModal" tabindex="-1" aria-labelledby="editOffreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOffreModalLabel">Modifier l'offre</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Le formulaire sera injecté ici -->
+                <div id="edit-offre-form-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal d'ajout -->
+<div class="modal fade" id="addOffreModal" tabindex="-1" aria-labelledby="addOffreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addOffreModalLabel">Ajouter une offre</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulaire d'ajout sera injecté ici -->
+                <div id="add-offre-form-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if offres.currentPageNumber == 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('offre_show', {page: offres.currentPageNumber - 1}) }}" tabindex="-1">Previous</a>
+            </li>
+            {% for i in 1..offres.pageCount %}
+                <li class="page-item {% if offres.currentPageNumber == i %}active{% endif %}">
+                    <a class="page-link" href="{{ path('offre_show', {page: i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+            <li class="page-item {% if offres.currentPageNumber == offres.pageCount %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('offre_show', {page: offres.currentPageNumber + 1}) }}">Next</a>
+            </li>
+        </ul>
+    </nav>
     <!-- Script AJAX pour gérer la suppression -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let deleteForm = null;
@@ -123,6 +231,94 @@
                 }
             });
         });
+
+$(document).ready(function () {
+    // Gestion du bouton "Modifier"
+    $('.edit-btn').on('click', function () {
+        var id = $(this).data('id');
+        $('#editOffreModal').modal('show');
+        $('#edit-offre-form-container').html('');
+
+        $.ajax({
+            url: '{{ path("offre_edit", {"id": "replace_with_id"}) }}'.replace('replace_with_id', id),
+            method: 'GET',
+            success: function (response) {
+                $('#edit-offre-form-container').html(response);
+
+                // Gérer la soumission du formulaire
+                $('#edit-offre-form').on('submit', function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: '{{ path("offre_edit", {"id": "replace_with_id"}) }}'.replace('replace_with_id', id),
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        success: function () {
+                            $('#editOffreModal').modal('hide');
+                            location.reload(); // Recharger la page pour voir les modifications
+                        },
+                        error: function (xhr) {
+                            const errors = xhr.responseJSON.errors;
+                            // Supprimer les erreurs précédentes
+                            $('#edit-offre-form .invalid-feedback').remove();
+                            $('#edit-offre-form .is-invalid').removeClass('is-invalid');
+
+                            // Afficher les nouvelles erreurs de validation
+                            for (const field in errors) {
+                                const errorMessage = errors[field];
+                                $(`#${field}`).addClass('is-invalid');
+                                $(`#${field}`).after(`<div class="invalid-feedback">${errorMessage}</div>`);
+                            }
+                        }
+                    });
+                });
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert('Erreur lors du chargement du formulaire.');
+            }
+        });
+    });
+});
+$(document).ready(function () {
+    $('#addOffreModal').on('show.bs.modal', function () {
+        $.ajax({
+            url: '{{ path("offre_create") }}',
+            method: 'GET',
+            success: function (response) {
+                $('#add-offre-form-container').html(response);
+
+                // Attache un gestionnaire d'événement après le chargement du formulaire
+                $('#add-offre-form').on('submit', function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: '{{ path("offre_create") }}',
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        success: function () {
+                            $('#addOffreModal').modal('hide');
+                            location.reload(); // Recharge la page après l'ajout
+                        },
+                        error: function (xhr) {
+                            alert('Erreur lors de l\'ajout');
+                            console.log(xhr.responseText);
+                        }
+                    });
+                });
+            },
+            error: function () {
+                alert('Erreur lors du chargement du formulaire.');
+            }
+        });
+    });
+});
+
+
+       
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 {% endblock %}

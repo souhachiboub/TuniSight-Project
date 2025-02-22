@@ -1,0 +1,340 @@
+{% block body %}
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<title>TunisSight - Découvrir</title>
+
+			{% block css %}
+				<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+				<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+				<link rel="stylesheet" href="{{ asset('client/css/style.css') }}">
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+			{% endblock %}
+
+			<style>
+				.container {
+					font-family: sans-serif;
+					display: flex;
+					padding-top: 10px;
+					gap: 20px;
+				}
+
+				.search-sidebar {
+					margin-left: -120px;
+					margin-right: 50px;
+					width: 280px;
+					background: #fff;
+					padding: 20px;
+					border-radius: 10px;
+					box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+					height: fit-content;
+				}
+
+				.activities-container {
+					flex: 1;
+					display: grid;
+					grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+					gap: 20px;
+				}
+
+				.activity-card {
+					background: #fff;
+					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+					border-radius: 10px;
+					overflow: hidden;
+					transition: transform 0.3s ease;
+				}
+
+				.activity-card:hover {
+					transform: scale(1.05);
+				}
+
+				.activity-card img {
+					width: 100%;
+					height: 200px;
+					object-fit: cover;
+				}
+
+				.activity-info {
+					padding: 15px;
+					text-align: center;
+				}
+
+				.activity-info h3 {
+					font-size: 18px;
+					font-weight: bold;
+					margin-bottom: 10px;
+				}
+
+				.activity-info p {
+					font-size: 16px;
+					color: #777;
+					margin: 10px 0;
+				}
+				/* --- Css pour le navbaraaaa --- */
+				#ftco-navbar {
+					height: 20vh;
+					background-size: cover;
+					background-position: center;
+					background-repeat: no-repeat;
+					background-attachment: fixed;
+					background-image: url('{{ asset('client/images/background33.jpg') }}');
+					position: relative
+				}
+				.navbar-brand img {
+					height: 60px;
+					width: auto;
+				}
+
+				.navbar-nav .nav-item {
+					margin: 0 10px;
+					font-weight: bold
+				}
+
+				.navbar-nav .nav-link {
+					font-size: 17px;
+					color: white !important;
+					transition: color 0.3s ease-in-out;
+				}
+
+				.navbar-nav .nav-link:hover {
+					color: #53d2dc !important;
+				}
+
+				.navbar-toggler {
+					border: none;
+					outline: none;
+				}
+
+				.navbar-toggler i {
+					font-size: 24px;
+					color: white;
+				}
+				/* ----- */
+				button {
+					appearance: none;
+					background-color: transparent;
+					border: 0.125em solid #1A1A1A;
+					border-radius: 0.9375em;
+					box-sizing: border-box;
+					color: #3B3B3B;
+					cursor: pointer;
+					display: inline-block;
+					font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+					font-size: 14px;
+					font-weight: 600;
+					line-height: 1.2;
+					margin: 0;
+					min-height: 2.5em;
+					min-width: 0;
+					outline: none;
+					padding: 0.5em 1.5em;
+					text-align: center;
+					text-decoration: none;
+					transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+					user-select: none;
+					-webkit-user-select: none;
+					touch-action: manipulation;
+					will-change: transform;
+				}
+				button:hover {
+					color: #fff;
+					background-color: #1A1A1A;
+					box-shadow: rgba(0, 0, 0, 0.25) 0 6px 10px;
+					transform: translateY(-2px);
+				}
+				/* css pour disponibilite */
+				.availability {
+					font-size: 10px;
+					font-weight: bold;
+					padding: 2px 8px;
+					border-radius: 3px;
+					display: inline-block;
+					text-transform: uppercase;
+					letter-spacing: 2px
+				}
+
+				.dispo {
+					background-color: #28a745;
+					color: white;
+					border: 1px solid #218838;
+				}
+
+				.nondispo {
+					background-color: #dc3545;
+					color: white;
+					border: 1px solid #c82333;
+				}
+				/* css poru bouton reserver wa9teli activité non dispo*/
+				button:disabled {
+					opacity: 0.5;
+					cursor: not-allowed;
+				}
+
+				button:disabled:hover,
+				button:disabled:focus,
+				button:disabled:active {
+					background-color: inherit;
+					color: inherit;
+				}
+			</style>
+		</head>
+		<body>
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
+				<div class="container">
+					<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
+						<span class="oi oi-menu"></span>
+						Menu
+					</button>
+					<div class="collapse navbar-collapse" id="ftco-nav">
+						<ul class="navbar-nav ml-auto">
+							<li class="nav-item active">
+								<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+							</li>
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i style="font-size:30px" class="fa fa-user-circle"></i>
+								</a>
+								<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+									{% if userId is not null %}
+										<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+											<i class="fa fa-user text-primary"></i>
+											<span class="ml-2">👤
+												{{ nom }}
+												{{ prenom }}</span>
+										</a>
+										<a class="dropdown-item" href="{{ path('app_logout_front') }}">
+											<i class="fas fa-sign-out-alt"></i>
+											<span class="ml-2">Se déconnecter</span>
+										</a>
+									{% else %}
+										<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+											<i class="fas fa-user"></i>
+											<span class="ml-2">Se connecter</span>
+										</a>
+
+										<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
+											<i class="fa fa-user-plus"></i>
+											<span class="ml-2">Devenez-Prestataire</span>
+										</a>
+										<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+											<i class="fa fa-user-plus"></i>
+											<span class="ml-2">Créer un compte</span>
+										</a>
+
+
+									{% endif %}
+
+								</div>
+							</li>
+						</ul>
+					</div>
+				</nav>
+
+				<div
+					class="container">
+					<!-- Sidebar pour les filtres -->
+					<div class="search-sidebar">
+						<form id="filterForm">
+							<div class="form-group">
+								<label for="categorie">Catégorie</label>
+								<select class="form-control" id="categorie" name="categorie">
+									<option value="">Toutes les catégories</option>
+									{% for categorie in categories %}
+										<option value="{{ categorie.id }}">{{ categorie.nom }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<hr>
+							<div class="form-group">
+								<label for="ville">Ville</label>
+								<select class="form-control" id="ville" name="ville">
+									<option value="">Toutes les villes</option>
+									{% for ville in villes %}
+										<option value="{{ ville.id }}">{{ ville.nom }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<hr>
+							<label>Prix</label>
+							<div class="form-group">
+								<label for="prixMin">Prix minimal</label>
+								<input type="number" class="form-control" id="prixMin" name="prixMin" placeholder="Prix minimal">
+							</div>
+							<div class="form-group">
+								<label for="prixMax">Prix maximum</label>
+								<input type="number" class="form-control" id="prixMax" name="prixMax" placeholder="Prix maximum">
+							</div>
+							<hr>
+
+							<button style="background-color:#53d2dc;color:white;margin-left:80px" type="submit" class="btn">Filtrer</button>
+						</form>
+					</div>
+					<!-- Liste des activités -->
+					<div class="activities-container" id="activitesList">
+
+						{% for activity in activites %}
+							<div class="activity-card">
+								<img src="{{ asset('uploads/images/' ~ activity.image) }}" alt="{{ activity.libelle }}">
+								<div class="activity-info">
+									<h3>{{ activity.libelle }}</h3>
+									{% if activity.disponibilite == 1 %}
+										<span class="availability dispo">disponible</span>
+									{% else %}
+										<span class="availability nondispo">Non disponible</span>
+									{% endif %}
+									<div style="display:flex; align-items:center;">
+										<i class="fa-solid fa-tag" style="color:black"></i>
+										<p style="margin-left:5px;color:black">{{ activity.prix }}
+											TND</p>
+									</div>
+									<div style="display:flex; align-items:center;">
+										<i class="fas fa-map-marker-alt" style="font-size:15px;color:black;color: #53d2dc"></i>
+										&nbsp;<p>{{ activity.localisation }}</p>
+									</div>
+									<hr>
+									<div style="display:flex;margin-left:15px">
+										<a href="{{ path('app_activite_show', {'id': activity.id}) }}">
+											<button>Voir détails</button>
+										</a>
+										&nbsp;
+										<button {% if activity.disponibilite == 0 %} disabled {% endif %}>
+											Réserver
+										</button>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+
+				<script>
+					document.getElementById('filterForm').addEventListener('submit', function (event) {
+event.preventDefault();
+
+const formData = new FormData(this);
+
+fetch('{{ path("app_activite_filter") }}', {
+method: 'POST',
+body: formData
+}).then(response => response.text()).then(data => {
+document.getElementById('activitesList').innerHTML = data;
+});
+});
+				</script>
+			</body>
+		</body>
+	</html>
+</body></html>{% endblock %}

@@ -43,7 +43,7 @@ class Voucher
     private ?User $user = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $isUsed = null;
+    private ?bool $isAssigned = null;
 
     
     public function __construct()
@@ -123,15 +123,15 @@ class Voucher
 
         return $this;
     }
-    public function getIsUsed(): ?bool
+    public function getisAssigned(): ?bool
     {
-        return $this->isUsed;
+        return $this->isAssigned;
     }
     
 
-    public function setIsUsed(?bool $isUsed): static
+    public function setisAssigned(?bool $isAssigned): static
     {
-    $this->isUsed = $isUsed;
+    $this->isAssigned = $isAssigned;
     return $this;
     }
 

@@ -1,12 +1,10 @@
-{% extends 'admin/index.html.twig' %}
-
 {% block title %}Modifier l'offre{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <h1>Modifier </h1>
+    <h1>Modifier l'offre</h1>
 
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_start(form, {'attr': {'id': 'edit-offre-form', 'novalidate': 'novalidate'}}) }}
 
     <div class="mb-3">
         {{ form_label(form.reduction) }}
@@ -14,11 +12,7 @@
         {{ form_errors(form.reduction) }}
     </div>
 
-    <div class="mb-3">
-        {{ form_label(form.dateDebut) }}
-        {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
-        {{ form_errors(form.dateDebut) }}
-    </div>
+   
 
     <div class="mb-3">
         {{ form_label(form.dateExpiration) }}
@@ -32,11 +26,10 @@
         {{ form_errors(form.activitie) }}
     </div>
 
-   <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Ajouter l'offre</button>
-        </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+    </div>
 
     {{ form_end(form) }}
 </div>
 {% endblock %}
-

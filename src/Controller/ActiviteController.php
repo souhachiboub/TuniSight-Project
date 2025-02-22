@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Activite;
 use App\Form\ActiviteType;
 use App\Repository\ActiviteRepository;
+use App\Repository\CategorieActiviteRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,28 +15,81 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 #[Route('/activite')]
 final class ActiviteController extends AbstractController
 {
     #[Route('/list', name: 'app_index', methods: ['GET'])]
-    public function index(ActiviteRepository $activiteRepository,SessionInterface $session): Response
-    {
-        return $this->render('details/index.html.twig', [
-            'activites' => $activiteRepository->findAll(),
+    public function index(
+        ActiviteRepository $activiteRepository,
+        SessionInterface $session,
+        CategorieActiviteRepository $categorieRepository,
+        PaginatorInterface $paginator,
+        Request $request,
+        VilleRepository $villeRepository
+    ): Response {
+        $categorieId = $request->query->get('categorie', null);
+
+        // Créer une requête QueryBuilder pour les activités
+        $queryBuilder = $activiteRepository->createQueryBuilder('a');
+
+        // Filtrer par catégorie si une catégorie est sélectionnée
+        if ($categorieId) {
+            $queryBuilder->andWhere('a.categorie = :categorieId')
+                ->setParameter('categorieId', $categorieId);
+        }
+
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(), // Passer la requête au paginator
+            $request->query->getInt('page', 1), // Numéro de page (1 par défaut)
+            2// Nombre d'éléments par page
+        );
+
+        $categories = $categorieRepository->findAll();
+        $villes = $villeRepository->findAll();
+
+        return $this->render('FrontOffice-activites/index.html.twig', [
+            'villes' => $villes,
+            'pagination' => $pagination,
             'userId' => $session->get('user_id'),
             'nom' => $session->get('user_nom'),
             'prenom' => $session->get('user_prenom'),
+            'categories' => $categories,
         ]);
     }
 
-    #[Route('/', name: 'app_activite_index', methods: ['GET'])]
-    public function indexx(ActiviteRepository $activiteRepository): Response
-    {
-        return $this->render('activite/index.html.twig', [
-            'activites' => $activiteRepository->findAll(),
+
+    #[Route('/decouvrir', name: 'app_activite_index', methods: ['GET'])]
+    public function decouvrirActivite(
+        ActiviteRepository $activiteRepository,
+        SessionInterface $session,
+        CategorieActiviteRepository $categorieRepository,
+        Request $request,
+        VilleRepository $villeRepository
+    ): Response {
+
+        $activites = $activiteRepository->findAll();
+        $categories = $categorieRepository->findAll();
+
+
+
+        // Récupérer toutes les villes
+        $villes = $villeRepository->findAll();
+
+        // Renvoyer la réponse à la vue
+        return $this->render('FrontOffice-activites/decouvrirActivites.html.twig', [
+            'userId' => $session->get('user_id'),
+            'activites' => $activites,
+            'nom' => $session->get('user_nom'),
+            'prenom' => $session->get('user_prenom'),
+            'categories' => $categories,
+            'villes' => $villes,
         ]);
     }
+
     #[Route('/new', name: 'app_activite_new', methods: ['GET', 'POST'])]
     public function newActivite(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -60,12 +115,40 @@ final class ActiviteController extends AbstractController
         ]);
     }
 
+    #[Route('/', name: 'app_activite_indexx', methods: ['GET'])]
+    public function indexx(ActiviteRepository $activiteRepository): Response
+    {
+        return $this->render('activite/index.html.twig', [
+            'activites' => $activiteRepository->findAll(),
+        ]);
+    }
 
+    #[Route('/filter', name: 'app_activite_filter', methods: ['POST'])]
+    public function filter(Request $request, ActiviteRepository $activiteRepository): Response
+    {
+        // Récupère les paramètres du formulaire
+        $categorieId = $request->request->get('categorie'); // Peut être une chaîne vide
+        $villeId = $request->request->get('ville'); // Peut être une chaîne vide
+        $prixMin = $request->request->get('prixMin'); // Peut être null ou une chaîne vide
+        $prixMax = $request->request->get('prixMax'); // Peut être null ou une chaîne vide
+
+        // Convertit les prix en float si nécessaire
+        $prixMin = $prixMin !== null && $prixMin !== '' ? (float) $prixMin : null;
+        $prixMax = $prixMax !== null && $prixMax !== '' ? (float) $prixMax : null;
+
+        // Appelle la méthode findByFilters pour obtenir les activités filtrées
+        $activites = $activiteRepository->findByFilters($categorieId, $villeId, $prixMin, $prixMax);
+
+        // Rend le template partiel avec les activités filtrées
+        return $this->render('FrontOffice-activites/_list.html.twig', [
+            'activites' => $activites,
+        ]);
+    }
 
     #[Route('/{id}', name: 'app_activite_show', methods: ['GET'])]
-    public function show(Activite $activite,SessionInterface $session): Response
+    public function show(Activite $activite, SessionInterface $session): Response
     {
-        return $this->render('details/detailsActivite.html.twig', [
+        return $this->render('FrontOffice-activites/detailsActivite.html.twig', [
             'activite' => $activite,
             'userId' => $session->get('user_id'),
             'nom' => $session->get('user_nom'),
@@ -85,7 +168,7 @@ final class ActiviteController extends AbstractController
             return $this->redirectToRoute('app_activite_index');
         }
 
-        return $this->render('activite/_form.html.twig', [
+        return $this->render('BackOffice-activites/_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }

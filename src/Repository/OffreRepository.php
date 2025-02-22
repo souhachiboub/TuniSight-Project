@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Offre;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Offre>
@@ -14,6 +15,22 @@ class OffreRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Offre::class);
+    }
+    public function findByExpirationStatusQuery(?string $expirée): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        if ($expirée === 'expirée') {
+            // Filtrer pour les offres expirées
+            $qb->andWhere('o.dateExpiration < :now')
+                ->setParameter('now', new \DateTime());
+        } elseif ($expirée === 'non_expirée') {
+            // Filtrer pour les offres non expirées
+            $qb->andWhere('o.dateExpiration >= :now')
+                ->setParameter('now', new \DateTime());
+        }
+
+        return $qb;
     }
 
 //    /**

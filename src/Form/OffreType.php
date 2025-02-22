@@ -16,12 +16,19 @@ class OffreType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-       
+        $isEdit = $options['is_edit'] ?? false;
         $builder
             ->add('reduction',IntegerType::class, [
                 'label' => 'Réduction (%)'
             ])
-            ->add('dateDebut', DateType::class, [
+            ->add('dateExpiration',DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date Expiration',
+                'required' => false,
+                'empty_data' => null,
+            ]);
+            if (!$isEdit) {
+            $builder->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date Emission',
                 'required' => false,
@@ -29,24 +36,20 @@ class OffreType extends AbstractType
                 'attr' => [
                 'min' => (new \DateTime())->format('Y-m-d'),
                  ],
-            ])
-            ->add('dateExpiration',DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Date Expiration',
-                'required' => false,
-                'empty_data' => null,
-            ])
-            ->add('activitie', EntityType::class, [
+                ]);}
+          
+            $builder->add('activitie', EntityType::class, [
                 'class' => Activite::class, // Spécifier l'entité associée
                 'choice_label' => 'libelle', // Afficher le nom de l'activité dans la liste déroulante
                 'label' => 'Sélectionner l\'activité',
                 'placeholder' => 'Choisir une activité', // Optionnel, permet d'ajouter un message placeholder
                 'disabled' => $options['is_edit'], 
-        ])
+            ]);
+        
        
            
             
-        ;
+        
     }
 
     public function configureOptions(OptionsResolver $resolver): void

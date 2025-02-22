@@ -1,0 +1,15 @@
+{{ form_start(form) }}
+    <div class="row g-3 align-items-center">
+        <div class="col-md-4">
+            {{ form_label(form.expired, 'État d\'expiration', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.expired, {'attr': {'class': 'form-select'}}) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_label(form.assigned, 'Assignation', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.assigned, {'attr': {'class': 'form-select'}}) }}
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+        </div>
+    </div>
+{{ form_end(form) }}

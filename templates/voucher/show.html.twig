@@ -1,20 +1,45 @@
 {% extends 'admin/index.html.twig' %}
- 
+
 {% block body %}
 <div class="container-fluid">
     <h1 class="mb-4">Gestion des Vouchers</h1>
+
     <div class="mb-4">
-            <a href="{{ path('voucher_new') }}" class="btn btn-primary">Ajouter une nouvelle offre</a>
-        </div>
+        <a href="{{ path('voucher_new') }}" class="btn btn-primary">Ajouter un Voucher</a>
+    </div>
 
-    <style>
-        .blur-text {
-            filter: blur(5px);
-            user-select: none; 
-            pointer-events: none; 
-        }
-    </style>
+    {# 🎨 Filtrage des Vouchers #}
+    <div class="card shadow p-3 mb-4">
+       <form method="get" action="{{ path('voucher_show') }}" class="row g-3 align-items-center">
+    <div class="col-md-4">
+        <label for="expired" class="form-label">État d'expiration</label>
+        <select name="expired" id="expired" class="form-select">
+            <option value="" {% if expired is null %}selected{% endif %}>Tous</option>
+            <option value="1" {% if expired is same as(true) %}selected{% endif %}>Expirés</option>
+            <option value="0" {% if expired is same as(false) %}selected{% endif %}>Non expirés</option>
+        </select>
+    </div>
 
+    <div class="col-md-4">
+        <label for="assigned" class="form-label">Assignation</label>
+        <select name="assigned" id="assigned" class="form-select">
+            <option value="" {% if assigned is null %}selected{% endif %}>Tous</option>
+            <option value="1" {% if assigned is same as(true) %}selected{% endif %}>Assignés</option>
+            <option value="0" {% if assigned is same as(false) %}selected{% endif %}>Non assignés</option>
+        </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-filter"></i> Filtrer
+        </button>
+    </div>
+</form>
+
+
+    </div>
+
+    {# 💳 Affichage des Vouchers #}
     <div class="row">
         {% for voucher in vouchers %}
             <div class="col-md-4">
@@ -26,14 +51,27 @@
                         <p class="card-text">
                             <strong>Valeur :</strong> {{ voucher.valeurReduction }}% <br>
                             <strong>Date d'Émission :</strong> {{ voucher.dateEmission|date('d/m/Y') }} <br>
-                            <strong>Date d'Expiration :</strong> {{ voucher.dateExpiration|date('d/m/Y') }} <br>
-                            <strong>Assigné à :</strong> {{ voucher.user ? voucher.user.email : 'Non assigné' }}
+                            <strong>Date d'Expiration :</strong> 
+                            <span class="{% if voucher.dateExpiration < "now"|date %}text-danger{% else %}text-success{% endif %}">
+                                {{ voucher.dateExpiration|date('d/m/Y') }}
+                            </span> 
+                            <br>
+                            <strong>Assigné à :</strong> 
+                            {% if voucher.user %}
+                                <span class="text-primary">{{ voucher.user.email }}</span>
+                            {% else %}
+                                <span class="text-muted">Non assigné</span>
+                            {% endif %}
                         </p>
                         <div class="mt-3 d-flex justify-content-between">
-                            <a href="{{ path('voucher_edit', {id: voucher.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                            <a href="{{ path('voucher_edit', {id: voucher.id}) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
                             <form method="post" action="{{ path('voucher_delete', {'id': voucher.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce voucher ?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voucher.id) }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -41,11 +79,18 @@
             </div>
         {% else %}
             <div class="col-12 text-center">
-                <p>Aucun voucher disponible.</p>
+                <p class="text-muted">Aucun voucher disponible.</p>
             </div>
         {% endfor %}
     </div>
 </div>
 
+<style>
+    .blur-text {
+        filter: blur(5px);
+        user-select: none; 
+        pointer-events: none; 
+    }
+</style>
 
 {% endblock %}

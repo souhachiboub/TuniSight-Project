@@ -7,44 +7,40 @@ use App\Form\OffreType;
 use App\Entity\Activite;
 use App\Repository\OffreRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OffreController extends AbstractController
 {
     
-    #[Route('/create', name: 'offer_create')]
-public function create(Request $request, EntityManagerInterface $em): Response
+    #[Route('/offre/new', name: 'offre_create', methods: ['GET', 'POST'])]
+public function create(Request $request, EntityManagerInterface $entityManager): Response
 {
-    $offer = new Offre();
-    $form = $this->createForm(OffreType::class, $offer);
+    $offre = new Offre();
+    $form = $this->createForm(OffreType::class, $offre);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        // Récupérer l'activité sélectionnée dans le formulaire
-        $activity = $offer->getActivitie();
+        $entityManager->persist($offre);
+        $entityManager->flush();
 
-        // Appliquer la réduction au prix de l'activité si une réduction est spécifiée
-        $discount = $offer->getReduction(); // Par exemple, un pourcentage de réduction
-
-        if ($discount) {
-            $prixInitial = $activity->getPrix(); // Le prix de l'activité
-            $prixAvecReduction = $prixInitial - ($prixInitial * $discount / 100);
-            $activity->setPrix($prixAvecReduction); // Mettre à jour le prix de l'activité avec la réduction
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(['success' => true]);
         }
 
-        // Persist l'offre dans la base de données
-        $em->persist($offer);
-        $em->flush();
-
-        // Ajouter un message de succès
-        $this->addFlash('success', 'L\'offre a été ajoutée avec succès!');
-
         return $this->redirectToRoute('offre_show');
+    }
+
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('offre/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     return $this->render('offre/new.html.twig', [
@@ -53,13 +49,46 @@ public function create(Request $request, EntityManagerInterface $em): Response
 }
 
 
-    #[Route('/offres', name: 'offre_show')]
-    public function index(OffreRepository $offreRepository): Response
-    {
+
+#[Route('/offres', name: 'offre_show')]
+// public function show(OffreRepository $offreRepository, Request $request, PaginatorInterface $paginator): Response
+// {
+//     // Création de la requête Doctrine Query
+//     $query = $offreRepository->createQueryBuilder('o')->getQuery();
+
+//     // Appliquer la pagination
+//     $pagination = $paginator->paginate(
+//         $query, // Requête Doctrine
+//         $request->query->getInt('page', 1), // Numéro de page (1 par défaut)
+//         5 // Nombre d'offres par page
+//     );
+
+//     return $this->render('offre/show.html.twig', [
+//         'offres' => $pagination, // On passe la pagination à Twig
+//     ]);
+// }
+
+public function show(OffreRepository $offreRepository, Request $request, PaginatorInterface $paginator): Response
+{
+    // Récupérer l'état d'expiration de la requête
+    $expirée = $request->query->get('expirée');
+
+    // Appliquer le filtre sur l'état d'expiration
+    $qb = $offreRepository->findByExpirationStatusQuery($expirée);
+
+    // Pagination
+    $query = $qb->getQuery();
+    $pagination = $paginator->paginate(
+        $query, 
+        $request->query->getInt('page', 1), 
+        5 
+    );
+
     return $this->render('offre/show.html.twig', [
-        'offres' => $offreRepository->findAll(),
+        'offres' => $pagination, 
     ]);
-    }
+}
+
     #[Route('/{id}/delete', name: 'offre_delete', methods: ['POST'])]
     public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
     {
@@ -73,24 +102,43 @@ public function create(Request $request, EntityManagerInterface $em): Response
     return $this->redirectToRoute('offre_show');
     }
     
-
-    #[Route('/offre/{id}/edit', name: 'offre_edit')]
-    public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
+    #[Route('/offre/{id}/edit', name: 'offre_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager,ValidatorInterface $validator): Response
     {
-    $form = $this->createForm(OffreType::class, $offre, [
-        'is_edit' => true
-    ]);
-    $form->handleRequest($request);
+        $form = $this->createForm(OffreType::class, $offre,['is_edit' => true]);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+    
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+    
+            return $this->redirectToRoute('offre_show');
+        }
+    
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('offre/edit.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        }
+        $errors = $validator->validate($offre);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->flush();
-        $this->addFlash('success', 'L\'offre a été mise à jour avec succès!');
-        return $this->redirectToRoute('offre_show');
+        // Si il y a des erreurs
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+    
+            return new JsonResponse(['errors' => $errorMessages], 400);  // Renvoi des erreurs
+        }
+    
+    
+        return $this->render('offre/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
-
-    return $this->render('offre/edit.html.twig', [
-        'offre' => $offre,
-        'form' => $form->createView(),
-    ]);
-}
+    
 }

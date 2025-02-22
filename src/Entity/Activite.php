@@ -89,11 +89,11 @@ class Activite
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'activite', orphanRemoval: true)]
     private Collection $avis;
 
-    /**
-     * @var Collection<int, Ville>
-     */
-    #[ORM\ManyToMany(targetEntity: Ville::class, inversedBy: 'activites')]
-    private Collection $ville;
+
+    #[ORM\ManyToOne(targetEntity: Ville::class, inversedBy: 'activites')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Ville $ville = null;
+
 
     #[ORM\ManyToOne(inversedBy: 'activites')]
     #[ORM\JoinColumn(nullable: false)]
@@ -298,29 +298,18 @@ class Activite
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ville>
-     */
-    public function getVille(): Collection
+    public function getVille(): ?Ville
     {
         return $this->ville;
     }
 
-    public function addVille(Ville $ville): static
+    public function setVille(?Ville $ville): self
     {
-        if (!$this->ville->contains($ville)) {
-            $this->ville->add($ville);
-        }
+        $this->ville = $ville;
 
         return $this;
     }
 
-    public function removeVille(Ville $ville): static
-    {
-        $this->ville->removeElement($ville);
-
-        return $this;
-    }
 
     public function getCategorie(): ?CategorieActivite
     {

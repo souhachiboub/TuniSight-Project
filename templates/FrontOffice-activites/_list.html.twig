@@ -1,0 +1,22 @@
+{# _activites_list.html.twig #}
+
+{% for activity in activites %}
+	<div class="activity-card">
+		<img src="{{ asset('uploads/images/' ~ activity.image) }}" alt="{{ activity.libelle }}">
+		<div class="activity-info">
+			<h3>{{ activity.libelle }}</h3>
+			<p>{{ activity.prix }}
+				TND</p>
+			<p>{{ activity.localisation }}</p>
+			<div style="display:flex">
+				<a href="{{ path('app_activite_show', {'id': activity.id}) }}">
+					<button>Voir détails</button>
+				</a>
+				&nbsp;
+				<button id="btn-reserver">Réserver</button>
+			</div>
+		</div>
+	</div>
+{% else %}
+	<p>Aucune activité trouvée.</p>
+{% endfor %}

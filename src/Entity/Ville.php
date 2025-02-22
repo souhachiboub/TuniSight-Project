@@ -30,7 +30,7 @@ class Ville
     /**
      * @var Collection<int, Activite>
      */
-    #[ORM\ManyToMany(targetEntity: Activite::class, mappedBy: 'ville')]
+    #[ORM\OneToMany(targetEntity: Activite::class, mappedBy: 'ville')]
     private Collection $activites;
 
     public function __construct()
@@ -99,20 +99,22 @@ class Ville
         return $this->activites;
     }
 
-    public function addActivite(Activite $activite): static
+    public function addActivite(Activite $activite): self
     {
         if (!$this->activites->contains($activite)) {
             $this->activites->add($activite);
-            $activite->addVille($this);
+            $activite->setVille($this);
         }
 
         return $this;
     }
 
-    public function removeActivite(Activite $activite): static
+    public function removeActivite(Activite $activite): self
     {
         if ($this->activites->removeElement($activite)) {
-            $activite->removeVille($this);
+            if ($activite->getVille() === $this) {
+                $activite->setVille(null);
+            }
         }
 
         return $this;
