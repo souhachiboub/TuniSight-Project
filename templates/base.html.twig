@@ -69,6 +69,7 @@
 				color: black !important
 			}
 			/* Buttons */
+
 			button {
 				appearance: none;
 				background-color: transparent;
@@ -184,6 +185,9 @@
 							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
 						</li>
 						<li class="nav-item">
+							<a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item">
 							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
 						</li>
 						<li class="nav-item">
@@ -196,37 +200,36 @@
 						<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i style="font-size:30px" class="fa fa-user-circle"></i>
 						</a>
-						<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
-
-							{% if userId is not null %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
-									<i class="fa fa-user text-primary"></i>
-									<span class="ml-2">👤
-										{{ nom }}
-										{{ prenom }}</span>
-								</a>
-								<a class="dropdown-item" href="{{ path('app_logout_front') }}">
-									<i class="fas fa-sign-out-alt"></i>
-									<span class="ml-2">Se déconnecter</span>
-								</a>
-							{% else %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
-									<i class="fas fa-user"></i>
-									<span class="ml-2">Se connecter</span>
-								</a>
-
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
-									<i class="fa fa-user-plus"></i>
-									<span class="ml-2">Devenez-Prestataire</span>
-								</a>
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
-									<i class="fa fa-user-plus"></i>
-									<span class="ml-2">Créer un compte</span>
-								</a>
-
-								
-							{% endif %}
-
+						<div
+							class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">{#{% if userId is not null %}
+																																								<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+																																									<i class="fa fa-user text-primary"></i>
+																																									<span class="ml-2">👤
+																																										{{ nom }}
+																																										{{ prenom }}</span>
+																																								</a>
+																																								<a class="dropdown-item" href="{{ path('app_logout_front') }}">
+																																									<i class="fas fa-sign-out-alt"></i>
+																																									<span class="ml-2">Se déconnecter</span>
+																																								</a>
+																																							{% else %}
+																																								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+																																									<i class="fas fa-user"></i>
+																																									<span class="ml-2">Se connecter</span>
+																																								</a>
+																																
+																																								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
+																																									<i class="fa fa-user-plus"></i>
+																																									<span class="ml-2">Devenez-Prestataire</span>
+																																								</a>
+																																								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+																																									<i class="fa fa-user-plus"></i>
+																																									<span class="ml-2">Créer un compte</span>
+																																								</a>
+																																
+																																
+																																							{% endif %}
+																																#}
 						</div>
 					</li>
 
@@ -237,103 +240,93 @@
 </html></div></body></html></nav><!-- END nav --><div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('client/images/background33.jpg') }}');"><div class="overlay"></div><div class="container"><div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true"><div class="col-md-7 ftco-animate">
 <span class="subheading">Bienvenue sur TunisSight</span>
 <h1 class="mb-4">Découvrez les meilleurs endroits avec nous</h1>
-<p class="caps">Voyagez à travers les coins les plus beaux de la Tunisie, sans perdre votre chemin</p></div></div></div></div>{% block listActivites %}{% endblock %}<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image:<section class=" ftco-section img ftco-select-destination" style=" background-image: url('{{ asset('client/images/bg_3.jpg') }}');">;"><div class="container"><div class="row mb-5">
-<div class="col-md pt-5">
-	<div class="ftco-footer-widget pt-md-5 mb-4">
-		<h2 class="ftco-heading-2">À propos de Tunisight</h2>
-		<p>Bienvenue sur Tunisight, votre plateforme de réservation touristique en Tunisie. Découvrez les trésors cachés du pays, des plages paradisiaques aux sites historiques fascinants.</p>
-		<ul class="ftco-footer-social list-unstyled float-md-left float-lft">
-			<li class="ftco-animate">
-				<a href="#" class="icons">
-					<span class="fa fa-twitter"></span>
+<p class="caps">Voyagez à travers les coins les plus beaux de la Tunisie, sans perdre votre chemin</p></div></div></div></div>{% block listActivites %}{% endblock %}<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image:<section class=" ftco-section img ftco-select-destination" style=" background-image: url('{{ asset('client/images/bg_3.jpg') }}');">;"><div class="container"><div class="row mb-5"><div class="col-md pt-5">
+<div class="ftco-footer-widget pt-md-5 mb-4">
+	<h2 class="ftco-heading-2">À propos de Tunisight</h2>
+	<p>Bienvenue sur Tunisight, votre plateforme de réservation touristique en Tunisie. Découvrez les trésors cachés du pays, des plages paradisiaques aux sites historiques fascinants.</p>
+	<ul class="ftco-footer-social list-unstyled float-md-left float-lft">
+		<li class="ftco-animate">
+			<a href="#" class="icons">
+				<span class="fa fa-twitter"></span>
+			</a>
+		</li>
+		<li class="ftco-animate">
+			<a href="#" class="icons">
+				<span class="fa fa-facebook"></span>
+			</a>
+		</li>
+		<li class="ftco-animate">
+			<a href="#" class="icons">
+				<span class="fa fa-instagram"></span>
+			</a>
+		</li>
+	</ul>
+</div></div><div class="col-md pt-5 border-left">
+<div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5">
+	<h2 class="ftco-heading-2">Informations</h2>
+	<ul class="list-unstyled">
+
+		<li>
+			<a href="#" class="py-2 d-block">Questions générales</a>
+		</li>
+		<li>
+			<a href="#" class="py-2 d-block">Politique de confidentialité</a>
+		</li>
+		<li>
+			<a href="#" class="py-2 d-block">Contactez-nous
+			</a>
+		</li>
+
+	</ul>
+</div></div><div class="col-md pt-5 border-left">
+<div class="ftco-footer-widget pt-md-5 mb-4">
+	<h2 class="ftco-heading-2">Experience</h2>
+	<ul class="list-unstyled">
+		<li>
+			<a href="#" class="py-2 d-block">Aventure</a>
+		</li>
+		<li>
+			<a href="#" class="py-2 d-block">Nature</a>
+		</li>
+
+		<li>
+			<a href="#" class="py-2 d-block">Camping</a>
+		</li>
+
+	</ul>
+</div></div><div class="col-md pt-5 border-left">
+<div class="ftco-footer-widget pt-md-5 mb-4">
+	<h2 class="ftco-heading-2">Vous avez une question ?</h2>
+	<div class="block-23 mb-3">
+		<ul>
+			<li>
+				<span class="icon fa fa-map-marker" style="color: #53d2dc !important"></span>
+				<span class="text">Tunis, Tunisie</span>
+			</li>
+			<li>
+				<a href="#">
+					<span class="icon fa fa-phone" style="color: #53d2dc !important"></span>
+					<span class="text">+216 71 100 750</span>
 				</a>
 			</li>
-			<li class="ftco-animate">
-				<a href="#" class="icons">
-					<span class="fa fa-facebook"></span>
-				</a>
-			</li>
-			<li class="ftco-animate">
-				<a href="#" class="icons">
-					<span class="fa fa-instagram"></span>
+			<li>
+				<a href="#">
+					<span class="icon fa fa-paper-plane" style="color: #53d2dc !important"></span>
+					<span class="text">contact@tunisight.com</span>
 				</a>
 			</li>
 		</ul>
 	</div>
-</div>
-<div class="col-md pt-5 border-left">
-	<div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5">
-		<h2 class="ftco-heading-2">Informations</h2>
-		<ul class="list-unstyled">
+</div></div></div><div class="row"><div class="col-md-12 text-center">
 
-			<li>
-				<a href="#" class="py-2 d-block">Questions générales</a>
-			</li>
-			<li>
-				<a href="#" class="py-2 d-block">Politique de confidentialité</a>
-			</li>
-			<li>
-				<a href="#" class="py-2 d-block">Contactez-nous
-				</a>
-			</li>
+<p>
+	Copyright  &copy;<script>
+		document.write(new Date().getFullYear());
+	</script>
+	Tunisight . Tous droits réservés.
+	<i class="fa fa-heart" aria-hidden="true"></i>
 
-		</ul>
-	</div>
-</div>
-<div class="col-md pt-5 border-left">
-	<div class="ftco-footer-widget pt-md-5 mb-4">
-		<h2 class="ftco-heading-2">Experience</h2>
-		<ul class="list-unstyled">
-			<li>
-				<a href="#" class="py-2 d-block">Aventure</a>
-			</li>
-			<li>
-				<a href="#" class="py-2 d-block">Nature</a>
-			</li>
-
-			<li>
-				<a href="#" class="py-2 d-block">Camping</a>
-			</li>
-
-		</ul>
-	</div>
-</div>
-<div class="col-md pt-5 border-left">
-	<div class="ftco-footer-widget pt-md-5 mb-4">
-		<h2 class="ftco-heading-2">Vous avez une question ?</h2>
-		<div class="block-23 mb-3">
-			<ul>
-				<li>
-					<span class="icon fa fa-map-marker" style="color: #53d2dc !important"></span>
-					<span class="text">Tunis, Tunisie</span>
-				</li>
-				<li>
-					<a href="#">
-						<span class="icon fa fa-phone" style="color: #53d2dc !important"></span>
-						<span class="text">+216 71 100 750</span>
-					</a>
-				</li>
-				<li>
-					<a href="#">
-						<span class="icon fa fa-paper-plane" style="color: #53d2dc !important"></span>
-						<span class="text">contact@tunisight.com</span>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div></div><div class="row">
-<div class="col-md-12 text-center">
-
-	<p>
-		Copyright  &copy;<script>
-			document.write(new Date().getFullYear());
-		</script>
-		Tunisight . Tous droits réservés.
-		<i class="fa fa-heart" aria-hidden="true"></i>
-
-	</p>
-</div></div></div></footer>{% block js %}<script src="{{asset('client/js/jquery.min.js')}}"></script><script src="{{asset('client/js/jquery-migrate-3.0.1.min.js')}}"></script><script src="{{asset('client/js/popper.min.js')}}"></script><script src="{{asset('client/js/bootstrap.min.js')}}"></script><script src="{{asset('client/js/jquery.easing.1.3.js')}}"></script><script src="{{asset('client/js/jquery.waypoints.min.js')}}"></script><script src="{{asset('client/js/jquery.stellar.min.js')}}"></script><script src="{{asset('client/js/owl.carousel.min.js')}}"></script><script src="{{asset('client/js/jquery.magnific-popup.min.js')}}"></script><script src="{{asset('client/js/jquery.animateNumber.min.js')}}"></script><script src="{{asset('client/js/bootstrap-datepicker.js')}}"></script><script src="{{asset('client/js/scrollax.min.js')}}"></script><script src="{{asset('client/js/main.js')}}"></script>{% endblock%}</body>{% block javascript %}<script>window.addEventListener('scroll', function () {
+</p></div></div></div></footer>{% block js %}<script src="{{asset('client/js/jquery.min.js')}}"></script><script src="{{asset('client/js/jquery-migrate-3.0.1.min.js')}}"></script><script src="{{asset('client/js/popper.min.js')}}"></script><script src="{{asset('client/js/bootstrap.min.js')}}"></script><script src="{{asset('client/js/jquery.easing.1.3.js')}}"></script><script src="{{asset('client/js/jquery.waypoints.min.js')}}"></script><script src="{{asset('client/js/jquery.stellar.min.js')}}"></script><script src="{{asset('client/js/owl.carousel.min.js')}}"></script><script src="{{asset('client/js/jquery.magnific-popup.min.js')}}"></script><script src="{{asset('client/js/jquery.animateNumber.min.js')}}"></script><script src="{{asset('client/js/bootstrap-datepicker.js')}}"></script><script src="{{asset('client/js/scrollax.min.js')}}"></script><script src="{{asset('client/js/main.js')}}"></script>{% endblock%}</body>{% block javascript %}<script>window.addEventListener('scroll', function () {
 var navbar = document.getElementById('ftco-navbar');
 if (window.scrollY > 50) {
 navbar.classList.add('scrolled');
