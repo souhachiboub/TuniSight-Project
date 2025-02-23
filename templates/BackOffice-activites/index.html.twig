@@ -32,7 +32,8 @@
 				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 				overflow: hidden;
 				transition: transform 0.3s ease;
-				height: 100%;
+				height: 480px;
+				width: 305px;
 				display: flex;
 				flex-direction: column;
 			}
@@ -280,7 +281,7 @@
 										<img src="{{asset('admin/img/editIcone.png')}}"/>
 									</a>
 									<div class="icon-link">
-										{{ include('activite/_delete_form.html.twig', { 
+										{{ include('BackOffice-Activites/_delete_form.html.twig', { 
                                                 'button_class': 'icons',
                                                 'button_style': 'border: none; background: none; cursor: pointer;',
                                                 'button_content': '<img src="' ~ asset('admin/img/deleteIcone.png') ~ '" alt="Delete"/>'

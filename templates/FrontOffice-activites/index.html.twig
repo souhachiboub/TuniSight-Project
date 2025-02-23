@@ -70,6 +70,17 @@
 			background-color: #53d2dc !important;
 
 		}
+		/* css les dates des activités */
+		.activity-dates {
+			display: flex;
+			align-items: center;
+			margin-top: 10px;
+			font-size: 16px;
+		}
+		.activity-dates .fa {
+			margin-right: 5px;
+			color: #26648e;
+		}
 	</style>
 	<section class="ftco-section">
 		<div class="container">
@@ -101,9 +112,19 @@
 								<h3>
 									<a href="#">{{ activite.libelle }}</a>
 								</h3>
+								<div class="activity-dates">
+									<span style=" font-size:16px">
+										<i class="fa fa-calendar"></i>
+										{{ activite.date_debut|date('d/m/Y') }}</span>
+									&nbsp;&nbsp;
+									<span style="font-size:16px">
+										<i class="fa fa-calendar-check"></i>
+										{{ activite.date_fin|date('d/m/Y') }}</span>
+								</div>
 								<p class="location">
 									<span class="fa fa-map-marker"></span>
 									{{ activite.localisation }}</p>
+
 								<div style="display:flex">
 									<a href="{{ path('app_activite_show', {'id': activite.id}) }}">
 										<button>Voir détails</button>

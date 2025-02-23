@@ -43,41 +43,34 @@ class Activite
     private ?bool $disponibilite = null;
 
     #[ORM\ManyToOne(inversedBy: 'activites')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    /**
-     * @ORM\Column(type="date")
-     * @Assert\NotBlank()
-     */
-    private $dateDebut;
+    #[ORM\Column(type: 'date')]
+    private ?\DateTimeInterface $date_debut = null;
 
-    /**
-     * @ORM\Column(type="date")
-     * @Assert\NotBlank()
-     */
-    private $dateFin;
-
-    public function getDateDebut(): ?\DateTimeInterface
+    #[ORM\Column(type: 'date')]
+    private ?\DateTimeInterface $date_fin = null;
+    public function getdate_debut(): ?\DateTimeInterface
     {
-        return $this->dateDebut;
+        return $this->date_debut;
     }
 
-    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    public function setdate_debut(\DateTimeInterface $dateDebut): self
     {
-        $this->dateDebut = $dateDebut;
+        $this->date_debut = $dateDebut;
 
         return $this;
     }
 
-    public function getDateFin(): ?\DateTimeInterface
+    public function getdate_fin(): ?\DateTimeInterface
     {
-        return $this->dateFin;
+        return $this->date_fin;
     }
 
-    public function setDateFin(\DateTimeInterface $dateFin): self
+    public function setdate_fin(\DateTimeInterface $dateFin): self
     {
-        $this->dateFin = $dateFin;
+        $this->date_fin = $dateFin;
 
         return $this;
     }
@@ -115,6 +108,9 @@ class Activite
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+
+
+
     public function setImageFile(?File $imageFile = null): void
     {
         $this->imageFile = $imageFile;
@@ -148,7 +144,6 @@ class Activite
     public function __construct()
     {
         $this->avis = new ArrayCollection();
-        $this->ville = new ArrayCollection();
         $this->reservation = new ArrayCollection();
     }
 
@@ -212,8 +207,8 @@ class Activite
 
     public function setDuree(): static
     {
-        if ($this->dateDebut && $this->dateFin) {
-            $interval = $this->dateDebut->diff($this->dateFin);
+        if ($this->date_debut && $this->date_fin) {
+            $interval = $this->date_debut->diff($this->date_fin);
             $this->duree = $interval->days;
         }
 

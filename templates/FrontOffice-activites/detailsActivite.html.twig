@@ -16,6 +16,9 @@
 			<link rel="stylesheet" href="{{asset('client/css/bootstrap-datepicker.css')}}">
 			<link rel="stylesheet" href="{{asset('client/css/flaticon.css')}}">
 			<link rel="stylesheet" href="{{asset('client/css/style.css')}}">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 		{% endblock %}
 		<style>
 			/* Global settings */
@@ -61,7 +64,6 @@
 				background-color: #fff;
 				border-radius: 10px;
 				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-				margin: 30px auto;
 			}
 
 			.details-image {
@@ -69,7 +71,7 @@
 				height: 400px;
 				background-size: cover;
 				background-position: center;
-				border-radius: 15px;
+				border-radius: 8px;
 				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 				transition: transform 0.3s ease-in-out;
 			}
@@ -84,7 +86,6 @@
 
 			.details-text h3 {
 				font-size: 32px;
-				font-weight: bold;
 				color: #333;
 				margin-bottom: 15px;
 				line-height: 1.3;
@@ -95,12 +96,13 @@
 				color: #777;
 				line-height: 1.6;
 				margin: 15px 0;
+				text-align: justify;
 			}
 
 			.price {
 				color: #53d2dc;
-				font-size: 28px;
-				font-weight: bold;
+				font-size: 20px;
+				font-style: italic;
 				margin-bottom: 15px;
 			}
 
@@ -139,6 +141,7 @@
 			}
 			#btn-back {
 				background-color: black;
+				color: white
 			}
 			button {
 				appearance: none;
@@ -189,7 +192,7 @@
 				background: rgba(0, 0, 0, 0.5);
 				z-index: 1;
 			}
-			h1 {
+			h3 {
 				color: black !important;
 				text-align: center !important
 			}
@@ -206,110 +209,356 @@
 				background-color: inherit;
 				color: inherit;
 			}
+
+
+			/* css lel navbaraaa */
+			#ftco-navbar {
+				height: 20vh;
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				background-image: url('{{ asset('client/images/background33.jpg') }}');
+				position: relative
+			}
+			.navbar-brand img {
+				height: 60px;
+				width: auto;
+			}
+
+			.navbar-nav .nav-item {
+				margin: 0 10px;
+				font-weight: bold
+			}
+
+			.navbar-nav .nav-link {
+				font-size: 17px;
+				color: white !important;
+				transition: color 0.3s ease-in-out;
+			}
+
+			.navbar-nav .nav-link:hover {
+				color: #53d2dc !important;
+			}
+
+			.navbar-toggler {
+				border: none;
+				outline: none;
+			}
+
+			.navbar-toggler i {
+				font-size: 24px;
+				color: white;
+			}
+
+
+			/* Style pour le bouton de réservation */
+			button {
+				appearance: none;
+				background-color: transparent;
+				border: 0.125em solid #1A1A1A;
+				border-radius: 0.9375em;
+				box-sizing: border-box;
+				color: #3B3B3B;
+				cursor: pointer;
+				display: inline-block;
+				font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.2;
+				margin: 0;
+				min-height: 2.5em;
+				min-width: 0;
+				outline: none;
+				padding: 0.5em 1.5em;
+				text-align: center;
+				text-decoration: none;
+				transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+				will-change: transform;
+			}
+			button:hover {
+				color: #fff;
+				background-color: #1A1A1A;
+				box-shadow: rgba(0, 0, 0, 0.25) 0 6px 10px;
+				transform: translateY(-2px);
+			}
+			/**/
+			.activity-card {
+				max-width: 300px;
+				background: white;
+				border-radius: 12px;
+				box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+				padding: 20px;
+				text-align: center;
+				border: 1px solid black
+			}
+
+
+			.dates-container {
+				display: flex;
+				justify-content: space-between;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+
+			.date-box {
+				flex: 1;
+				background: #f7f7f7;
+				padding: 10px;
+				border-radius: 8px;
+				text-align: center;
+			}
+
+			.date-label {
+				font-size: 12px;
+				font-weight: bold;
+				color: #26648e;
+				display: block;
+			}
+
+			.date-value {
+				font-size: 15px;
+			}
+
+			.adults-section {
+				text-align: left;
+				margin-bottom: 15px;
+			}
+
+			.adults-label {
+				display: block;
+				color: black
+			}
+
+
+			.counter {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+			}
+
+			.counter button {
+				border: none;
+				background: none;
+				font-size: 20px;
+				color: #26648e;
+				cursor: pointer;
+			}
+
+			.date-icon {
+				font-size: 18px;
+				color: black;
+				margin-bottom: 5px;
+			}
+			.price-bar {
+				background: #26648e;
+				color: white;
+				font-size: 18px;
+				font-weight: bold;
+				padding: 7px;
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+				text-align: center;
+			}
+
+			.price-text {
+				font-size: 14px;
+				font-weight: normal;
+			}
+
+			/*css du voucher */
+
+			.voucher-section {
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+			}
+
+			.voucher-section input {
+				padding: 8px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				width: 150px;
+			}
+
+			.voucher-section button {
+				background: #26648e;
+				color: white;
+				border: none;
+				border-radius: 5px;
+			}
 		</style>
 	</head>
 	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
 			<div class="container">
-				<img class="img" src="{{asset('admin/img/logo.png')}}"/>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+				<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
 					<span class="oi oi-menu"></span>
 					Menu
 				</button>
-
 				<div class="collapse navbar-collapse" id="ftco-nav">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item active">
-							<a href="index.html" class="nav-link">Accueil</a>
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
 						</li>
 						<li class="nav-item">
-							<a href="about.html" class="nav-link">Boutique</a>
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
 						</li>
 						<li class="nav-item">
-							<a href="destination.html" class="nav-link">Destination</a>
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
 						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:30px" class="fa fa-user-circle"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+								{% if userId is not null %}
+									<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+										<i class="fa fa-user text-primary"></i>
+										<span class="ml-2">👤
+											{{ nom }}
+											{{ prenom }}</span>
+									</a>
+									<a class="dropdown-item" href="{{ path('app_logout_front') }}">
+										<i class="fas fa-sign-out-alt"></i>
+										<span class="ml-2">Se déconnecter</span>
+									</a>
+								{% else %}
+									<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+										<i class="fas fa-user"></i>
+										<span class="ml-2">Se connecter</span>
+									</a>
+
+									<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
+										<i class="fa fa-user-plus"></i>
+										<span class="ml-2">Devenez-Prestataire</span>
+									</a>
+									<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+										<i class="fa fa-user-plus"></i>
+										<span class="ml-2">Créer un compte</span>
+									</a>
 
 
-					</li>
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<i style="font-size:30px" class="fa fa-user-circle"></i>
-						</a>
-						<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+								{% endif %}
 
-							{% if userId is not null %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
-									<i class="fa fa-user text-primary"></i>
-									<span class="ml-2">👤
-										{{ nom }}
-										{{ prenom }}</span>
-								</a>
-								<a class="dropdown-item" href="{{ path('app_logout_front') }}">
-									<i class="fa fa-sign-out-alt text-danger"></i>
-									<span class="ml-2">Logout</span>
-								</a>
-							{% else %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
-									<i class="fa fa-sign-in-alt text-primary"></i>
-									<span class="ml-2">Login</span>
-								</a>
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
-									<i class="fa fa-user-plus"></i>
-									<span class="ml-2">Créer un compte</span>
-								</a>
-							{% endif %}
-
-						</div>
-					</li>
-				</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
 			</nav>
 
-			<div class="hero-wrap">
-				<div class="overlay"></div>
-			</div>
-			<h1 class=" mb-0 bread">Détails de l'activité
-			</h1>
-
 			<section class="ftco-section details-container">
+				<div class="activity-card">
+					<div class="price-bar">
+						<span class="price-text">Prix total
+						</span>
+
+						<span class="price-value">{{ activite.prix }}
+							DT</span>
+					</div>
+					<div class="dates-container">
+						<div class="date-box">
+							<i class="fa fa-calendar-alt date-icon"></i>
+							<span class="date-label">ARRIVÉE</span>
+							<span class="date-value">{{ activite.date_debut|date('d/m/Y') }}</span>
+						</div>
+						<div class="date-box">
+							<i class="fa fa-calendar-alt date-icon"></i>
+							<span class="date-label">DÉPART</span>
+							<span class="date-value">{{ activite.date_fin|date('d/m/Y') }}</span>
+						</div>
+					</div>
+					<hr>
+
+					<div class="adults-section">
+						<span class="adults-label">Nombre personnes
+						</span>
+						<div class="counter">
+							<button onclick="decrement()">&#8722;</button>
+							<span id="nbrPersonnes">1</span>
+							<button onclick="increment()">&#43;</button>
+						</div>
+					</div><hr>
+					<div class="voucher-section">
+						<input type="text" id="voucherCode" placeholder="Entrer le code">
+						<button>Appliquer Voucher</button>
+					</div>
+					<hr>
+					<button style="width:150px" {% if activite.disponibilite == 0 %} disabled {% endif %}>
+						Réserver
+					</button>
+				</div>
+
 
 				<div class="container">
-
-					<div class="details-image" style="background-image: url('{{ asset('uploads/images/' ~ activite.image) }}');"></div>
-
 					<div class="details-text">
-						<span class="price">&nbsp;{{ activite.prix }}
-							TN/personne
-						</span>
 						<h3>{{ activite.libelle }}</h3>
+						<button style="margin-left:300px">
+							Catégorie :
+							{{activite.categorie.nom}}
+						</button>
+						<hr>
+
+						<br>
+						<span class="price">&nbsp;{{ activite.prix }}
+							DT/personne
+						</span>
+
 						<p>{{ activite.description }}</p>
+
+						<div class="activity-dates">
+							<span style=" font-size:16px">
+
+								<i class="fa fa-calendar"></i>
+								{{ activite.date_debut|date('d/m/Y') }}</span>
+							&nbsp;&nbsp;
+							<span style="font-size:16px">
+								<i class="fa fa-calendar-check"></i>
+								{{ activite.date_fin|date('d/m/Y') }}</span>
+							&nbsp;&nbsp;&nbsp;
+							<span>
+								<i class="fa fa-clock time-icon"></i>
+								{{ activite.duree }}
+								JOURS</span>
+						</div>
+
 						<p class="location">
 							<span class="fa fa-map-marker"></span>
 							{{ activite.localisation }}</p>
-						<a href="{{ path('app_index')}}" class="btn-reserver" id="btn-back">Revenir</a>
-						<button class="btn-reserver" {% if activite.disponibilite == 0 %} disabled {% endif %}>
-							Réserver
+
+						<hr>
+
+						<button href="{{ path('app_index')}}" id="btn-back">Revenir
 						</button>
 
-
-						<button type="button" class="btn-reserver" data-bs-toggle="modal" data-bs-target="#voucherModal">
+						<button type="button" style=" color:#26648e" data-bs-toggle="modal" data-bs-target="#voucherModal">
 							Apply voucher
 						</button>
 
-						<!-- Modal -->
-						<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="voucherModalLabel">Appliquer un Coupon</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-									</div>
-									<div class="modal-body" id="voucherFormContainer"></div>
+					</div>
+					<div class="details-image" style="background-image: url('{{ asset('uploads/images/' ~ activite.image) }}');"></div>
+
+					<!-- Modal -->
+					<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="voucherModalLabel">Appliquer un Coupon</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
+								<div class="modal-body" id="voucherFormContainer"></div>
 							</div>
 						</div>
+					</div>
 
-						<script>
-							// Charger le formulaire dans le modal lorsqu'il est ouvert
+				</body>
+				<script>
+					// Charger le formulaire dans le modal lorsqu'il est ouvert
 document.getElementById('voucherModal').addEventListener('show.bs.modal', function (event) {
 const activityId = {{ activite.id }};
 fetch(`/load-voucher-form/${activityId}`).then(response => response.text()).then(data => {
@@ -338,13 +587,5 @@ alert(data.message);
 }
 }
 );
-</script>
 
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
-</html></div></body></html></div></body></html></div></body></html> </div></body></html></div></body></html></section><!-- Ajouter Bootstrap JS si nécessaire --><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script></body></html></body></html></body></html>
+</script>

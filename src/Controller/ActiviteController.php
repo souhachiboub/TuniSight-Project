@@ -32,20 +32,17 @@ final class ActiviteController extends AbstractController
     ): Response {
         $categorieId = $request->query->get('categorie', null);
 
-        // Créer une requête QueryBuilder pour les activités
         $queryBuilder = $activiteRepository->createQueryBuilder('a');
 
-        // Filtrer par catégorie si une catégorie est sélectionnée
         if ($categorieId) {
             $queryBuilder->andWhere('a.categorie = :categorieId')
                 ->setParameter('categorieId', $categorieId);
         }
 
-        // Paginer les résultats
         $pagination = $paginator->paginate(
-            $queryBuilder->getQuery(), // Passer la requête au paginator
-            $request->query->getInt('page', 1), // Numéro de page (1 par défaut)
-            4 // Nombre d'éléments par page
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            4
         );
 
         $categories = $categorieRepository->findAll();
@@ -61,9 +58,16 @@ final class ActiviteController extends AbstractController
         ]);
     }
 
+    #[Route('/', name: 'app_activite_backoffice', methods: ['GET'])]
+    public function indexx(ActiviteRepository $activiteRepository): Response
+    {
+        return $this->render('BackOffice-activites/index.html.twig', [
+            'activites' => $activiteRepository->findAll(),
+        ]);
+    }
 
-    #[Route('/', name: 'app_activite_index', methods: ['GET'])]
-    public function indexx(
+    #[Route('/decouvrir', name: 'app_activite_index', methods: ['GET'])]
+    public function decouvrirActivites(
         ActiviteRepository $activiteRepository,
         SessionInterface $session,
         CategorieActiviteRepository $categorieRepository,
@@ -76,10 +80,8 @@ final class ActiviteController extends AbstractController
 
 
 
-        // Récupérer toutes les villes
         $villes = $villeRepository->findAll();
 
-        // Renvoyer la réponse à la vue
         return $this->render('FrontOffice-activites/decouvrirActivites.html.twig', [
             'userId' => $session->get('user_id'),
             'activites' => $activites,
@@ -102,7 +104,7 @@ final class ActiviteController extends AbstractController
             $entityManager->persist($activite);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_activite_index');
+            return $this->redirectToRoute('app_activite_backoffice');
         }
 
         if ($request->isXmlHttpRequest()) {
@@ -110,7 +112,7 @@ final class ActiviteController extends AbstractController
                 'form' => $form->createView(),
             ]);
         }
-        return $this->render('activite/new.html.twig', [
+        return $this->render('BackOffice-activites/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -118,20 +120,16 @@ final class ActiviteController extends AbstractController
     #[Route('/filter', name: 'app_activite_filter', methods: ['POST'])]
     public function filter(Request $request, ActiviteRepository $activiteRepository): Response
     {
-        // Récupère les paramètres du formulaire
         $categorieId = $request->request->get('categorie'); // Peut être une chaîne vide
         $villeId = $request->request->get('ville'); // Peut être une chaîne vide
         $prixMin = $request->request->get('prixMin'); // Peut être null ou une chaîne vide
         $prixMax = $request->request->get('prixMax'); // Peut être null ou une chaîne vide
 
-        // Convertit les prix en float si nécessaire
         $prixMin = $prixMin !== null && $prixMin !== '' ? (float) $prixMin : null;
         $prixMax = $prixMax !== null && $prixMax !== '' ? (float) $prixMax : null;
 
-        // Appelle la méthode findByFilters pour obtenir les activités filtrées
         $activites = $activiteRepository->findByFilters($categorieId, $villeId, $prixMin, $prixMax);
 
-        // Rend le template partiel avec les activités filtrées
         return $this->render('FrontOffice-activites/_list.html.twig', [
             'activites' => $activites,
         ]);
@@ -157,7 +155,7 @@ final class ActiviteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $activite->setDuree();
             $entityManager->flush();
-            return $this->redirectToRoute('app_activite_index');
+            return $this->redirectToRoute('app_activite_backoffice');
         }
 
         return $this->render('BackOffice-activites/_form.html.twig', [
@@ -192,6 +190,6 @@ final class ActiviteController extends AbstractController
         } else {
             $this->addFlash('error', 'Le token CSRF est invalide.');
         }
-        return $this->redirectToRoute('app_activite_index');
+        return $this->redirectToRoute('app_activite_backoffice');
     }
 }

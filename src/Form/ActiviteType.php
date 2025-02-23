@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Activite;
 use App\Entity\CategorieActivite;
 use App\Entity\Offre;
+use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,13 +20,6 @@ class ActiviteType extends AbstractType
         $builder
             ->add('libelle')
             ->add('description')
-            #->add('imageFile', VichImageType::class, [
-            #   'required' => false,
-            #   'label' => 'Image',
-            #   'mapped' => true,
-            #   'download_uri' => false,
-            #  'image_uri' => false,
-            #])
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'allow_delete' => false,
@@ -38,20 +32,18 @@ class ActiviteType extends AbstractType
             ->add('capacite')
             ->add('disponibilite')
 
-            #->add('ville', EntityType::class, [
-            #   'class' => Ville::class,
-            #   'choice_label' => 'id',
-            #  'multiple' => true,
-            #])
+            ->add('ville', EntityType::class, [
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'multiple' => false,
+                'expanded' => false,
+            ])
             ->add('categorie', EntityType::class, [
                 'class' => CategorieActivite::class,
                 'choice_label' => 'nom',
 
             ])
-            // ->add('offre', EntityType::class, [
-            //     'class' => Offre::class,
-            //     'choice_label' => 'nom',
-            // ])
+
             ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
@@ -61,11 +53,6 @@ class ActiviteType extends AbstractType
                 'attr' => ['class' => 'form-control'],
             ])
 
-            #->add('reservation', EntityType::class, [
-            #   'class' => Reservation::class,
-            #   'choice_label' => 'id',
-            #   'multiple' => true,
-            #])
         ;
     }
 

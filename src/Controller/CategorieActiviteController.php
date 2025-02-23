@@ -18,9 +18,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class CategorieActiviteController extends AbstractController
 {
     #[Route('/', name: 'app_categorie_activite_index', methods: ['GET'])]
-    public function index(CategorieActiviteRepository $categorieActiviteRepository,SessionInterface $session): Response
+    public function index(CategorieActiviteRepository $categorieActiviteRepository, SessionInterface $session): Response
     {
-        return $this->render('categorie_activite/index.html.twig', [
+        return $this->render('BackOffice-catActivites/index.html.twig', [
             'categorie_activites' => $categorieActiviteRepository->findAll(),
             'userId' => $session->get('user_id'),
             'nom' => $session->get('user_nom'),
@@ -39,7 +39,7 @@ final class CategorieActiviteController extends AbstractController
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse([
                     'errors' => true,
-                    'form' => $this->renderView('categorie_activite/_form.html.twig', [
+                    'form' => $this->renderView('BackOffice-catActivites/_form.html.twig', [
                         'form' => $form->createView(),
                     ])
                 ]);
@@ -60,13 +60,13 @@ final class CategorieActiviteController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                'form' => $this->renderView('categorie_activite/_form.html.twig', [
+                'form' => $this->renderView('BackOffice-catActivites/_form.html.twig', [
                     'form' => $form->createView(),
                 ])
             ]);
         }
 
-        return $this->render('categorie_activite/_form.html.twig', [
+        return $this->render('BackOffice-catActivites/_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -78,7 +78,7 @@ final class CategorieActiviteController extends AbstractController
     #[Route('/{id}', name: 'app_categorie_activite_show', methods: ['GET'])]
     public function show(CategorieActivite $categorieActivite): Response
     {
-        return $this->render('categorie_activite/show.html.twig', [
+        return $this->render('BackOffice-catActivites/show.html.twig', [
             'categorie_activite' => $categorieActivite,
         ]);
     }
@@ -94,7 +94,7 @@ final class CategorieActiviteController extends AbstractController
             return $this->redirectToRoute('app_categorie_activite_index');
         }
 
-        return $this->render('categorie_activite/_form.html.twig', [
+        return $this->render('BackOffice-catActivites/_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
