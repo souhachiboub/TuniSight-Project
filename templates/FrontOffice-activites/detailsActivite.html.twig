@@ -339,6 +339,7 @@
 				align-items: center;
 				justify-content: center;
 				gap: 10px;
+
 			}
 
 			.counter button {
@@ -394,6 +395,48 @@
 		</style>
 	</head>
 	<body>
+		<!-- code du calcul prix total - et + - lezm ykoun f awl lbody, bch l page ta9ra les fonctions increment & decrement */-->
+
+		<script>
+			let nbrPersonnes = 1;
+const prixUnitaire = {{ activite.prix }};
+const capaciteMax = {{ activite.capacite }};
+
+function updateTotalPrice() {
+const totalPrice = nbrPersonnes * prixUnitaire;
+document.getElementById('totalPrice').textContent = totalPrice + ' DT';
+}
+
+function updateButtons() {
+document.querySelector('.counter button:first-child').disabled = nbrPersonnes === 1;
+document.querySelector('.counter button:last-child').disabled = nbrPersonnes === capaciteMax;
+}
+
+function increment() {
+if (nbrPersonnes < capaciteMax) {
+nbrPersonnes++;
+document.getElementById('nbrPersonnes').textContent = nbrPersonnes;
+updateTotalPrice();
+updateButtons();
+}
+}
+
+function decrement() {
+if (nbrPersonnes > 1) {
+nbrPersonnes--;
+document.getElementById('nbrPersonnes').textContent = nbrPersonnes;
+updateTotalPrice();
+updateButtons();
+}
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+updateTotalPrice();
+updateButtons();
+});
+		</script>
+
+
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
 			<div class="container">
 				<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
@@ -455,21 +498,19 @@
 			<section class="ftco-section details-container">
 				<div class="activity-card">
 					<div class="price-bar">
-						<span class="price-text">Prix total
-						</span>
-
-						<span class="price-value">{{ activite.prix }}
+						<span class="price-text">Prix total</span>
+						<span class="price-value" id="totalPrice">{{ activite.prix }}
 							DT</span>
 					</div>
 					<div class="dates-container">
 						<div class="date-box">
 							<i class="fa fa-calendar-alt date-icon"></i>
-							<span class="date-label">ARRIVÉE</span>
+							<span class="date-label">DÉPART</span>
 							<span class="date-value">{{ activite.date_debut|date('d/m/Y') }}</span>
 						</div>
 						<div class="date-box">
 							<i class="fa fa-calendar-alt date-icon"></i>
-							<span class="date-label">DÉPART</span>
+							<span class="date-label">RETOUR</span>
 							<span class="date-value">{{ activite.date_fin|date('d/m/Y') }}</span>
 						</div>
 					</div>
@@ -479,10 +520,11 @@
 						<span class="adults-label">Nombre personnes
 						</span>
 						<div class="counter">
-							<button onclick="decrement()">&#8722;</button>
+							<button style="border: 1px solid black; width: 30px; height: 20px; padding: 0; font-size: 16px;" onclick="decrement()">&#8722;</button>
 							<span id="nbrPersonnes">1</span>
-							<button onclick="increment()">&#43;</button>
+							<button style="border: 1px solid black; width: 30px; height: 20px; padding: 0; font-size: 16px;" onclick="increment()">&#43;</button>
 						</div>
+
 					</div><hr>
 					<div class="voucher-section">
 						<input type="text" id="voucherCode" placeholder="Entrer le code">
@@ -558,8 +600,7 @@
 
 				</body>
 				<script>
-					// Charger le formulaire dans le modal lorsqu'il est ouvert
-document.getElementById('voucherModal').addEventListener('show.bs.modal', function (event) {
+					document.getElementById('voucherModal').addEventListener('show.bs.modal', function (event) {
 const activityId = {{ activite.id }};
 fetch(`/load-voucher-form/${activityId}`).then(response => response.text()).then(data => {
 document.getElementById('voucherFormContainer').innerHTML = data;
@@ -578,8 +619,8 @@ method: 'POST',
 body: formData
 }).then(response => response.json()).then(data => {
 if (data.status === 'success') {
-alert(data.message); // Afficher un message de succès
-window.location.reload(); // Recharger la page pour afficher le nouveau prix
+alert(data.message);
+window.location.reload();
 } else {
 alert(data.message);
 }
@@ -587,5 +628,6 @@ alert(data.message);
 }
 }
 );
+
 
 </script>

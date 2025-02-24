@@ -17,39 +17,53 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateReservation = null;
+    private ?\DateTimeInterface $date_debut = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date_fin = null;
 
     #[ORM\Column]
     private ?int $nbrPersonnes = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?float $prixTotal = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    /**
-     * @var Collection<int, Activite>
-     */
-    #[ORM\ManyToMany(targetEntity: Activite::class, mappedBy: 'reservation')]
-    private Collection $activites;
+    #[ORM\ManyToOne(targetEntity: Activite::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Activite $activite = null;
 
-    public function __construct()
-    {
-        $this->activites = new ArrayCollection();
-    }
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $stripeSessionId = null;  // Pour l'API Stripe
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDateReservation(): ?\DateTimeInterface
+    public function getDateDebut(): ?\DateTimeInterface
     {
-        return $this->dateReservation;
+        return $this->date_debut;
     }
 
-    public function setDateReservation(\DateTimeInterface $dateReservation): static
+    public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
-        $this->dateReservation = $dateReservation;
+        $this->date_debut = $dateDebut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->date_fin;
+    }
+
+    public function setDateFin(\DateTimeInterface $dateFin): static
+    {
+        $this->date_fin = $dateFin;
 
         return $this;
     }
@@ -66,6 +80,18 @@ class Reservation
         return $this;
     }
 
+    public function getPrixTotal(): ?float
+    {
+        return $this->prixTotal;
+    }
+
+    public function setPrixTotal(float $prixTotal): static
+    {
+        $this->prixTotal = $prixTotal;
+
+        return $this;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -78,29 +104,26 @@ class Reservation
         return $this;
     }
 
-    /**
-     * @return Collection<int, Activite>
-     */
-    public function getActivites(): Collection
+    public function getActivite(): ?Activite
     {
-        return $this->activites;
+        return $this->activite;
     }
 
-    public function addActivite(Activite $activite): static
+    public function setActivite(?Activite $activite): static
     {
-        if (!$this->activites->contains($activite)) {
-            $this->activites->add($activite);
-            $activite->addReservation($this);
-        }
+        $this->activite = $activite;
 
         return $this;
     }
 
-    public function removeActivite(Activite $activite): static
+    public function getStripeSessionId(): ?string
     {
-        if ($this->activites->removeElement($activite)) {
-            $activite->removeReservation($this);
-        }
+        return $this->stripeSessionId;
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): static
+    {
+        $this->stripeSessionId = $stripeSessionId;
 
         return $this;
     }

@@ -31,7 +31,6 @@ final class ActiviteController extends AbstractController
         VilleRepository $villeRepository
     ): Response {
         $categorieId = $request->query->get('categorie', null);
-
         $queryBuilder = $activiteRepository->createQueryBuilder('a');
 
         if ($categorieId) {
@@ -71,7 +70,6 @@ final class ActiviteController extends AbstractController
         ActiviteRepository $activiteRepository,
         SessionInterface $session,
         CategorieActiviteRepository $categorieRepository,
-        Request $request,
         VilleRepository $villeRepository
     ): Response {
 
@@ -120,10 +118,10 @@ final class ActiviteController extends AbstractController
     #[Route('/filter', name: 'app_activite_filter', methods: ['POST'])]
     public function filter(Request $request, ActiviteRepository $activiteRepository): Response
     {
-        $categorieId = $request->request->get('categorie'); // Peut être une chaîne vide
-        $villeId = $request->request->get('ville'); // Peut être une chaîne vide
-        $prixMin = $request->request->get('prixMin'); // Peut être null ou une chaîne vide
-        $prixMax = $request->request->get('prixMax'); // Peut être null ou une chaîne vide
+        $categorieId = $request->request->get('categorie');
+        $villeId = $request->request->get('ville');
+        $prixMin = $request->request->get('prixMin');
+        $prixMax = $request->request->get('prixMax');
 
         $prixMin = $prixMin !== null && $prixMin !== '' ? (float) $prixMin : null;
         $prixMax = $prixMax !== null && $prixMax !== '' ? (float) $prixMax : null;
