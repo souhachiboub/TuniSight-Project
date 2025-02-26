@@ -2,29 +2,26 @@
 
 namespace App\Form;
 
+
 use App\Entity\UserEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class RegistrationFormType extends AbstractType
+class UserRegisterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
         ->add('email', EmailType::class)
-        ->add('role', ChoiceType::class, [
-            'choices' => [
-                'Prestataire' => 'ROLE_PRESTATAIRE',
-                'Artisan' => 'ROLE_ARTISAN',
-            ],
-        ])
         ->add('plainPassword', PasswordType::class, [
             // instead of being set onto the object directly,
             // this is read and encoded in the controller
@@ -56,11 +53,22 @@ class RegistrationFormType extends AbstractType
                     'minMessage' => 'Your password confirmation should be at least {{ limit }} characters',
                     'max' => 4096,
                 ]),
+                new Callback([$this, 'validatePasswordConfirmation']), // Utilisation du validateur Callback
                 
             ],
         ])
         ->add('submit', SubmitType::class, ['label' => 'S\'inscrire']);
         ;
+    }
+
+     public function validatePasswordConfirmation($data, ExecutionContextInterface $context)
+    {
+        $plainPassword = $context->getRoot()->get('plainPassword')->getData();
+        
+        if ($plainPassword !== $data) {
+            $context->buildViolation('The password fields must match.')
+                ->addViolation();
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

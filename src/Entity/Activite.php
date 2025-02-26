@@ -42,9 +42,9 @@ class Activite
     #[ORM\Column]
     private ?bool $disponibilite = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'activites')]
-    // #[ORM\JoinColumn(nullable: false)]
-    // private ?User $user = null;
+    #[ORM\ManyToOne(inversedBy: 'activites')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?UserEntity $user = null;
 
     /**
      * @ORM\Column(type="date")
@@ -257,17 +257,17 @@ class Activite
         return $this;
     }
 
-    // public function getUser(): ?User
-    // {
-    //     return $this->user;
-    // }
+    public function getUser(): ?UserEntity
+    {
+        return $this->user;
+    }
 
-    // public function setUser(?User $user): static
-    // {
-    //     $this->user = $user;
+    public function setUser(?UserEntity $user): static
+    {
+        $this->user = $user;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * @return Collection<int, Avis>

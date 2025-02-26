@@ -1,0 +1,10 @@
+{# {% extends 'base.html.twig' %} #}
+
+{% block body %}
+    <h2>Inscription</h2>
+    {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword) }}
+        
+    {{ form_end(registrationForm) }}
+{% endblock %}

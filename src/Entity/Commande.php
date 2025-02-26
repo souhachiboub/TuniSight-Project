@@ -22,9 +22,9 @@ class Commande
     #[ORM\Column]
     private ?int $nbrProdTotal = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'commandes')]
-    // #[ORM\JoinColumn(nullable: false)]
-    // private ?User $user = null;
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?UserEntity $user = null;
 
     /**
      * @var Collection<int, LigneCommande>
@@ -68,17 +68,17 @@ class Commande
         return $this;
     }
 
-    // public function getUser(): ?User
-    // {
-    //     return $this->user;
-    // }
+    public function getUser(): ?UserEntity
+    {
+        return $this->user;
+    }
 
-    // public function setUser(?User $user): static
-    // {
-    //     $this->user = $user;
+    public function setUser(?UserEntity $user): static
+    {
+        $this->user = $user;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * @return Collection<int, LigneCommande>

@@ -1,71 +1,31 @@
-{# templates/security/login.html.twig #}
-
 {# {% extends 'base.html.twig' %} #}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h2 class="text-center">Connexion</h2>
+<form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
-        {% if error %}
-            <div class="alert alert-danger">
-                {{ error.messageKey|trans(error.messageData, 'security') }}
-            </div>
-        {% endif %}
-
-        <form method="post">
-            <div class="mb-3">
-                <label for="inputEmail" class="form-label">Email</label>
-                <input type="email" name="email" id="inputEmail" class="form-control" value="{{ last_username }}" required autofocus>
-            </div>
-
-            <div class="mb-3">
-                <label for="inputPassword" class="form-label">Mot de passe</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" required>
-            </div>
-
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-        </form>
-
-        <div class="mt-3 text-center">
-            <a href="{{ path('app_register') }}">Créer un compte</a> | 
-          
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>
-    </div>
-{% endblock %}
-{% block title %}Login{% endblock %}
+    {% endif %}
 
-{% block content %}
-    <header>Login</header>
-    
-    {{ form_start(form) }}
-    
-    <div class="field input-field">
-        {{ form_widget(form.email, { 'attr': {'class': 'input', 'placeholder': 'Email'} }) }}
-    </div>
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <label for="inputEmail">Email</label>
+    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+    <label for="inputPassword">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 
-    <div class="field input-field">
-        {{ form_widget(form.motdepasse, { 'attr': {'class': 'password', 'placeholder': 'Password', 'type': 'password'} }) }}
-        <i class='bx bx-hide eye-icon'></i>
-    </div>
+    <input type="hidden" name="_csrf_token"
+           value="{{ csrf_token('authenticate') }}"
+    >
 
-    <div class="form-link">
-        <a href="#" class="forgot-pass">Forgot password?</a>
-    </div>
-
-    <div class="field button-field">
-        <button type="submit">Login</button>
-    </div>
-
-    {{ form_end(form) }}
-
-    <br><br><br><br><br><br>
-    <center>
-        <a href="{{ path('app_inscription_front') }}" style="color: black;">
-            Vous n'avez pas un compte ?
-        </a>
-    </center>
+    <button class="btn btn-lg btn-primary" type="submit">
+        Sign in
+    </button>
+</form>
 {% endblock %}
