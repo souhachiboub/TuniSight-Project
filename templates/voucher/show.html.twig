@@ -13,7 +13,7 @@
        <form method="get" action="{{ path('voucher_show') }}" class="row g-3 align-items-center">
     <div class="col-md-4">
         <label for="expired" class="form-label">État d'expiration</label>
-        <select name="expired" id="expired" class="form-select">
+        <select name="expired" id="expired" class="form-control w-auto">
             <option value="" {% if expired is null %}selected{% endif %}>Tous</option>
             <option value="1" {% if expired is same as(true) %}selected{% endif %}>Expirés</option>
             <option value="0" {% if expired is same as(false) %}selected{% endif %}>Non expirés</option>
@@ -22,7 +22,7 @@
 
     <div class="col-md-4">
         <label for="assigned" class="form-label">Assignation</label>
-        <select name="assigned" id="assigned" class="form-select">
+        <select name="assigned" id="assigned" class="form-control w-auto">
             <option value="" {% if assigned is null %}selected{% endif %}>Tous</option>
             <option value="1" {% if assigned is same as(true) %}selected{% endif %}>Assignés</option>
             <option value="0" {% if assigned is same as(false) %}selected{% endif %}>Non assignés</option>

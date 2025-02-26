@@ -208,21 +208,21 @@
 										{{ nom }}
 										{{ prenom }}</span>
 								</a>
-								<a class="dropdown-item" href="{{ path('app_logout_front') }}">
+								<a class="dropdown-item" href="{{ path('app_logout') }}">
 									<i class="fas fa-sign-out-alt"></i>
 									<span class="ml-2">Se déconnecter</span>
 								</a>
 							{% else %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
 									<i class="fas fa-user"></i>
 									<span class="ml-2">Se connecter</span>
 								</a>
 
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
+								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
 									<i class="fa fa-user-plus"></i>
 									<span class="ml-2">Devenez-Prestataire</span>
 								</a>
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
 									<i class="fa fa-user-plus"></i>
 									<span class="ml-2">Créer un compte</span>
 								</a>

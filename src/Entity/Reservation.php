@@ -22,9 +22,9 @@ class Reservation
     #[ORM\Column]
     private ?int $nbrPersonnes = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'reservations')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?User $user = null;
 
     /**
      * @var Collection<int, Activite>
@@ -66,17 +66,17 @@ class Reservation
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+    // public function setUser(?User $user): static
+    // {
+    //     $this->user = $user;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, Activite>

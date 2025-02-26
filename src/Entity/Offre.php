@@ -34,10 +34,11 @@ class Offre
     #[Assert\NotBlank]
     private ?\DateTimeInterface $dateExpiration = null;
 
-    #[ORM\ManyToOne(inversedBy: 'offres')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(inversedBy: 'offre', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
     #[Assert\NotBlank(['message' => 'Veuillez sélectionner une activité.',])]
     private ?Activite $activitie = null;
+
 
   
 

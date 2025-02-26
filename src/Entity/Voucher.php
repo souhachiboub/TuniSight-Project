@@ -38,9 +38,9 @@ class Voucher
     #[Assert\GreaterThanOrEqual(value: 5, message: "La valeur de réduction doit être positive.")]
     private ?int $valeurReduction = null;
 
-    #[ORM\ManyToOne(inversedBy: 'vouchers')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'vouchers')]
+    // #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    // private ?User $user = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isAssigned = null;
@@ -104,25 +104,25 @@ class Voucher
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        // if ($user === null && $this->user !== null) {
-        //     $this->user->setVoucher(null);
-        // }
+    // public function setUser(?User $user): static
+    // {
+    //     // if ($user === null && $this->user !== null) {
+    //     //     $this->user->setVoucher(null);
+    //     // }
 
-        // if ($user !== null && $user->getVoucher() !== $this) {
-        //     $user->setVoucher($this);
-        // }
+    //     // if ($user !== null && $user->getVoucher() !== $this) {
+    //     //     $user->setVoucher($this);
+    //     // }
 
-        $this->user = $user;
+    //     $this->user = $user;
 
-        return $this;
-    }
+    //     return $this;
+    // }
     public function getisAssigned(): ?bool
     {
         return $this->isAssigned;

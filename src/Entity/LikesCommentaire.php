@@ -15,9 +15,9 @@ class LikesCommentaire
 
   
 
-    #[ORM\ManyToOne(inversedBy: 'likesCommmentaire')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'likesCommmentaire')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'likesCommentaire')]
     #[ORM\JoinColumn(nullable: false)]
@@ -30,17 +30,17 @@ class LikesCommentaire
 
    
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+    // public function setUser(?User $user): static
+    // {
+    //     $this->user = $user;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getCommentaire(): ?Commentaire
     {

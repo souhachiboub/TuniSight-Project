@@ -70,6 +70,45 @@
 			background-color: #53d2dc !important;
 
 		}
+
+		/* Design du badge Promo */
+.promo-label {
+    background: #FFD700;  /* Jaune plus vif */
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px 0px 0px 5px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Design du pourcentage de réduction */
+.reduction {
+    background: #FF4D4D;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 0px 5px 5px 0px;
+    position: absolute;
+    top: 10px;
+    left: 75px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation pour rendre la réduction plus visible */
+@keyframes fadeInOut {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+.reduction {
+    animation: fadeInOut 1.5s infinite;
+}
+
 	</style>
 	<section class="ftco-section">
 		<div class="container">
@@ -104,6 +143,12 @@
 								<p class="location">
 									<span class="fa fa-map-marker"></span>
 									{{ activite.localisation }}</p>
+									{% if activite.offre is not null and activite.offre.reduction is not null %}
+									
+    <span class="promo-label">Promo</span>
+    <span class="reduction">-{{ activite.offre.reduction }}%</span>
+</div>
+{% endif %}
 								<div style="display:flex">
 									<a href="{{ path('app_activite_show', {'id': activite.id}) }}">
 										<button>Voir détails</button>

@@ -30,9 +30,9 @@ class Reclamation
     #[ORM\Column(length: 255)]
     private EtatReclamtion $etat;
 
-    #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?User $user = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateEnvoie = null;
@@ -75,17 +75,17 @@ class Reclamation
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+    // public function setUser(?User $user): static
+    // {
+    //     $this->user = $user;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getDateEnvoie(): ?\DateTimeInterface
     {

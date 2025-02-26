@@ -19,22 +19,63 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class OffreController extends AbstractController
 {
     
-    #[Route('/offre/new', name: 'offre_create', methods: ['GET', 'POST'])]
-public function create(Request $request, EntityManagerInterface $entityManager): Response
+//     #[Route('/offre/new', name: 'offre_create', methods: ['GET', 'POST'])]
+// public function create(Request $request, EntityManagerInterface $entityManager): Response
+// {
+//     $offre = new Offre();
+//     $form = $this->createForm(OffreType::class, $offre);
+//     $form->handleRequest($request);
+
+//     if ($form->isSubmitted() && $form->isValid()) {
+//         $entityManager->persist($offre);
+//         $entityManager->flush();
+
+//         if ($request->isXmlHttpRequest()) {
+//             return new JsonResponse(['success' => true]);
+//         }
+
+//         return $this->redirectToRoute('offre_show');
+//     }
+
+//     if ($request->isXmlHttpRequest()) {
+//         return $this->render('offre/new.html.twig', [
+//             'form' => $form->createView(),
+//         ]);
+//     }
+
+//     return $this->render('offre/new.html.twig', [
+//         'form' => $form->createView(),
+//     ]);
+// }
+
+#[Route('/offre/new', name: 'offre_create', methods: ['GET', 'POST'])]
+public function create(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
 {
     $offre = new Offre();
     $form = $this->createForm(OffreType::class, $offre);
     $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->persist($offre);
-        $entityManager->flush();
+    if ($form->isSubmitted()) {
+        if ($form->isValid()) {
+            $entityManager->persist($offre);
+            $entityManager->flush();
 
-        if ($request->isXmlHttpRequest()) {
-            return new JsonResponse(['success' => true]);
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+
+            return $this->redirectToRoute('offre_show');
+        } else {
+            // Si le formulaire n'est pas valide, on renvoie les erreurs
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[$error->getOrigin()->getName()] = $error->getMessage();
+            }
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'errors' => $errors], 400);
+            }
         }
-
-        return $this->redirectToRoute('offre_show');
     }
 
     if ($request->isXmlHttpRequest()) {
@@ -102,43 +143,83 @@ public function show(OffreRepository $offreRepository, Request $request, Paginat
     return $this->redirectToRoute('offre_show');
     }
     
+    // #[Route('/offre/{id}/edit', name: 'offre_edit', methods: ['GET', 'POST'])]
+    // public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager,ValidatorInterface $validator): Response
+    // {
+    //     $form = $this->createForm(OffreType::class, $offre,['is_edit' => true]);
+    //     $form->handleRequest($request);
+    
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager->flush();
+    
+    //         if ($request->isXmlHttpRequest()) {
+    //             return new JsonResponse(['success' => true]);
+    //         }
+    
+    //         return $this->redirectToRoute('offre_show');
+    //     }
+    
+    //     if ($request->isXmlHttpRequest()) {
+    //         return $this->render('offre/edit.html.twig', [
+    //             'form' => $form->createView(),
+    //         ]);
+    //     }
+    //     $errors = $validator->validate($offre);
+
+    //     // Si il y a des erreurs
+    //     if (count($errors) > 0) {
+    //         $errorMessages = [];
+    //         foreach ($errors as $error) {
+    //             $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+    //         }
+    
+    //         return new JsonResponse(['errors' => $errorMessages], 400);  // Renvoi des erreurs
+    //     }
+    
+    
+    //     return $this->render('offre/edit.html.twig', [
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
+
+
     #[Route('/offre/{id}/edit', name: 'offre_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager,ValidatorInterface $validator): Response
-    {
-        $form = $this->createForm(OffreType::class, $offre,['is_edit' => true]);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
+public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+{
+    $form = $this->createForm(OffreType::class, $offre, ['is_edit' => true]);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted()) {
+        if ($form->isValid()) {
             $entityManager->flush();
-    
+
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse(['success' => true]);
             }
-    
-            return $this->redirectToRoute('offre_show');
-        }
-    
-        if ($request->isXmlHttpRequest()) {
-            return $this->render('offre/edit.html.twig', [
-                'form' => $form->createView(),
-            ]);
-        }
-        $errors = $validator->validate($offre);
 
-        // Si il y a des erreurs
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            return $this->redirectToRoute('offre_show');
+        } else {
+            // Si le formulaire n'est pas valide, on renvoie les erreurs
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[$error->getOrigin()->getName()] = $error->getMessage();
             }
-    
-            return new JsonResponse(['errors' => $errorMessages], 400);  // Renvoi des erreurs
+
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'errors' => $errors], 400);
+            }
         }
-    
-    
+    }
+
+    if ($request->isXmlHttpRequest()) {
         return $this->render('offre/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
+    return $this->render('offre/edit.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
     
 }

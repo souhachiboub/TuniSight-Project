@@ -53,9 +53,9 @@ class Produit
     private ?File $imageFile = null; // Ce champ est virtuel, il ne correspond pas à un attribut dans la base de données
 
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'produits')]
+    // #[ORM\JoinColumn(nullable: true)]
+    // private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -153,16 +153,16 @@ private Collection $paniers;
 
 
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
-    }
+    // public function setUser(?User $user): static
+    // {
+    //     $this->user = $user;
+    //     return $this;
+    // }
 
     public function getCategorieProduit(): ?CategorieProduit
     {

@@ -42,9 +42,9 @@ class Activite
     #[ORM\Column]
     private ?bool $disponibilite = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activites')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'activites')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?User $user = null;
 
     /**
      * @ORM\Column(type="date")
@@ -99,8 +99,9 @@ class Activite
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieActivite $categorie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activites')]
+   #[ORM\OneToOne(mappedBy: 'activitie', cascade: ['persist', 'remove'])]
     private ?Offre $offre = null;
+
 
     /**
      * @var Collection<int, Reservation>
@@ -148,7 +149,7 @@ class Activite
     public function __construct()
     {
         $this->avis = new ArrayCollection();
-        $this->ville = new ArrayCollection();
+       // $this->ville = new ArrayCollection();
         $this->reservation = new ArrayCollection();
     }
 
@@ -256,17 +257,17 @@ class Activite
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+    // public function setUser(?User $user): static
+    // {
+    //     $this->user = $user;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, Avis>

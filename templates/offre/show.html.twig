@@ -63,18 +63,19 @@
 
         </div>
 
-           <!-- Formulaire de filtrage par état d'expiration -->
-    <form method="get" action="{{ path('offre_show') }}">
-        <div class="form-group">
-            <label for="expirée">Filtrer par état d'expiration :</label>
-            <select class="form-control" id="expirée" name="expirée">
+        <!-- Filtrage -->
+    <form method="get" action="{{ path('offre_show') }}" class="mb-3">
+        <div class="form-group d-flex align-items-center gap-2">
+            <label for="expirée" class="mr-2">Filtrer par expiration :</label>
+            <select class="form-control w-auto" id="expirée" name="expirée">
                 <option value="">Sélectionner...</option>
                 <option value="non_expirée" {% if app.request.get('expirée') == 'non_expirée' %}selected{% endif %}>Non expirée</option>
                 <option value="expirée" {% if app.request.get('expirée') == 'expirée' %}selected{% endif %}>Expirée</option>
             </select>
+            <button type="submit" class="btn btn-primary ml-2">Filtrer</button>
         </div>
-        <button type="submit" class="btn btn-primary">Filtrer</button>
     </form>
+
 
         <!-- Tableau des Offres -->
         <div class="card shadow mb-4">
@@ -104,8 +105,8 @@
                                 <td>{{ offre.activitie.libelle }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a href="#" class="edit-btn" data-id="{{ offre.id }}">
-												<img src="{{asset('admin/img/editIcone.png')}}"/>
+                                        <a href="#" class="edit-btn" data-id="{{ offre.id }}" class="btn btn-warning btn-sm">
+												<i class="fas fa-edit"></i> Modifier
 											</a>
 
 
@@ -281,6 +282,7 @@ $(document).ready(function () {
     });
 });
 $(document).ready(function () {
+    // Gestion du modal d'ajout
     $('#addOffreModal').on('show.bs.modal', function () {
         $.ajax({
             url: '{{ path("offre_create") }}',
@@ -288,7 +290,7 @@ $(document).ready(function () {
             success: function (response) {
                 $('#add-offre-form-container').html(response);
 
-                // Attache un gestionnaire d'événement après le chargement du formulaire
+                // Gestion de la soumission du formulaire d'ajout
                 $('#add-offre-form').on('submit', function (e) {
                     e.preventDefault();
 
@@ -296,13 +298,24 @@ $(document).ready(function () {
                         url: '{{ path("offre_create") }}',
                         method: 'POST',
                         data: $(this).serialize(),
-                        success: function () {
-                            $('#addOffreModal').modal('hide');
-                            location.reload(); // Recharge la page après l'ajout
+                        success: function (data) {
+                            if (data.success) {
+                                $('#addOffreModal').modal('hide');
+                                location.reload(); // Recharger la page après l'ajout
+                            } else {
+                                // Afficher les erreurs de validation
+                                $('#add-offre-form .invalid-feedback').remove();
+                                $('#add-offre-form .is-invalid').removeClass('is-invalid');
+
+                                for (const field in data.errors) {
+                                    const errorMessage = data.errors[field];
+                                    $(`#add-offre-form [name="${field}"]`).addClass('is-invalid');
+                                    $(`#add-offre-form [name="${field}"]`).after(`<div class="invalid-feedback">${errorMessage}</div>`);
+                                }
+                            }
                         },
                         error: function (xhr) {
-                            alert('Erreur lors de l\'ajout');
-                            console.log(xhr.responseText);
+                            alert('Une erreur est survenue lors de la soumission du formulaire.');
                         }
                     });
                 });
