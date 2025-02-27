@@ -8,8 +8,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
@@ -18,6 +21,13 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+        ->add('nom', TextType::class)
+        ->add('prenom', TextType::class)
+        ->add('dateNaissance', DateType::class, [
+            'widget' => 'single_text',
+        ])
+        ->add('numTel', NumberType::class)
+        ->add('cin', TextType::class)
         ->add('email', EmailType::class)
         ->add('role', ChoiceType::class, [
             'choices' => [
@@ -43,23 +53,23 @@ class RegistrationFormType extends AbstractType
             ],
         ])
 
-        ->add('confirmPassword', PasswordType::class, [
-            'mapped' => false,
-            'label' => 'Confirm Password', // Label for the field
-            'attr' => ['autocomplete' => 'new-password'],
-            'constraints' => [
-                new NotBlank([
-                    'message' => 'Please confirm your password',
-                ]),
-                new Length([
-                    'min' => 6,
-                    'minMessage' => 'Your password confirmation should be at least {{ limit }} characters',
-                    'max' => 4096,
-                ]),
+        // ->add('confirmPassword', PasswordType::class, [
+        //     'mapped' => false,
+        //     'label' => 'Confirm Password', // Label for the field
+        //     'attr' => ['autocomplete' => 'new-password'],
+        //     'constraints' => [
+        //         new NotBlank([
+        //             'message' => 'Please confirm your password',
+        //         ]),
+        //         new Length([
+        //             'min' => 6,
+        //             'minMessage' => 'Your password confirmation should be at least {{ limit }} characters',
+        //             'max' => 4096,
+        //         ]),
                 
-            ],
-        ])
-        ->add('submit', SubmitType::class, ['label' => 'S\'inscrire']);
+        //     ],
+        // ])
+       
         ;
     }
 

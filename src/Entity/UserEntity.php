@@ -28,12 +28,10 @@ class UserEntity implements  UserInterface,PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
-    #[Assert\Length(min: 2, max: 50, minMessage: "Le nom doit contenir au moins {{ limit }} caractères.", maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le prénom ne peut pas être vide.")]
-    #[Assert\Length(min: 2, max: 50, minMessage: "Le prénom doit contenir au moins {{ limit }} caractères.", maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $prenom = null;
 
     #[ORM\Column]
@@ -63,6 +61,8 @@ class UserEntity implements  UserInterface,PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255, maxMessage: "La bio ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $bio = null;
+    
+    #[ORM\Column(type: Types::ARRAY)]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
@@ -213,7 +213,7 @@ public function getDateNaissance(): ?\DateTimeInterface
     return $this->dateNaissance;
 }
 
-public function setDateNaissance(\DateTimeInterface $dateNaissance): static
+public function setDateNaissance(?\DateTimeInterface $dateNaissance): static
 {
     $this->dateNaissance = $dateNaissance;
 

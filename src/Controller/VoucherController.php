@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserEntity;
 use App\Entity\Voucher;
 use App\Form\VoucherType;
 use App\Service\MailerService;
@@ -66,6 +67,8 @@ class VoucherController extends AbstractController
     #[Route('/vouchers', name: 'voucher_show', methods: ['GET', 'POST'])]
     public function show(Request $request, VoucherRepository $voucherRepository): Response
     {
+
+       
         // Récupérer les filtres depuis la requête GET
         $expired = $request->query->get('expired', '');
         $assigned = $request->query->get('assigned', '');
@@ -99,8 +102,8 @@ class VoucherController extends AbstractController
             ]);
         if (!$voucher->getUser()) {
             $formBuilder->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => function (User $user) {
+                'class' => UserEntity::class,
+                'choice_label' => function (UserEntity $user) {
                     return $user->getEmail() ;
                 },
                 'placeholder' => 'Sélectionnez un client',

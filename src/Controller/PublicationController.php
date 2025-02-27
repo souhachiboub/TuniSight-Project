@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Publication;
 use App\Entity\Image;
 use App\Entity\Likes;
-use App\Entity\User;
+use App\Entity\UserEntity;
 use App\Entity\Commentaire;
 use App\Entity\LikesCommentaire;
 use App\Form\CommentaireType;
@@ -42,7 +42,7 @@ class PublicationController extends AbstractController
                 ]);
             } else {
                 $publication->setDatePublication(new \DateTime());
-                $user = $entityManager->getRepository(User::class)->find(1); // Assuming user with ID 1
+                $user = $entityManager->getRepository(UserEntity::class)->find(1); // Assuming user with ID 1
                 $publication->setUser($user);
     
                 $entityManager->persist($publication);
@@ -93,7 +93,7 @@ class PublicationController extends AbstractController
         }
 
         $publications = $entityManager->getRepository(Publication::class)->findBy([], ['datePublication' => 'DESC']);
-        $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(UserEntity::class)->find(1);
 
         // Gestion des likes pour chaque publication
         foreach ($publications as $pub) {
@@ -132,7 +132,7 @@ class PublicationController extends AbstractController
                 ]);
             } else {
                 $publication->setDatePublication(new \DateTime());
-                $user = $entityManager->getRepository(User::class)->find(1); // Assuming user with ID 1
+                $user = $entityManager->getRepository(UserEntity::class)->find(1); // Assuming user with ID 1
                 $publication->setUser($user);
     
                 $entityManager->persist($publication);
@@ -183,7 +183,7 @@ class PublicationController extends AbstractController
         }
 
         $publications = $entityManager->getRepository(Publication::class)->findBy(['user' => 1], ['datePublication' => 'DESC']);
-        $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(UserEntity::class)->find(1);
 
         // Gestion des likes pour chaque publication
         foreach ($publications as $pub) {
@@ -209,7 +209,7 @@ public function DetailsPublications($id, Request $request, EntityManagerInterfac
         throw $this->createNotFoundException('La publication n\'existe pas.');
     }
 
-    $user = $entityManager->getRepository(User::class)->find(1); // Assume user ID is 1
+    $user = $entityManager->getRepository(UserEntity::class)->find(1); // Assume user ID is 1
     $isLiked = $entityManager->getRepository(Likes::class)->findOneBy([
         'user' => $user,
         'publication' => $publication

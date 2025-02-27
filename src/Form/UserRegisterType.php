@@ -10,8 +10,11 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -21,6 +24,18 @@ class UserRegisterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+        ->add('nom', TextType::class
+        )
+        ->add('prenom', TextType::class, [
+            'constraints' => [
+                new NotBlank(['message' => 'Veuillez entrer votre prénom']),
+            ],
+        ])
+        ->add('numTel', NumberType::class)
+        ->add('dateNaissance', DateType::class, [
+            'widget' => 'single_text',
+        ])
+        ->add('cin', TextType::class)
         ->add('email', EmailType::class)
         ->add('plainPassword', PasswordType::class, [
             // instead of being set onto the object directly,
@@ -53,7 +68,7 @@ class UserRegisterType extends AbstractType
                     'minMessage' => 'Your password confirmation should be at least {{ limit }} characters',
                     'max' => 4096,
                 ]),
-                new Callback([$this, 'validatePasswordConfirmation']), // Utilisation du validateur Callback
+                //new Callback([$this, 'validatePasswordConfirmation']), // Utilisation du validateur Callback
                 
             ],
         ])
