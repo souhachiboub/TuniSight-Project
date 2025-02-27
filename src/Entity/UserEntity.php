@@ -62,7 +62,7 @@ class UserEntity implements  UserInterface,PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 255, maxMessage: "La bio ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $bio = null;
     
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]

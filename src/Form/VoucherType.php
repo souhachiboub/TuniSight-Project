@@ -2,7 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\User;
+
+use App\Entity\UserEntity;
 use App\Entity\Voucher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -40,7 +41,7 @@ class VoucherType extends AbstractType
             'label' => 'Réduction (%)'
         ])
         ->add('user', EntityType::class, [
-            'class' => User::class,
+            'class' => UserEntity::class,
             'choice_label' => 'email', 
             'label' => 'Assigné à (Client)',
             'required' => false,

@@ -39,14 +39,14 @@ class VoucherController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($voucher);
             $entityManager->flush();
-            if ($voucher->getUser()) {
-                $mailer->sendVoucherEmail(
-                    $voucher->getUser()->getEmail(),
-                    $voucher->getCodeVoucher(),
-                    $voucher->getValeurReduction(),
-                    $voucher->getDateExpiration()
-                );
-            }
+            // if ($voucher->getUser()) {
+            //     $mailer->sendVoucherEmail(
+            //         $voucher->getUser()->getEmail(),
+            //         $voucher->getCodeVoucher(),
+            //         $voucher->getValeurReduction(),
+            //         $voucher->getDateExpiration()
+            //     );
+            // }
 
             return $this->redirectToRoute('voucher_show');
         }
