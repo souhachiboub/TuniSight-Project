@@ -26,11 +26,7 @@ class UserRegisterType extends AbstractType
         $builder
         ->add('nom', TextType::class
         )
-        ->add('prenom', TextType::class, [
-            'constraints' => [
-                new NotBlank(['message' => 'Veuillez entrer votre prénom']),
-            ],
-        ])
+        ->add('prenom', TextType::class)
         ->add('numTel', NumberType::class)
         ->add('dateNaissance', DateType::class, [
             'widget' => 'single_text',
@@ -72,7 +68,7 @@ class UserRegisterType extends AbstractType
                 
             ],
         ])
-        ->add('submit', SubmitType::class, ['label' => 'S\'inscrire']);
+    
         ;
     }
 

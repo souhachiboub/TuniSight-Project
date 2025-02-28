@@ -201,12 +201,12 @@
 						</a>
 						<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
 
-							{% if userId is not null %}
-								<a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+							{% if app.user %}
+								<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login')}}">
 									<i class="fa fa-user text-primary"></i>
-									<span class="ml-2">👤
-										{{ nom }}
-										{{ prenom }}</span>
+									<span class="ml-2">
+										{{ app.user.nom }}
+										{{ app.user.prenom }}</span>
 								</a>
 								<a class="dropdown-item" href="{{ path('app_logout') }}">
 									<i class="fas fa-sign-out-alt"></i>

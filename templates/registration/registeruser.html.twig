@@ -71,7 +71,7 @@
 				{{ form_errors(registrationForm.nom) }}
 			</div>
 		</div>
-		<br/>
+		
 
         <div class="field input-field">
 			{{ form_widget(registrationForm.prenom, {'attr': {'class': 'input', 'placeholder': 'Prénom'}}) }}
@@ -81,7 +81,7 @@
 		</div>
 		
 	</div>
-    
+    <br/>
 
     <div class="field input-field">
     {{ form_widget(registrationForm.numTel, {'attr': {'class': 'input', 'placeholder': 'Numéro de téléphone'}}) }}
@@ -114,8 +114,6 @@
 	</div>
 
 	<br/>
-
-    <br/>
 
 	<div class="field input-field">
 		{{ form_widget(registrationForm.dateNaissance, {'attr': {'class': 'input', 'placeholder': 'Date de naissance'}}) }}
