@@ -39,23 +39,57 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    // public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    // {
+    //     $user = $token->getUser();
+    //     $roles = $user->getRoles();
+    
+    //     if (in_array('ROLE_PRESTATAIRE', $roles)) {
+    //         return new RedirectResponse($this->urlGenerator->generate('voucher_show'));
+    //     } elseif (in_array('ROLE_ARTISAN', $roles)) {
+    //         return new RedirectResponse($this->urlGenerator->generate('app_produit'));
+    //     }
+    //     else {
+          
+    //         return new RedirectResponse($this->urlGenerator->generate('app_index'));
+    //     }
+    // }    
+    // protected function getLoginUrl(Request $request): string
+    // {
+    //     return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    // }
+
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $session = $request->getSession();
         $user = $token->getUser();
         $roles = $user->getRoles();
-    
+
+        // Vérifier s'il y a une URL de redirection en session (cas réservation)
+        if ($session->has('redirect_url')) {
+            $redirectUrl = $session->get('redirect_url');
+            //$session->remove('redirect_url'); 
+            return new RedirectResponse($redirectUrl);
+        }
+
+        // Redirection selon le rôle
         if (in_array('ROLE_PRESTATAIRE', $roles)) {
             return new RedirectResponse($this->urlGenerator->generate('voucher_show'));
         } elseif (in_array('ROLE_ARTISAN', $roles)) {
             return new RedirectResponse($this->urlGenerator->generate('app_produit'));
         }
-        else {
-          
-            return new RedirectResponse($this->urlGenerator->generate('app_index'));
-        }
-    }    
+
+        return new RedirectResponse($this->urlGenerator->generate('app_index'));
+    }
+
     protected function getLoginUrl(Request $request): string
     {
+        $session = $request->getSession();
+
+        if ($request->query->has('redirect')) {
+            $session->set('redirect_url', $request->query->get('redirect'));
+        }
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }

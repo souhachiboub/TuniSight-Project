@@ -68,14 +68,14 @@ class ReservationController extends AbstractController
             
 //             if (!$voucher) {
 //                 $this->addFlash('danger', 'Le voucher est invalide.');
-//             } elseif ($voucher->getIsUsed()) {
+//             } elseif ($voucher->getisAssigned()) {
 //                 $this->addFlash('warning', 'Ce voucher a déjà été utilisé.');
 //             } elseif ($voucher->getDateExpiration() < new \DateTime()) {
 //                 $this->addFlash('warning', 'Le voucher a expiré.');
 //             } else {
 //                 // Appliquer le voucher à la réservation
 //                 $reservation->setVoucher($voucher);
-//                 $voucher->setIsUsed(true);  // Marquer le voucher comme utilisé
+//                 $voucher->setisAssigned(true);  // Marquer le voucher comme utilisé
 //                 $entityManager->persist($voucher);
 //             }
 //         }
@@ -140,7 +140,7 @@ class ReservationController extends AbstractController
 //         }
 
 //         // Check if the voucher has been used
-//         if ($voucher->getIsUsed()) {
+//         if ($voucher->getisAssigned()) {
 //             $this->addFlash('warning', 'Ce voucher a déjà été utilisé.');
 //             return $this->redirectToRoute('apply_voucher', ['id' => $activity->getId()]);
 //         }
@@ -158,7 +158,7 @@ class ReservationController extends AbstractController
 
 //         // Apply the discount to the reservation and mark the voucher as used
 //         $reservation->setTotalPrice(max($newPrice, 0)); // Ensure the price doesn't go below 0
-//         $voucher->setIsUsed(true);
+//         $voucher->setisAssigned(true);
 
 //         // Persist changes to the database
 //         $entityManager->persist($reservation);
@@ -217,7 +217,7 @@ class ReservationController extends AbstractController
 
 //             if (!$voucher) {
 //                 $this->addFlash('error', 'Ce coupon est invalide.');
-//             } elseif ($voucher->getIsUsed()) {
+//             } elseif ($voucher->getisAssigned()) {
 //                 $this->addFlash('error', 'Ce coupon a déjà été utilisé.');
 //             } elseif ($voucher->getDateExpiration() < new \DateTimeImmutable()) {
 //                 $this->addFlash('error', 'Ce coupon a expiré.');
@@ -226,7 +226,7 @@ class ReservationController extends AbstractController
 //                 $this->addFlash('success', 'Coupon appliqué avec succès ! Réduction : ' . $voucher->getValeurReduction() . '%');
                 
 //                 // Marquer le coupon comme utilisé
-//                 $voucher->setIsUsed(true);
+//                 $voucher->setisAssigned(true);
 //                 $entityManager->flush();
 //             }
 //         }
@@ -260,7 +260,7 @@ class ReservationController extends AbstractController
 
 //         if (!$voucher) {
 //             $this->addFlash('error', 'Ce coupon est invalide.');
-//         } elseif ($voucher->getIsUsed()) {
+//         } elseif ($voucher->getisAssigned()) {
 //             $this->addFlash('error', 'Ce coupon a déjà été utilisé.');
 //         } elseif ($voucher->getDateExpiration() < new \DateTimeImmutable()) {
 //             $this->addFlash('error', 'Ce coupon a expiré.');
@@ -276,7 +276,7 @@ class ReservationController extends AbstractController
 //             $this->addFlash('success', 'Coupon appliqué avec succès ! Réduction : ' . $reduction . '% - Nouveau prix : ' . $prixAvecReduction . 'TND');
             
 
-//             $voucher->setIsUsed(true);
+//             $voucher->setisAssigned(true);
 //             $entityManager->flush();
 //         }
 //     }
@@ -313,7 +313,7 @@ public function loadVoucherForm(int $id, EntityManagerInterface $entityManager):
     ]);
 }
 
-#[Route('/apply-voucher/{id}', name: 'apply_voucher', methods: ['POST'])]
+#[Route('/apply-voucher/{id}', name: 'apply_voucher', methods: ['GET', 'POST'])]
 public function applyVoucher(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
 {
     // Récupérer l'activité à partir de l'ID
@@ -342,7 +342,7 @@ public function applyVoucher(int $id, Request $request, EntityManagerInterface $
                 'status' => 'error',
                 'message' => 'Ce coupon est invalide.',
             ], Response::HTTP_BAD_REQUEST);
-        } elseif ($voucher->getIsUsed()) {
+        } elseif ($voucher->getisAssigned()) {
             return $this->json([
                 'status' => 'error',
                 'message' => 'Ce coupon a déjà été utilisé.',
@@ -362,7 +362,7 @@ public function applyVoucher(int $id, Request $request, EntityManagerInterface $
             $entityManager->flush();
 
             // Marquer le voucher comme utilisé
-            $voucher->setIsUsed(true);
+            $voucher->setIsAssigned(true);
             $entityManager->flush();
 
             // Renvoyer une réponse JSON de succès

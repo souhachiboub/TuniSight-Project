@@ -17,11 +17,36 @@ class VoucherRepository extends ServiceEntityRepository
     }
 
 
+    // public function filterVouchers(?bool $expired, ?bool $assigned)
+    // {
+    //     $qb = $this->createQueryBuilder('v');
+    
+    //     // Si expired est défini, appliquer le filtre correspondant
+    //     if ($expired !== null) {
+    //         if ($expired) {
+    //             $qb->andWhere('v.dateExpiration < :now');
+    //         } else {
+    //             $qb->andWhere('v.dateExpiration >= :now');
+    //         }
+    //         $qb->setParameter('now', new \DateTime());
+    //     }
+    
+    //     // Si assigned est défini, appliquer le filtre correspondant
+    //     if ($assigned !== null) {
+    //         if ($assigned) {
+    //             $qb->andWhere('v.user IS NOT NULL');
+    //         } else {
+    //             $qb->andWhere('v.user IS NULL');
+    //         }
+    //     }
+    
+    //     return $qb->getQuery()->getResult();
+    // }
+
     public function filterVouchers(?bool $expired, ?bool $assigned)
     {
         $qb = $this->createQueryBuilder('v');
     
-        // Si expired est défini, appliquer le filtre correspondant
         if ($expired !== null) {
             if ($expired) {
                 $qb->andWhere('v.dateExpiration < :now');
@@ -31,7 +56,6 @@ class VoucherRepository extends ServiceEntityRepository
             $qb->setParameter('now', new \DateTime());
         }
     
-        // Si assigned est défini, appliquer le filtre correspondant
         if ($assigned !== null) {
             if ($assigned) {
                 $qb->andWhere('v.user IS NOT NULL');
@@ -42,6 +66,8 @@ class VoucherRepository extends ServiceEntityRepository
     
         return $qb->getQuery()->getResult();
     }
+    
+
     
 
 

@@ -206,7 +206,7 @@
 									<i class="fa fa-user text-primary"></i>
 									<span class="ml-2">
 										{{ app.user.nom }}
-										{{ app.user.prenom }}</span>
+										{{ prenom }}</span>
 								</a>
 								<a class="dropdown-item" href="{{ path('app_logout') }}">
 									<i class="fas fa-sign-out-alt"></i>
@@ -222,7 +222,7 @@
 									<i class="fa fa-user-plus"></i>
 									<span class="ml-2">Devenez-Prestataire</span>
 								</a>
-								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+								<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
 									<i class="fa fa-user-plus"></i>
 									<span class="ml-2">Créer un compte</span>
 								</a>

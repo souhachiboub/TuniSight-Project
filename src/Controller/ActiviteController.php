@@ -148,6 +148,7 @@ final class ActiviteController extends AbstractController
     #[Route('/{id}', name: 'app_activite_show', methods: ['GET'])]
     public function show(Activite $activite, SessionInterface $session): Response
     {
+        $user = $this->getUser();
         return $this->render('FrontOffice-activites/detailsActivite.html.twig', [
             'activite' => $activite,
             'userId' => $session->get('user_id'),

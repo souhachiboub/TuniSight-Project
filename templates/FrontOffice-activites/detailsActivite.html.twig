@@ -194,19 +194,6 @@
 				color: black !important;
 				text-align: center !important
 			}
-
-			/* css sur le bouton réserver wa9teli dispo=0*/
-			button:disabled {
-				opacity: 0.5;
-				cursor: not-allowed;
-			}
-
-			button:disabled:hover,
-			button:disabled:focus,
-			button:disabled:active {
-				background-color: inherit;
-				color: inherit;
-			}
 		</style>
 	</head>
 	<body>
@@ -239,21 +226,23 @@
     </a>
     <div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
 
-        {% if userId is not null %}
-            <a class="dropdown-item d-flex align-items-center" href="{{ path('moncompte', {'id': userId}) }}">
+        {% if  app.user %}
+			
+	
+            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_index') }}">
                 <i class="fa fa-user text-primary"></i>
                 <span class="ml-2">👤 {{ nom }} {{ prenom }}</span>
             </a>
-            <a class="dropdown-item" href="{{ path('app_logout_front') }}">
+            <a class="dropdown-item" href="{{ path('app_logout') }}">
                 <i class="fa fa-sign-out-alt text-danger"></i>
                 <span class="ml-2">Logout</span>
             </a>
         {% else %}
-            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login_front') }}">
+            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
                 <i class="fa fa-sign-in-alt text-primary"></i>
                 <span class="ml-2">Login</span>
             </a>
-            <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription_front') }}">
+            <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_inscription') }}">
                 <i class="fa fa-user-plus"></i>
                 <span class="ml-2">Créer un compte</span>
             </a>
@@ -290,14 +279,21 @@
 						<span class="fa fa-map-marker"></span>
 						{{ activite.localisation }}</p>
 					<a href="{{ path('app_index')}}" class="btn-reserver" id="btn-back">Revenir</a>
-					<button class="btn-reserver" {% if activite.disponibilite == 0 %} disabled {% endif %}>
-							Réserver
-					</button>
+					<button class="btn-reserver">Réserver</button>
 					
 
-					 <button type="button" class="btn-reserver" data-bs-toggle="modal" data-bs-target="#voucherModal">
-        Apply voucher
-    </button>
+					{% if app.user %}
+						 <button type="button" class="btn-reserver" data-bs-toggle="modal" data-bs-target="#voucherModal">
+        				Appliquer Voucher
+    					</button>
+					{% else %}
+						
+    				<a href="{{ path('app_login', {'redirect': app.request.uri }) }}" class="btn-reserver">
+        			Appliquer Voucher
+    				</a>
+
+					{% endif %}
+					
 
     <!-- Modal -->
     <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
@@ -316,9 +312,10 @@
 
     <!-- JavaScript pour charger le formulaire et gérer la soumission -->
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
         // Charger le formulaire dans le modal lorsqu'il est ouvert
         document.getElementById('voucherModal').addEventListener('show.bs.modal', function (event) {
-            const activityId = {{ activite.id }};
+            const activityId = {{ activite.id|json_encode }};
             fetch(`/load-voucher-form/${activityId}`)
                 .then(response => response.text())
                 .then(data => {
@@ -332,26 +329,38 @@
             if (event.target.id === 'voucherForm') {
                 event.preventDefault();
                 const formData = new FormData(event.target);
-                const activityId = {{ activite.id }};
+                const activityId = {{ activite.id|json_encode }};
 
                 fetch(`/apply-voucher/${activityId}`, {
                     method: 'POST',
                     body: formData,
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message); // Afficher un message de succès
-                        window.location.reload(); // Recharger la page pour afficher le nouveau prix
-                    } else {
-                        alert(data.message); // Afficher un message d'erreur
-                    }
-                })
-                .catch(error => console.error('Erreur lors de la soumission du formulaire', error));
+                .then(response => {
+    if (!response.ok) {
+        return response.json().then(data => {
+            throw new Error(data.message);  // Utiliser le message de l'API pour l'afficher
+        });
+    }
+    return response.json();
+})
+.then(data => {
+    if (data.status === 'success') {
+        alert(data.message); // Afficher un message de succès
+        window.location.reload(); // Recharger la page pour afficher le nouveau prix
+    } else {
+        alert(data.message); // Afficher un message d'erreur
+    }
+})
+                
+                .catch(error => {
+                    console.error('Erreur lors de la soumission du formulaire', error);
+                    alert('Une erreur est survenue : ' + error.message); // Afficher un message d'erreur général
+                });
             }
         });
-		
-    </script>
+    });
+</script>
+
 
 				</div>
 			</div>

@@ -313,28 +313,29 @@
         });
 
         // Gérer la soumission du formulaire via AJAX
-        document.addEventListener('submit', function (event) {
-            if (event.target.id === 'voucherForm') {
-                event.preventDefault();
-                const formData = new FormData(event.target);
-                const activityId = {{ activite.id }};
+       document.addEventListener('submit', function (event) {
+    if (event.target.id === 'voucherForm') {
+        event.preventDefault(); // Empêcher la soumission par défaut
 
-                fetch(`/apply-voucher/${activityId}`, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message); // Afficher un message de succès
-                        window.location.reload(); // Recharger la page pour afficher le nouveau prix
-                    } else {
-                        alert(data.message); // Afficher un message d'erreur
-                    }
-                })
-                .catch(error => console.error('Erreur lors de la soumission du formulaire', error));
+        const formData = new FormData(event.target); // Récupérer les données du formulaire
+        const activityId = {{ activite.id }}; // Récupérer l'ID de l'activité
+
+        fetch(`/apply-voucher/${activityId}`, {
+            method: 'POST', // Utiliser la méthode POST
+            body: formData, // Envoyer les données du formulaire
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message); // Afficher un message de succès
+                window.location.reload(); // Recharger la page pour afficher le nouveau prix
+            } else {
+                alert(data.message); // Afficher un message d'erreur
             }
-        });
+        })
+        .catch(error => console.error('Erreur lors de la soumission du formulaire', error));
+    }
+});
     </script>
 
 				</div>

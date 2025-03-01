@@ -134,6 +134,14 @@ class Voucher
     $this->isAssigned = $isAssigned;
     return $this;
     }
+// Dans l'entité Voucher
+public function isAssignedToCurrentUser(?UserEntity $currentUser): bool
+{
+    return $this->user && $this->user->getId() === $currentUser->getId() && $this->getIsAssigned() === true;
+}
+
+   
+
 
    
 

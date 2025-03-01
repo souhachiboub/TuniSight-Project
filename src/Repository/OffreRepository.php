@@ -16,22 +16,48 @@ class OffreRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Offre::class);
     }
-    public function findByExpirationStatusQuery(?string $expirée): QueryBuilder
-    {
-        $qb = $this->createQueryBuilder('o');
 
-        if ($expirée === 'expirée') {
-            // Filtrer pour les offres expirées
-            $qb->andWhere('o.dateExpiration < :now')
-                ->setParameter('now', new \DateTime());
-        } elseif ($expirée === 'non_expirée') {
-            // Filtrer pour les offres non expirées
-            $qb->andWhere('o.dateExpiration >= :now')
-                ->setParameter('now', new \DateTime());
+    public function findByExpirationStatusQuery(?bool $expired): QueryBuilder
+{
+    $qb = $this->createQueryBuilder('o');
+
+    if ($expired !== null) {
+        if ($expired) {
+            $qb->andWhere('o.dateExpiration < :now');
+        } else {
+            $qb->andWhere('o.dateExpiration >= :now');
         }
-
-        return $qb;
+        $qb->setParameter('now', new \DateTime());
     }
+
+    return $qb; // Retourner le QueryBuilder pour la pagination
+}
+
+// public function findByExpirationStatusQuery(?bool $expired)
+// {
+//     $qb = $this->createQueryBuilder('o');
+//     if ($expired !== null) {
+//         $qb->andWhere('o.dateExpiration ' . ($expired ? '<' : '>=') . ' CURRENT_DATE()');
+//     }
+//     return $qb;
+// }
+
+    // public function findByExpirationStatusQuery(?string $expirée): QueryBuilder
+    // {
+    //     $qb = $this->createQueryBuilder('o');
+
+    //     if ($expirée === 'expirée') {
+    //         // Filtrer pour les offres expirées
+    //         $qb->andWhere('o.dateExpiration < :now')
+    //             ->setParameter('now', new \DateTime());
+    //     } elseif ($expirée === 'non_expirée') {
+    //         // Filtrer pour les offres non expirées
+    //         $qb->andWhere('o.dateExpiration >= :now')
+    //             ->setParameter('now', new \DateTime());
+    //     }
+
+    //     return $qb;
+    // }
 
 //    /**
 //     * @return Offre[] Returns an array of Offre objects

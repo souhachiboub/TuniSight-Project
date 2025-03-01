@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+
+#[Route('/prestataire')]
 class OffreController extends AbstractController
 {
     
@@ -91,34 +93,18 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
 
 
 
-#[Route('/offres', name: 'offre_show')]
-// public function show(OffreRepository $offreRepository, Request $request, PaginatorInterface $paginator): Response
-// {
-//     // Création de la requête Doctrine Query
-//     $query = $offreRepository->createQueryBuilder('o')->getQuery();
-
-//     // Appliquer la pagination
-//     $pagination = $paginator->paginate(
-//         $query, // Requête Doctrine
-//         $request->query->getInt('page', 1), // Numéro de page (1 par défaut)
-//         5 // Nombre d'offres par page
-//     );
-
-//     return $this->render('offre/show.html.twig', [
-//         'offres' => $pagination, // On passe la pagination à Twig
-//     ]);
-// }
-
+#[Route('/offres', name: 'offre_show', methods: ['GET', 'POST'])]
 public function show(OffreRepository $offreRepository, Request $request, PaginatorInterface $paginator): Response
 {
     // Récupérer l'état d'expiration de la requête
-    $expirée = $request->query->get('expirée');
+    $expired = $request->query->get('expired', '');
+    $expired = ($expired === '') ? null : filter_var($expired, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
     // Appliquer le filtre sur l'état d'expiration
-    $qb = $offreRepository->findByExpirationStatusQuery($expirée);
+    $qb = $offreRepository->findByExpirationStatusQuery($expired);
 
     // Pagination
-    $query = $qb->getQuery();
+    $query = $qb->getQuery(); // Correction : Utiliser la bonne requête
     $pagination = $paginator->paginate(
         $query, 
         $request->query->getInt('page', 1), 
@@ -127,8 +113,10 @@ public function show(OffreRepository $offreRepository, Request $request, Paginat
 
     return $this->render('offre/show.html.twig', [
         'offres' => $pagination, 
+        'expired' => $expired,
     ]);
 }
+
 
     #[Route('/{id}/delete', name: 'offre_delete', methods: ['POST'])]
     public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response

@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\UserEntity;
 use App\Entity\Voucher;
 use App\Form\VoucherType;
+use App\Entity\UserEntity;
 use App\Service\MailerService;
+use Symfony\Component\Mailer\Mailer;
 use App\Repository\VoucherRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -18,9 +20,26 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mime\Email;
 
+#[Route('/prestataire')]
 class VoucherController extends AbstractController
 {
+    #[Route('/send', name: 'send_email')]
+
+public function sendTestEmail(MailerInterface $mailer)
+{
+    $email = (new Email())
+        ->from('tunisightservice@gmail.com')
+        ->to('chiboubsouha1@gmail.com')
+        ->subject('Test Email')
+        ->text('Ceci est un test de l\'envoi d\'email via Symfony.');
+
+    $mailer->send($email);
+
+    return new Response('Email de test envoyé.');
+}
+
     #[Route('/voucher', name: 'app_voucher')]
     public function index(): Response
     {
@@ -39,14 +58,19 @@ class VoucherController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($voucher);
             $entityManager->flush();
-            // if ($voucher->getUser()) {
-            //     $mailer->sendVoucherEmail(
-            //         $voucher->getUser()->getEmail(),
-            //         $voucher->getCodeVoucher(),
-            //         $voucher->getValeurReduction(),
-            //         $voucher->getDateExpiration()
-            //     );
-            // }
+            if ($voucher->getUser()) {
+                try {
+                $mailer->sendVoucherEmail(
+                    $voucher->getUser()->getEmail(),
+                    $voucher->getCodeVoucher(),
+                    $voucher->getValeurReduction(),
+                    $voucher->getDateExpiration()
+                );
+            } catch (\Exception $e) {
+                // Log l'erreur ou afficher un message pour le développeur
+                error_log('Erreur d\'envoi de mail : ' . $e->getMessage());
+            }
+            }
 
             return $this->redirectToRoute('voucher_show');
         }
@@ -55,6 +79,9 @@ class VoucherController extends AbstractController
             'voucherForm' => $form->createView(),
         ]);
     }
+
+   
+    
     // #[Route('/vouchers', name: 'voucher_show')]
     // public function show(VoucherRepository $voucherRepository): Response
     // {
@@ -111,9 +138,7 @@ class VoucherController extends AbstractController
                 'label' => 'Assigner à un client'
             ]);
         }    
-        $formBuilder->add('save', SubmitType::class, [
-            'label' => 'Enregistrer les modifications'
-        ]);    
+         
         $form = $formBuilder->getForm();
         $form->handleRequest($request);   
         if ($form->isSubmitted() && $form->isValid()) {
@@ -149,50 +174,68 @@ class VoucherController extends AbstractController
         return $this->redirectToRoute('voucher_show');
     }
 
-    #[Route('/vouchers/filter', name: 'voucher_filter', methods: ['GET', 'POST'])]
+    // #[Route('/vouchers/filter', name: 'voucher_filter', methods: ['GET', 'POST'])]
 
    
-    public function filterVouchers(Request $request, VoucherRepository $voucherRepository): Response
+    // public function filterVouchers(Request $request, VoucherRepository $voucherRepository): Response
+    // {
+    // $form = $this->createFormBuilder()
+    //     ->add('expired', ChoiceType::class, [
+    //         'choices' => [
+    //             'Tous' => null,
+    //             'Expirés' => true,
+    //             'Non expirés' => false,
+    //         ],
+    //         'required' => false,
+    //         'expanded' => true,
+    //         'multiple' => false
+    //     ])
+    //     ->add('assigned', ChoiceType::class, [
+    //         'choices' => [
+    //             'Tous' => null,
+    //             'Assignés' => true,
+    //             'Non assignés' => false,
+    //         ],
+    //         'required' => false,
+    //         'expanded' => true,
+    //         'multiple' => false
+    //     ])
+    //     ->add('submit', SubmitType::class, ['label' => 'Filtrer'])
+    //     ->getForm();
+
+    //     $form->handleRequest($request);
+
+    //     $filters = $form->getData() ?? []; // Ensure $filters is an array
+        
+    //     $expired = $filters['expired'] ?? null; // Default to null if not set
+    //     $assigned = $filters['assigned'] ?? null; // Default to null if not set
+        
+    //     $vouchers = $voucherRepository->filterVouchers($expired, $assigned);
+        
+
+    // return $this->render('voucher/filltrage.html.twig', [
+    //     'form' => $form->createView(),
+    //     'vouchers' => $vouchers
+    // ]);
+    // }
+
+    #[Route('/vouchers/ajax-filter', name: 'voucher_filter_ajax', methods: ['GET','POST'])]
+    public function filterVouchersAjax(Request $request, VoucherRepository $voucherRepository): Response
     {
-    $form = $this->createFormBuilder()
-        ->add('expired', ChoiceType::class, [
-            'choices' => [
-                'Tous' => null,
-                'Expirés' => true,
-                'Non expirés' => false,
-            ],
-            'required' => false,
-            'expanded' => true,
-            'multiple' => false
-        ])
-        ->add('assigned', ChoiceType::class, [
-            'choices' => [
-                'Tous' => null,
-                'Assignés' => true,
-                'Non assignés' => false,
-            ],
-            'required' => false,
-            'expanded' => true,
-            'multiple' => false
-        ])
-        ->add('submit', SubmitType::class, ['label' => 'Filtrer'])
-        ->getForm();
+    $expired = $request->query->get('expired', '');
+    $assigned = $request->query->get('assigned', '');
 
-        $form->handleRequest($request);
+    // Convertir les valeurs en booléens ou null
+    $expired = ($expired === '') ? null : filter_var($expired, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    $assigned = ($assigned === '') ? null : filter_var($assigned, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        $filters = $form->getData() ?? []; // Ensure $filters is an array
-        
-        $expired = $filters['expired'] ?? null; // Default to null if not set
-        $assigned = $filters['assigned'] ?? null; // Default to null if not set
-        
-        $vouchers = $voucherRepository->filterVouchers($expired, $assigned);
-        
+    $vouchers = $voucherRepository->filterVouchers($expired, $assigned);
 
-    return $this->render('voucher/filltrage.html.twig', [
-        'form' => $form->createView(),
+    return $this->render('voucher/voucher_list.html.twig', [
         'vouchers' => $vouchers
     ]);
     }
+
 
     
 
