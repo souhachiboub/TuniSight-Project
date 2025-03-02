@@ -1,0 +1,190 @@
+{% block body %}
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<title>TunisSight - Découvrir</title>
+
+			{% block css %}
+				<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+				<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+				<link rel="stylesheet" href="{{ asset('client/css/style.css') }}">
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+			{% endblock %}
+
+			<style>
+				/* Styles pour la navbar */
+				#ftco-navbar {
+					height: 20vh;
+					background-size: cover;
+					background-position: center;
+					background-repeat: no-repeat;
+					background-attachment: fixed;
+					background-image: url('{{ asset('client/images/background33.jpg') }}');
+					position: relative;
+				}
+
+				.navbar-brand img {
+					height: 60px;
+					width: auto;
+				}
+
+				.navbar-nav .nav-item {
+					margin: 0 10px;
+					font-weight: bold;
+				}
+
+				.navbar-nav .nav-link {
+					font-size: 17px;
+					color: white !important;
+					transition: color 0.3s ease-in-out;
+				}
+
+				.navbar-nav .nav-link:hover {
+					color: #53d2dc !important;
+				}
+
+				.navbar-toggler {
+					border: none;
+					outline: none;
+				}
+
+				.navbar-toggler i {
+					font-size: 24px;
+					color: white;
+				}
+
+				.confirmation-container {
+					background-color: #f8f9fa;
+					padding: 30px;
+					border-radius: 15px;
+					box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+					max-width: 600px;
+					margin: 35px auto;
+					text-align: center;
+				}
+
+				.confirmation-container h1 {
+					color: #4f8fc0;
+					font-size: 2.4rem;
+					margin-bottom: 10px;
+					font-weight: bold;
+				}
+
+				.confirmation-container p {
+					color: #343a40;
+					font-size: 1.2rem;
+					margin-bottom: 10px;
+				}
+
+				.confirmation-container .btn-primary {
+					background-color: #007bff;
+					border: none;
+					padding: 12px 30px;
+					font-size: 1.1rem;
+					border-radius: 8px;
+					transition: background-color 0.3s ease, transform 0.3s ease;
+				}
+
+				.confirmation-container .btn-primary:hover {
+					background-color: #4f8fc0;
+					transform: translateY(-3px);
+				}
+
+				.confirmation-container .btn-primary:active {
+					transform: translateY(0);
+				}
+
+				.confirmation-container .icon {
+					margin-top: -25px;
+					font-size: 4rem;
+					color: #4f8fc0;
+				}
+
+				.buttons {
+					display: flex;
+					gap: 10px;
+					justify-content: center;
+				}
+
+				.btn-success {
+					background-color: #26648e;
+					border: none;
+					padding: 12px 30px;
+					font-size: 1.1rem;
+					border-radius: 8px;
+					color: white;
+					transition: background-color 0.3s ease, transform 0.3s ease;
+				}
+
+				.btn-success:hover {
+					transform: translateY(-3px);
+					background-color: #4f8fc0 !important;
+
+				}
+
+				#btn-retour:active,
+				.btn-success:active {
+					transform: translateY(0);
+				}
+
+				#btn-retour {
+					background-color: #53d2dc !important;
+				}
+			</style>
+		</head>
+		<body>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
+				<div class="container">
+					<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
+						<span class="oi oi-menu"></span>
+						Menu
+					</button>
+					<div class="collapse navbar-collapse" id="ftco-nav">
+						<ul class="navbar-nav ml-auto">
+							<li class="nav-item active">
+								<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+							</li>
+
+						</ul>
+					</div>
+				</div>
+			</nav>
+
+			<div class="confirmation-container">
+				<div class="icon">
+					<i class="fas fa-check-circle"></i>
+				</div>
+
+				<h1>Merci pour votre réservation !</h1>
+				<div>
+					<img style="width:100px;height:100px" src="{{ qrCodeImage }}" alt="QR Code">
+				</div>
+
+				<p>
+					Votre paiement a été effectué avec succès.Vous recevrez bientôt les détails de votre activité.
+				</p>
+				<div class="buttons">
+					<a href="{{ path('app_index') }}" class="btn btn-primary" id="btn-retour">
+						Retour à la page principale
+					</a>
+					<a href="{{ path('generate_invoice', {'id': reservation.id}) }}" class="btn btn-success">
+						<i class="fas fa-download"></i>
+						Télécharger la facture
+					</a>
+				</div>
+			</div>
+
+			<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+		{% endblock %}
+	</body>
+</html>

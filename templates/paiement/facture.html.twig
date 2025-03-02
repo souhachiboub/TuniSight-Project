@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Facture de Réservation</title>
+		<style>
+			body {
+				font-family: 'Arial', sans-serif;
+				margin: 0;
+				padding: 40px;
+				background-color: #f4f4f4;
+				color: #333;
+			}
+
+			h1,
+			h2 {
+				font-family: 'Roboto', sans-serif;
+				color: #333;
+				margin-bottom: 10px;
+			}
+
+			/* En-tête */
+			.header {
+				text-align: center;
+				margin-bottom: 30px;
+			}
+
+			.header img {
+				max-width: 150px;
+				margin-bottom: 10px;
+			}
+
+			.header h1 {
+				font-size: 28px;
+				color: #26648e;
+				margin-bottom: 5px;
+			}
+
+			/* Section des informations */
+			.invoice-details {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 20px;
+			}
+
+			.invoice-details div {
+				width: 48%;
+			}
+
+			.invoice-details strong {
+				color: #555;
+			}
+
+			/* Tableau des lignes de facture */
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 20px;
+				background-color: #fff;
+				border-radius: 8px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			th,
+			td {
+				padding: 15px;
+				text-align: left;
+				border: 1px solid #ddd;
+			}
+
+			th {
+				background-color: #f9f9f9;
+				color: #4f8fc0;
+				font-size: 14px;
+			}
+
+			td {
+				font-size: 14px;
+				color: #555;
+			}
+
+			.total {
+				font-size: 18px;
+				font-weight: bold;
+				text-align: right;
+				margin-top: 20px;
+			}
+
+			.details {
+				margin-top: 30px;
+			}
+
+			.activity-image {
+				max-width: 100%;
+				height: auto;
+				border-radius: 8px;
+				display: block;
+				margin-top: 10px;
+			}
+
+			.no-image {
+				font-style: italic;
+				color: #888;
+			}
+
+			.footer {
+				text-align: center;
+				font-size: 12px;
+				color: #777;
+				margin-top: 30px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div class="header">
+			<h1>Facture de Réservation</h1>
+		</div>
+
+		<div class="invoice-details">
+			<div>
+				<p>
+					<strong>Référence :</strong>
+					{{ reservation.id }}</p>
+				<p>
+					<strong>Date de facturation :</strong>
+					{{ "now"|date("d/m/Y") }}</p>
+			</div>
+			<div>
+				<p>
+					<strong>Client :</strong>
+					{{ reservation.user.nom }}
+					{{ reservation.user.prenom }}</p>
+				<p>
+					<strong>Email :</strong>
+					{{ reservation.user.email }}</p>
+				<p>
+					<strong>Numéro téléphone :</strong>
+					+216
+					{{ reservation.user.numTel }}</p>
+			</div>
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Activité</th>
+					<th>Nombre de personnes</th>
+					<th>Prix unitaire (DT)</th>
+					<th>Total (DT)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{ reservation.activite.libelle }}</td>
+					<td>{{ reservation.nbrPersonnes }}</td>
+					<td>{{ reservation.activite.prix }}</td>
+					<td>{{ reservation.prixTotal }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="total">
+			<p>
+				<strong>Total à payer :</strong>
+				{{ reservation.prixTotal }}
+				DT</p>
+		</div>
+
+		<div class="details">
+			<h2>Détails de l'activité</h2>
+			<p>
+				<strong>Libellé :</strong>
+				{{ reservation.activite.libelle }}</p>
+			<p>
+				<strong>Description :</strong>
+				{{ reservation.activite.description }}</p>
+			<p>
+				<strong>Date de début :</strong>
+				{{ reservation.activite.dateDebut|date('d/m/Y') }}</p>
+			<p>
+				<strong>Date de fin :</strong>
+				{{ reservation.activite.dateFin|date('d/m/Y') }}</p>
+
+		</div>
+
+		<div class="footer">
+			<p>&copy;
+				{{ "now"|date("Y") }}
+				Mon Entreprise - Tous droits réservés.</p>
+			<p>Adresse de l'entreprise | Téléphone | Email</p>
+		</div>
+
+	</body>
+</html>

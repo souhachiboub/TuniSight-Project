@@ -1,0 +1,66 @@
+{% extends 'offre/templateadmin.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>Créer un Nouveau Voucher</h1>
+
+    {{ form_start(voucherForm, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="mb-3">
+            {{ form_label(voucherForm.codeVoucher) }}
+            {{ form_widget(voucherForm.codeVoucher, {'attr': {'class': 'form-control' ~ (voucherForm.codeVoucher.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(voucherForm.codeVoucher) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(voucherForm.valeurReduction) }}
+            {{ form_widget(voucherForm.valeurReduction, {'attr': {'class': 'form-control' ~ (voucherForm.valeurReduction.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(voucherForm.valeurReduction) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(voucherForm.dateEmission) }}
+            {{ form_widget(voucherForm.dateEmission, {'attr': {'class': 'form-control' ~ (voucherForm.dateEmission.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(voucherForm.dateEmission) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(voucherForm.dateExpiration) }}
+            {{ form_widget(voucherForm.dateExpiration, {'attr': {'class': 'form-control' ~ (voucherForm.dateExpiration.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(voucherForm.dateExpiration) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(voucherForm.user) }}
+            {{ form_widget(voucherForm.user, {'attr': {'class': 'form-control' ~ (voucherForm.user.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(voucherForm.user) }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Ajouter l'offre</button>
+        </div>
+
+    {{ form_end(voucherForm) }}
+</div>
+
+<style>
+.is-invalid {
+    border-color: #dc3545 !important;  /* Bordure rouge pour les champs invalides */
+}
+
+.invalid-feedback {
+    color: #dc3545;  /* Couleur rouge pour les messages d'erreur */
+}
+
+</style>
+{% endblock %}
+

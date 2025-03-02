@@ -1,0 +1,251 @@
+{% extends 'user/templateuser.html.twig' %}
+{% block actualButton %}
+            <li class="nav-item ">
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item ">
+							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+						</li>
+                        <li class="nav-item active">
+							<a href="{{path('app_chat')}}" class="nav-link">ChatBot ✦︎</a>
+						</li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i style="font-size:30px" class="fa fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+    
+                                {% if app.user %}
+                                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login')}}">
+                                        <i class="fa fa-user text-primary"></i>
+                                        <span class="ml-2">
+                                            {{ app.user.nom }}
+                                            {{ app.user.prenom }}</span>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span class="ml-2">Se déconnecter</span>
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
+                                        <i class="fas fa-user"></i>
+                                        <span class="ml-2">Se connecter</span>
+                                    </a>
+    
+                                    <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+                                        <i class="fa fa-user-plus"></i>
+                                        <span class="ml-2">Devenez-Prestataire</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+                                        <i class="fa fa-user-plus"></i>
+                                        <span class="ml-2">Créer un compte</span>
+                                    </a>
+    
+                                    
+                                {% endif %}
+    
+                            </div>
+                        </li>
+                        {% endblock %}
+{% block actuel %}<p class="breadcrumbs"><span class="mr-2"><a href={{ path('app_index') }}>Home <i class="fa fa-chevron-right"></i></a></span> <span>ChatBot <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">ChatBot</h1>{% endblock %}
+{% block actual1 %}<h2 class="ftco-heading-2">ChatBot</h2>{% endblock %}
+
+{% block css %}
+<style>
+    .chatbot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: white;
+        padding: 20px;
+    }
+
+    #chat-container {
+        width: 80%; /* Adjusted width */
+        max-width: 800px; /* Maximum width */
+        height: 400px;
+        border-radius: 10px;
+        background: #f9f9f9; /* Gemini-like background */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        margin: 20px auto;
+
+    }
+
+    .user-message, .bot-message {
+        max-width: 80%; /* Adjusted width */
+        padding: 10px;
+        border-radius: 8px; /* Softer corners */
+        margin-bottom: 10px;
+        animation: fadeIn 0.3s ease-in-out;
+        font-family: 'Roboto', sans-serif; /* Gemini-like font */
+        font-size: 16px;
+    }
+
+    .user-message {
+        background-color: #007bff; /* Blue for user */
+        color: white;
+        align-self: flex-end;
+    }
+
+    .bot-message {
+        background-color: #f0f0f0; /* Couleur plus moderne */
+        color: #333;
+        border-radius: 15px;
+        padding: 12px;
+        position: relative;
+        display: flex;
+        align-items: flex-start; /* Ensure content is aligned left */
+        justify-content: flex-start;
+        gap: 10px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+    }
+
+    .error-message {
+        background-color: #ffdddd; /* Light red for errors */
+        color: #c0392b; /* Reddish text */
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    #chat-input {
+        display: flex;
+        margin-top: 10px;
+        gap: 5px;
+        width: 80%; /* Adjusted width */
+        max-width: 800px;/* Maximum width */
+    }
+
+    #message-input {
+        flex-grow: 1;
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: 0.3s;
+        width: 700px; /* Adjusted width */
+       
+    }
+
+    #message-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    #send-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    #send-button:hover {
+        background-color: #0056b3;
+    }
+
+    #loading {
+        text-align: center;
+        margin-top: 10px;
+        font-style: italic;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="chatbot">
+    <p style="font-size : 25px ; color: #2B3940; ; align-items : left; font-weight: bold;" >Intérroger AI pour un séjour unique et inoubliable.</p>
+
+    <div id="chat-container"></div>
+    <div>
+        <input type="text" id="message-input">
+        <button id="send-button">Envoyer</button>
+    </div>
+    <div id="loading">Chargement...</div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const loadingDiv = document.getElementById('loading');
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                addUserMessage(message);
+                messageInput.value = '';
+                sendMessage(message);
+            }
+        });
+
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('user-message');
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addBotMessage(message, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('bot-message');
+            messageDiv.textContent = message;
+            if (isError) {
+                messageDiv.classList.add('error-message');
+            }
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage(message) {
+            loadingDiv.style.display = 'block';
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `message=${encodeURIComponent(message)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingDiv.style.display = 'none';
+                if (data.response) {
+                    addBotMessage(data.response);
+                } else if (data.error) {
+                    addBotMessage(data.error, true);
+                } else {
+                    addBotMessage("Réponse inattendue du serveur.", true);
+                }
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                console.error('Error:', error);
+                addBotMessage('Une erreur est survenue lors de la communication avec le serveur.', true);
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,82 @@
+
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 text-center">
+        <h1 class="text-success fw-bold">✅ Paiement Réussi !</h1>
+        <p class="text-muted">{{ message }}</p>
+
+        <div class="details-box mt-4 p-3">
+            <h2 class="fw-bold">📦 Détails de la commande</h2>
+            <p><strong>🛍 Nombre total de produits :</strong> {{ commande.nbrProdTotal }}</p>
+                        <p><strong>💰 Prix total :</strong> {{ commande.prixtotale|number_format(2, ',', ' ') }} €</p> 
+
+            <p><strong>📅 Date de la commande :</strong> {{ commande.dateCreation|date('d/m/Y H:i') }}</p>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('app_boutique') }}" class="btn btn-outline-dark">🏠 Retour à l'accueil</a>
+            <a href="{{ path('telecharger_facture', {'id': commande.id}) }}" class="btn btn-primary">
+                📄 Télécharger la Facture
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+/* ✅ Style général */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+/* ✅ Card design */
+.card {
+    max-width: 600px;
+    margin: auto;
+    border-radius: 15px;
+    background: #fff;
+    padding: 30px;
+}
+
+/* ✅ Détails de la commande */
+.details-box {
+    background: #f1f1f1;
+    border-radius: 10px;
+    text-align: left;
+}
+
+/* ✅ Boutons stylés */
+.btn {
+    margin: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+/* ✅ Animation légère */
+.card h1 {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("✅ Paiement validé, suppression du panier...");
+    localStorage.removeItem('cart'); // ✅ Supprimer le panier en localStorage
+    updateCart(); // ✅ Mettre à jour l'affichage du panier
+
+    // ✅ Optionnel : Forcer un rechargement du panier après suppression
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+});
+</script>
+
+

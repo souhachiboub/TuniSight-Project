@@ -1,0 +1,221 @@
+{% extends 'user/templateuser.html.twig' %}
+{% block actualButton %}
+            <li class="nav-item ">
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item active">
+							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+						</li>
+                        <li class="nav-item">
+							<a href="{{path('app_chat')}}" class="nav-link">ChatBot ✦︎</a>
+						</li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i style="font-size:30px" class="fa fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+    
+                                {% if app.user %}
+                                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login')}}">
+                                        <i class="fa fa-user text-primary"></i>
+                                        <span class="ml-2">
+                                            {{ app.user.nom }}
+                                            {{ app.user.prenom }}</span>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span class="ml-2">Se déconnecter</span>
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
+                                        <i class="fas fa-user"></i>
+                                        <span class="ml-2">Se connecter</span>
+                                    </a>
+    
+                                    <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+                                        <i class="fa fa-user-plus"></i>
+                                        <span class="ml-2">Devenez-Prestataire</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+                                        <i class="fa fa-user-plus"></i>
+                                        <span class="ml-2">Créer un compte</span>
+                                    </a>
+    
+                                    
+                                {% endif %}
+    
+                            </div>
+                        </li>
+                        {% endblock %}
+{% block actuel %}<p class="breadcrumbs"><span class="mr-2"><a href={{ path('app_index') }}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Réclamation <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Réclamation</h1>{% endblock %}
+{% block actual1 %}<h2 class="ftco-heading-2">Réclamation</h2>{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <div class="card">
+        <div class="user-info">
+            <img src="{{ asset(reclamation.user.photoProfil) }}" alt="Photo de profil" class="user-photo">
+            <div>
+                <h2 class="user-name">{{ reclamation.user.nom }} {{ reclamation.user.prenom }}</h2>
+            </div>
+        </div>
+
+        <p class="reclamation-info">
+            {{ reclamation.dateEnvoie|date('Y-m-d') }} - {{ reclamation.etat }}
+        </p>
+
+        <div class="content-section">
+            <p class="description">{{ reclamation.description }}</p>
+        </div>
+
+        {% if reclamation.reponse %}
+        <div class="response-section">
+            <h3>Réponse</h3>
+            <p class="response-text">{{ reclamation.reponse.reponse }}</p>
+            <p class="response-date">Répondu le {{ reclamation.reponse.date|date('d F Y') }}</p>
+        </div>
+        {% endif %}
+
+        <a href="{{ path('app_reclamation_mes') }}" class="btn-retour">Retour</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block css %}
+<style>
+    /* General Styles */
+    .container {
+        max-width: 700px;
+        
+        padding: 20px;
+        font-family: system.ui;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .user-photo {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        border: 2px solid #26648E;
+        object-fit: cover;
+    }
+
+    .user-name {
+        font-size: 1.1em;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .date {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    /* Status Badge */
+    .status-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+    }
+
+    .reclamation-info {
+       font-size: 0.8em;
+        color: #777;
+    }
+
+    /* Content */
+    .content-section {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        color: #2B3940;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    /* Response Section */
+    .response-section {
+        background: #eef5f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 5px solid #26648E;
+    }
+
+    .response-section h3 {
+        color: #26648E;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .response-text {
+        font-size: 1em;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .response-date {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Button */
+    .btn-retour {
+        color : #2B3940;
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #fff;
+        color: black;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-retour:hover {
+        color : #2B3940;
+        background-color: 0 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            max-width: 90%;
+            padding: 15px;
+        }
+
+        .card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}

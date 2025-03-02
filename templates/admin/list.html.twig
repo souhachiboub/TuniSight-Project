@@ -1,0 +1,79 @@
+{% extends "admin/templateadmin.html.twig" %}
+
+
+{% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <form method="GET" action="{{ path('app_list_user') }}" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+        <div class="input-group">
+            <input value="{{ searchQuery }}" name="searchQuery" type="text" class="form-control bg-light border-0 small" placeholder="Chercher..."
+                aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+    
+   
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold text-primary">Liste des utilisateurs</h4>
+        </div>
+        <div class="card-body">
+
+            <!-- Filter Form -->
+            <form method="get" action="{{ path('app_list_user') }}">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <select class="form-control" name="role" onchange="this.form.submit()">
+                            <option value="">Tous les rôles</option>
+                            <option value="user" {% if app.request.query.get('role') == 'user' %}selected{% endif %}>Utilisateur</option>
+                            <option value="prestataire" {% if app.request.query.get('role') == 'prestataire' %}selected{% endif %}>Prestataire</option>
+                            <option value="artisan" {% if app.request.query.get('role') == 'artisan' %}selected{% endif %}>Artisan</option>
+                        </select>
+                    </div>
+        
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Numéro de téléphone</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.nom }}</td>
+                                <td>{{ user.prenom }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.numTel }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>
+                                    <a href="{{ path('user_details', {'id': user.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Aucun utilisateur trouvé</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Page Content -->
+{% endblock %}

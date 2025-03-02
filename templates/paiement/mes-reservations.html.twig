@@ -1,0 +1,236 @@
+{% block body %}
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<title>TunisSight - Découvrir</title>
+
+			{% block css %}
+				<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+				<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+				<link rel="stylesheet" href="{{ asset('client/css/style.css') }}">
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+			{% endblock %}
+
+			<style>
+				.container {
+					font-family: sans-serif;
+					display: flex;
+					padding-top: 10px;
+					gap: 20px;
+				}
+
+				.search-sidebar {
+					margin-left: -120px;
+					margin-right: 50px;
+					width: 280px;
+					background: #fff;
+					padding: 20px;
+					border-radius: 10px;
+					box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+					height: fit-content;
+				}
+
+				.activities-container {
+					flex: 1;
+					display: grid;
+					grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+					gap: 20px;
+				}
+
+				.activity-card {
+					background: #fff;
+					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+					border-radius: 10px;
+					overflow: hidden;
+					transition: transform 0.3s ease;
+				}
+
+				.activity-card:hover {
+					transform: scale(1.05);
+				}
+
+				.activity-card img {
+					width: 100%;
+					height: 200px;
+					object-fit: cover;
+				}
+
+				.activity-info {
+					padding: 15px;
+					text-align: center;
+				}
+
+				.activity-info h3 {
+					font-size: 18px;
+					font-weight: bold;
+					margin-bottom: 10px;
+				}
+
+				.activity-info p {
+					font-size: 16px;
+					color: #777;
+					margin: 10px 0;
+				}
+
+				/* Styles pour la navbar */
+				#ftco-navbar {
+					height: 20vh;
+					background-size: cover;
+					background-position: center;
+					background-repeat: no-repeat;
+					background-attachment: fixed;
+					background-image: url('{{ asset('client/images/background33.jpg') }}');
+					position: relative;
+				}
+
+				.navbar-brand img {
+					height: 60px;
+					width: auto;
+				}
+
+				.navbar-nav .nav-item {
+					margin: 0 10px;
+					font-weight: bold;
+				}
+
+				.navbar-nav .nav-link {
+					font-size: 17px;
+					color: white !important;
+					transition: color 0.3s ease-in-out;
+				}
+
+				.navbar-nav .nav-link:hover {
+					color: #53d2dc !important;
+				}
+
+				.navbar-toggler {
+					border: none;
+					outline: none;
+				}
+
+				.navbar-toggler i {
+					font-size: 24px;
+					color: white;
+				}
+
+				.activity-image {
+					width: 300px;
+					height: 150px;
+					object-fit: cover;
+					border-radius: 8px;
+				}
+				button:hover {
+					color: #fff;
+					background-color: #1A1A1A;
+					box-shadow: rgba(0, 0, 0, 0.25) 0 6px 10px;
+					transform: translateY(-2px);
+				}
+				button {
+					appearance: none;
+					background-color: transparent;
+					border: 0.125em solid #1A1A1A;
+					border-radius: 0.9375em;
+					box-sizing: border-box;
+					color: #3B3B3B;
+					cursor: pointer;
+					display: inline-block;
+					font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+					font-size: 14px;
+					font-weight: 600;
+					line-height: 1.2;
+					margin: 0 0 0 205px;
+					min-height: 2.5em;
+					min-width: 0;
+					outline: none;
+					padding: 0.5em 1.5em;
+					text-align: center;
+					text-decoration: none;
+					transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+					user-select: none;
+					-webkit-user-select: none;
+					touch-action: manipulation;
+					will-change: transform;
+				}
+			</style>
+		</head>
+		<body>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
+				<div class="container">
+					<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
+						<span class="oi oi-menu"></span>
+						Menu
+					</button>
+					<div class="collapse navbar-collapse" id="ftco-nav">
+						<ul class="navbar-nav ml-auto">
+							<li class="nav-item active">
+								<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+							</li>
+							<li class="nav-item">
+								<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+							</li>
+
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<h1 style="text-align:center" class="mb-4">Mes réservations</h1><br>
+			<a href="{{ path('app_index') }}">
+				<button>
+					<i class="fa fa-arrow-left"></i>&nbsp;Retour
+				</button>
+			</a>
+
+			<div class="container">
+
+				{% if reservations is not empty %}
+					<table class="table table-bordered table-striped table-hover">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Image</th>
+								<th>Activité</th>
+								<th>Nombre de personnes</th>
+								<th>Prix total</th>
+								<th>Facture</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for reservation in reservations %}
+								<tr>
+									<td>{{ reservation.id }}</td>
+									<td><img src="{{ asset('uploads/images/' ~ reservation.activite.image) }}" class="activity-image" alt="{{ reservation.activite.libelle }}"></td>
+
+									<td>{{ reservation.activite.libelle }}</td>
+									<td>{{ reservation.nbrPersonnes }}
+										<em>personne(s)
+										</em>
+									</td>
+									<td>{{ reservation.prixTotal }}
+										<em style="font-size:12px">TND<em></td>
+										</td>
+									</td>
+									<td>
+										<a href="{{ path('generate_invoice', {'id': reservation.id}) }}" class="btn btn-success">
+											<i class="fas fa-download"></i>
+											Télécharger la facture
+										</a>
+									</td>
+
+								{% endfor %}
+							</tr>
+						</tbody>
+					</tbody>
+				</table>
+			{% else %}
+				<p>Aucune réservation trouvée.</p>
+			{% endif %}
+		</body>
+	</html>
+</body></html></div>{% endblock %}</body></html>

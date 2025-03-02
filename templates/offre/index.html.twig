@@ -1,0 +1,40 @@
+{# templates/offre/index.html.twig #}
+
+
+{% block title %}Liste des Offres{% endblock %}
+
+{% block body %}
+    <h1>Liste des Offres</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Réduction</th>
+                <th>Date de début</th>
+                <th>Date d'expiration</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for offre in offres %}
+            <tr>
+                <td>{{ offre.id }}</td>
+                <td>{{ offre.reduction }}%</td>
+                <td>{{ offre.dateDebut ? offre.dateDebut|date('Y-m-d') : '' }}</td>
+                <td>{{ offre.dateExpiration ? offre.dateExpiration|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('offre_show', {'id': offre.id}) }}">Voir</a>
+                    <a href="{{ path('offre_edit', {'id': offre.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune offre trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('offre_new') }}">Créer une nouvelle offre</a>
+{% endblock %}

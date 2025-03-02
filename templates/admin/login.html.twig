@@ -1,0 +1,35 @@
+{% extends 'baseLoginInscriFront.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <header>Login</header>
+    
+    {{ form_start(form) }}
+    
+    <div class="field input-field">
+        {{ form_widget(form.email, { 'attr': {'class': 'input', 'placeholder': 'Email'} }) }}
+    </div>
+
+    <div class="field input-field">
+        {{ form_widget(form.motdepasse, { 'attr': {'class': 'password', 'placeholder': 'Password', 'type': 'password'} }) }}
+        <i class='bx bx-hide eye-icon'></i>
+    </div>
+
+    <div class="form-link">
+        <a href="#" class="forgot-pass">Forgot password?</a>
+    </div>
+
+    <div class="field button-field">
+        <button type="submit">Login</button>
+    </div>
+
+    {{ form_end(form) }}
+
+    <br><br><br><br><br><br>
+    <center>
+        <a href="{{ path('app_inscription') }}" style="color: black;">
+            Vous n'avez pas un compte ?
+        </a>
+    </center>
+{% endblock %}

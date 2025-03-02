@@ -1,0 +1,7 @@
+{% block body %}
+
+	{{ include('BackOffice-activites/_form.html.twig', {'form': form}) }}
+
+	<a href="{{ path('app_activite_backoffice') }}" class="btn" style="background-color:rgb(229, 229, 229); color: black;">
+		<img src="{{asset('admin/img/back.png')}}"/>&nbsp; Retour à la liste</a>
+{% endblock %}

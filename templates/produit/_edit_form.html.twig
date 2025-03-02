@@ -1,0 +1,32 @@
+{{ form_start(form, {
+    'action': path('produit_edit', {'id': produit.id}),
+    'method': 'POST',
+    'attr': {'id': 'form-edit-produit', 'novalidate': 'novalidate'}
+}) }}
+    <div class="mb-3">
+        {{ form_label(form.libelle, 'Libellé') }}
+        {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}}) }}
+
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.description, 'Description') }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.prix, 'Prix') }}
+        {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'min': '0'}}) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.categorieProduit, 'Catégorie') }}
+        {{ form_widget(form.categorieProduit, {'attr': {'class': 'form-control'}}) }}
+    </div>
+  
+    <div class="mb-3">
+        {{ form_label(form.imageFile, 'Image') }}
+        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-success">Modifier</button>
+    </div>
+{{ form_end(form) }}

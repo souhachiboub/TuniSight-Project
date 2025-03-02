@@ -1,0 +1,81 @@
+{% extends 'offre/templateadmin.html.twig' %} 
+{% block body %}
+<div class="container-fluid">
+    <h1 class="mb-4">Gestion des Vouchers</h1>
+
+    <div class="mb-4">
+        <a href="{{ path('voucher_new') }}" class="btn custom-btn">Ajouter un Voucher</a>
+    </div>
+
+    {# 🎨 Filtrage des Vouchers #}
+    <div class="card shadow p-3 mb-4">
+        <form id="filter-form" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <label for="expired" class="form-label">État d'expiration</label>
+                <select name="expired" id="expired" class="form-control w-auto">
+                    <option value="">Tous</option>
+                    <option value="1">Expirés</option>
+                    <option value="0">Non expirés</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="assigned" class="form-label">Assignation</label>
+                <select name="assigned" id="assigned" class="form-control w-auto">
+                    <option value="">Tous</option>
+                    <option value="1">Assignés</option>
+                    <option value="0">Non assignés</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn custom-btn w-100">
+                    <i class="fas fa-filter"></i> Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {# 💳 Affichage des Vouchers #}
+    <div id="voucher-list" class="row">
+        {% include 'voucher/voucher_list.html.twig' %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#filter-form').on('submit', function(event) {
+            event.preventDefault(); // Empêcher le rechargement de la page
+
+            let expired = $('#expired').val();
+            let assigned = $('#assigned').val();
+
+            $.ajax({
+                url: "{{ path('voucher_filter_ajax') }}",
+                method: "GET",
+                data: { expired: expired, assigned: assigned },
+                success: function(response) {
+                    $('#voucher-list').html(response);
+                }
+            });
+        });
+    });
+</script>
+
+{% block stylesheets %}
+    <style>
+        .custom-btn {
+            background-color: #7AB2D3;
+            border-color: #7AB2D3;
+            color: white;
+        }
+
+        .custom-btn:hover {
+            background-color: #6fa3c4;
+            border-color: #6fa3c4;
+        }
+    </style>
+{% endblock %}
+
+{% endblock %}

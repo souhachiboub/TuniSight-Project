@@ -1,0 +1,51 @@
+{% extends "admin/templateadmin.html.twig" %}
+
+{% block body %}
+<a class="retour" href="{{ path('app_list_user') }}">➜</a>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Détails de l'utilisateur</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- Display user profile photo -->
+                    {% if user.photoProfil %}
+                        <img src="{{ asset(user.photoProfil) }}" alt="Photo de profil" class="img-fluid rounded-circle">
+                    {% else %}
+                        <img src="{{ asset('photo_profile/default.jpg') }}" alt="Photo de profil par défaut" class="img-fluid rounded-circle">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Nom:</strong> {{ user.nom }}</p>
+                    <p><strong>Prénom:</strong> {{ user.prenom }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Numéro de téléphone:</strong> {{ user.numTel }}</p>
+                    <p><strong>Rôle:</strong> {{ user.role }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Page Content -->
+{% endblock %}
+{% block css %}
+<style>
+.retour {
+    margin-right : 1200px;
+    margin-bottom  : 50px;
+    font-size : 30px;
+    display: inline-block;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+.retour:hover {
+    text-decoration : none ;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+</style>
+{% endblock %}
