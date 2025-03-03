@@ -1,0 +1,438 @@
+{% extends 'user/templateuser.html.twig' %}
+{% block actualButton %}
+            <li class="nav-item ">
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item active">
+							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+						</li>{% endblock %}
+{% block actuel %}<p class="breadcrumbs"><span class="mr-2"><a href={{ path('app_index') }}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Réclamation <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Réclamation</h1>{% endblock %}
+{% block actual1 %}<h2 class="ftco-heading-2">Réclamation</h2>{% endblock %}
+
+{% block body %}
+<div class="container">
+    <button class="btn btn-primary" data-modal="addReclamationModal">
+        <img src="{{ asset('clients/images/write.png') }}" alt="Ajouter une réclamation" style="width: 30px; height: 30px;"  title="Ajouter une publication">
+    </button>
+
+    <div id="addReclamationModal" class="modal">
+        <div class="modal-content">
+            <a href="#" class="close">&times;</a>
+            <div class="logo" style="text-align: center;">
+                <p style="font-weight:bold ; font-size : 24px ; color: #2B3940;">Soumettre une réclamation</p>
+                {{ form_start(form, {'attr': {'id': 'reclamationForm', 'novalidate': 'novalidate'}}) }}
+                <div class="input-group">
+                    <label for="{{ form.description.vars.id }}"></label>
+                    {{ form_widget(form.description, {
+                        'attr': {
+                            'rows': '5',
+                            'cols': '33',
+                            'placeholder': 'Décrivez votre réclamation',
+                            'required': 'required',
+                            'class': 'textarea'
+                        }
+                    }) }}
+                    <div id="error-message" style="color: red; margin-top: 5px;"></div>
+                    <button type="submit" class="submit-btn">Soumettre</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="reclamations-list">
+        <p class="experience-text"><span style="font-size: 40px; font-weight: bold; color: #2B3940;">Mes réclamations</span></p>
+        <form id="filterForm">
+            <label for="etatFilter">Filtrer par état:</label>
+            <select id="etatFilter" name="etat">
+                <option value="tout" {% if etatFilter == 'tout' %}selected{% endif %}>Tout</option>
+                <option value="en attente" {% if etatFilter == 'en attente' %}selected{% endif %}>En attente</option>
+                <option value="traitée" {% if etatFilter == 'traitée' %}selected{% endif %}>Traité</option>
+            </select>
+        </form>
+        <div class="reclamations-container">
+            {% for reclamation in reclamations %}
+            <div class="reclamation-card" data-id="{{ reclamation.id }}">
+                <div class="card-content">
+                    <div class="reclamation-details">
+                        <div class="user-name-container">
+                            <img src="{{ asset(reclamation.user.photoProfil) }}" alt="Photo de l'utilisateur" class="user-photo">
+                            <a href="#" class="profile"><h2 class="user-name">{{ reclamation.user.nom }} {{ reclamation.user.prenom }}</h2></a>
+                        </div>
+                        <p class="reclamation-description">{{ reclamation.description }}</p>
+                        <p class="reclamation-info">{{ reclamation.dateEnvoie|date('Y-m-d') }} - {{ reclamation.etat }}</p>
+                        <div class="action-buttons">
+                            {% if reclamation.etat == 'en attente' %}
+                                <a href="{{ path('app_reclamation_modifier', {'id': reclamation.id}) }}" class="btn btn-modify">Modifier</a>
+                            {% endif %}
+                            <a href="{{ path('app_reclamation_voir', {'id': reclamation.id}) }}" class="btn btn-view">Voir</a>
+                            <form action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="{{ reclamation.id }}">
+                                <button type="submit" class="btn btn-delete">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <p>Aucune réclamation trouvée.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block css %}
+<style>
+    body {
+        font-family: system-ui;
+        color: #2B3940;
+    }
+
+    .container {
+        width: 70%;
+        margin: auto;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        width: 90%;
+        max-width: 600px;
+        text-align: left;
+        position: relative;
+    }
+
+    .close {
+        text-decoration: none;
+        font-size: 30px;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: #26648E;
+        cursor: pointer;
+    }
+
+    /* Form Styles */
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .textarea {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f7f7f7;
+        border: none;
+        outline: none;
+        resize: vertical;
+        font-family: system-ui;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px 20px;
+        background-color: #26648E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .submit-btn:hover {
+        background-color: #4F8FC0;
+    }
+
+    /* Add Button Styles */
+    .btn-primary {
+        background-color: white;
+        border: none;
+        padding: 20px 20px;
+        font-size: 16px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        bottom: -120px;
+        right: 300px;
+        position: absolute;
+    }
+
+    .btn-primary:hover {
+        background-color: #4F8FC0;
+    }
+
+    /* Reclamations List Styles */
+    .reclamations-list {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    #etatFilter {
+        background-color: #f1f1f1;
+        border: none;
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .reclamation-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .user-name-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .user-photo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        border: 2px solid #26648E;
+    }
+
+    .user-name {
+        font-size: 1.1em;
+        margin: 0;
+    }
+
+    .reclamation-description {
+        margin: 15px 0;
+        line-height: 1.6;
+    }
+
+    .reclamation-info {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-view, .btn-modify {
+        background-color: transparent;
+        border: 1px solid #4F8FC0;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background-color 0.3s, color 0.3s;
+        color: #4F8FC0;
+        text-decoration: none;
+    }
+
+    .btn-view:hover, .btn-modify:hover {
+        background-color: #4F8FC0;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: transparent;
+        border: 1px solid #888;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: background-color 0.3s, color 0.3s;
+        color: #2B3940;
+    }
+
+    .btn-delete:hover {
+        background-color: #f1f1f1;
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            width: 95%;
+        }
+        
+        .modal-content {
+            margin: 15% auto;
+            padding: 20px;
+            width: 90%;
+        }
+        
+        .action-buttons {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addReclamationModal = document.getElementById('addReclamationModal');
+        const openModalButton = document.querySelector('[data-modal="addReclamationModal"]');
+        const closeModalButton = addReclamationModal.querySelector('.close');
+        const form = document.getElementById('reclamationForm');
+        const textarea = form.querySelector('textarea');
+        const errorDiv = document.getElementById('error-message');
+    
+        // Function to clear the form and error messages
+        function clearForm(modal) {
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+                errorDiv.textContent = '';
+            }
+        }
+    
+        // Auto-resize textarea
+        textarea.addEventListener('input', function () {
+            if (this.value.trim()) {
+                errorDiv.textContent = '';
+            }
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    
+        // Open modal
+        openModalButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            addReclamationModal.style.display = 'block';
+            clearForm(addReclamationModal);
+        });
+    
+        // Close modal
+        closeModalButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            addReclamationModal.style.display = 'none';
+            clearForm(addReclamationModal);
+        });
+    
+        // Handle form submission
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            // Validate textarea
+            if (!textarea.value.trim()) {
+                errorDiv.textContent = 'La réclamation ne peut pas être vide.';
+                return;
+            }
+    
+            if (textarea.value.length > 5000) {
+                errorDiv.textContent = 'La réclamation ne peut pas dépasser 5000 caractères.';
+                return;
+            }
+    
+            // Create FormData object
+            const formData = new FormData(this);
+    
+            // Send form data via fetch
+            fetch('/reclamation/mes-reclamations', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest', // Indicate this is an AJAX request
+                },
+                body: formData,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Clear form and close modal
+                        clearForm(addReclamationModal);
+                        addReclamationModal.style.display = 'none';
+                        window.location.reload(); // Reload the page to reflect changes
+                    } else {
+                        // Display errors
+                        if (data.errors && Array.isArray(data.errors)) {
+                            errorDiv.textContent = data.errors.join(', '); // Join errors into a single string
+                        } else {
+                            errorDiv.textContent = 'Une erreur est survenue.';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorDiv.textContent = 'Une erreur est survenue lors de l\'envoi de la réclamation.';
+                });
+        });
+    
+        // Handle filter change (AJAX)
+        const etatFilter = document.getElementById('etatFilter');
+        if (etatFilter) {
+            etatFilter.addEventListener('change', function () {
+                const etat = this.value;
+                const container = document.querySelector('.reclamations-container');
+    
+                // Fetch filtered reclamations
+                fetch(`/reclamation/mes-reclamations?etat=${etat}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // Indicate this is an AJAX request
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        // Update the reclamations container with the new HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+    
+                        // Extract the reclamations container from the response
+                        const newReclamations = tempDiv.querySelector('.reclamations-container');
+                        if (newReclamations) {
+                            container.innerHTML = newReclamations.innerHTML;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        container.innerHTML = '<p>Une erreur est survenue lors du chargement des données.</p>';
+                    });
+            });
+        }
+    });
+</script>
+{% endblock %}

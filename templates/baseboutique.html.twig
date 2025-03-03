@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>TunisSight - website
+		</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{% block css %}
+			<!-- Dans le head de ton template (par exemple dans baseboutique.html.twig) -->
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css" rel="stylesheet">
+
+			<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+			<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+
+			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+			<link rel="stylesheet" href="{{asset('client/css/animate.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.carousel.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.theme.default.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/magnific-popup.css')}}">
+
+			<link rel="stylesheet" href="{{asset('client/css/bootstrap-datepicker.css')}}">
+
+
+			<link rel="stylesheet" href="{{asset('client/css/flaticon.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/style.css')}}">
+
+		{% endblock %}
+
+
+		{% block filtre2  %}{% endblock %}
+		{%block js15%}{% endblock %}
+
+		{% block payer  %}{% endblock %}
+		{% block javascripts112 %}{% endblock %}
+		{% block scripts15 %}{% endblock %}
+
+
+		{% block javascripts2 %}{% endblock %}
+		{% block stylesheets1 %}{% endblock %}
+
+		{% block javascripts11 %}{% endblock %}
+		{% block css1 %}{% endblock %}
+
+		<style>
+
+			/* css pour le banner */
+			span {
+				color: #53d2dc !important
+			}
+			.navbar-nav .nav-item.active {
+				transform: scale(1.2);
+				transition: transform 0.3s ease;
+			}
+
+			.navbar-nav .nav-item.active .nav-link {
+				color: #53d2dc !important;
+			}
+			.subheading {
+				font-size: 50px !important
+			}
+
+			.hero-wrap {
+				position: relative;
+			}
+
+			.hero-wrap::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0, 0, 0, 0); !important;
+				z-index: 1;
+
+			}
+
+			/*css pour liste des activités*/
+
+
+			.project-wrap h3 {
+				font-size: 18px;
+				font-weight: bold;
+				margin-bottom: 10px;
+			}
+			.price {
+				color: black !important
+			}
+			/* Buttons */
+			button {
+				appearance: none;
+				background-color: transparent;
+				border: 0.125em solid #1A1A1A;
+				border-radius: 0.9375em;
+				box-sizing: border-box;
+				color: #3B3B3B;
+				cursor: pointer;
+				display: inline-block;
+				font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.2;
+				margin: 0;
+				min-height: 2.5em;
+				min-width: 0;
+				outline: none;
+				padding: 0.5em 1.5em;
+				text-align: center;
+				text-decoration: none;
+				transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+				will-change: transform;
+			}
+
+
+			button:disabled {
+				pointer-events: none;
+			}
+
+			button:hover {
+				color: #fff;
+				background-color: #1A1A1A;
+				box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+				transform: translateY(-2px);
+			}
+
+			button:active {
+				box-shadow: none;
+				transform: translateY(0);
+			}
+			#btn-reserver:hover {
+				background-color: #53d2dc;
+			}
+
+
+			.navbar {
+				transition: background-color 0.3s ease;
+			}
+
+			.navbar.scrolled {
+				background-color: rgba(0, 0, 0, 0.7) !important;
+				height: 80px !important
+			}
+			.navbar.scrolled .nav-link {
+				color: white !important;
+			}
+
+			.navbar.scrolled .nav-item.active .nav-link {
+				color: #53d2dc !important;
+			}
+
+			/* css l drop down mta se connecter */
+			.dropdown-menu {
+				min-width: 200px;
+				border: none;
+				background: white;
+			}
+
+			.dropdown-item {
+				padding: 10px 15px;
+				transition: background 0.3s ease;
+				font-size: 15px;
+			}
+
+			.dropdown-item i {
+				font-size: 15px;
+				width: 30px;
+				text-align: center;
+
+			}
+
+			.dropdown-item:hover {
+				background: #f8f9fa;
+				color: #53d2dc !important
+			}
+			.ml-2 {
+				color: black !important
+			}
+
+
+			/**/
+			.ftco-footer {
+				background-size: cover;
+				background-position: center;
+				padding: 5rem 0;
+				color: white;
+				margin-left: 200px;
+				margin-right: 200px
+			}
+
+			.ftco-footer .ftco-heading-2 {
+				font-size: 20px;
+				font-weight: bold;
+				margin-bottom: 20px;
+				color: white;
+			}
+
+			.ftco-footer-widget {
+				margin-bottom: 30px;
+			}
+
+			.ftco-footer-widget ul {
+				padding: 0;
+				list-style: none;
+			}
+
+			.ftco-footer-widget ul li {
+				margin-bottom: 10px;
+			}
+
+			.ftco-footer-widget ul li a {
+				color: white;
+				text-decoration: none;
+				transition: color 0.3s ease;
+			}
+
+			.ftco-footer-widget ul li a:hover {
+				color: #53d2dc;
+			}
+
+			.ftco-footer-social {
+				display: flex;
+				gap: 10px;
+				margin-top: 15px;
+			}
+
+			.ftco-footer-social li {
+				list-style: none;
+			}
+
+			.ftco-footer-social li a {
+				display: inline-block;
+				width: 40px;
+				height: 40px;
+				line-height: 40px;
+				text-align: center;
+				background-color: #53d2dc;
+				color: white;
+				border-radius: 50%;
+				transition: background 0.3s ease;
+			}
+
+			.ftco-footer-social li a:hover {
+				background-color: white;
+				color: #53d2dc;
+			}
+
+			.block-23 ul {
+				padding: 0;
+				list-style: none;
+			}
+
+			.block-23 ul li {
+				display: flex;
+				align-items: center;
+				margin-bottom: 10px;
+			}
+
+			.block-23 ul li .icon {
+				margin-right: 10px;
+				font-size: 18px;
+			}
+
+			.text-center {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			.text-center p {
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+			<div class="container">
+				<img class="img" src="{{asset('admin/img/logo.png')}}"/>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="oi oi-menu"></span>
+					Menu
+				</button>
+
+				<div class="collapse navbar-collapse" id="ftco-nav">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item active">
+							<a href="{{ path('app_index') }}" class="nav-link">Acceuil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="destination.html" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item">
+							<a href="destination.html" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="destination.html" class="nav-link">Publications</a>
+						</li>
+						<li class="nav-item">
+							<a href="destination.html" class="nav-link">Destination</a>
+						</li>
+
+
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:30px" class="fa fa-user-circle"></i>
+								<span class="ml-2">{{ app.user.nom ?? 'invité' }}</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+								{% if app.user %}
+									<a class="dropdown-item d-flex align-items-center" href="#">
+										<i class="fa fa-user text-primary"></i>
+										<span class="ml-2">Profil</span>
+									</a>
+									<a class="dropdown-item d-flex align-items-center" href="{{ path('mes_commandes') }}">
+										<i class="fa fa-box text-primary"></i>
+										<span class="ml-2">Mes commandes</span>
+									</a>
+
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item d-flex align-items-center text-danger font-weight-bold" href="{{ path('app_logout') }}">
+										<i class="fa fa-sign-out"></i>
+										<span class="ml-2">Déconnexion</span>
+									</a>
+								{% else %}
+									<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
+										<i class="fa fa-sign-in text-primary"></i>
+										<span class="ml-2">Se connecter</span>
+									</a>
+								{% endif %}
+							</div>
+						</li>
+
+
+					</li>
+
+				</li>
+
+			</ul>
+		</div>
+	</body>
+</html></div></body></html></nav><!-- END nav --><div class="hero-wrap" style="background-image: url('{{ asset('client/images/background33.jpg') }}'); height: 310px;"><div class="overlay"></div></div><div class="overlay"></div><div class="container"></div></div><section class="ftco-section ftco-no-pb ftco-no-pt"><div class="container"><div class="row"><div class="col-md-12"><div class="ftco-search d-flex justify-content-center">
+<div class="row">
+
+	<div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-performance-tab">
+		<form action="#" class="search-property-1">
+			<div class="row no-gutters">
+				<div class="col-lg d-flex">
+					<div class="form-group p-4 border-0">
+						<label for="#">Destination</label>
+						<div class="form-field">
+							<div class="icon">
+								<span class="fa fa-search"></span>
+							</div>
+							<input type="text" class="form-control" placeholder="Search place">
+						</div>
+					</div>
+				</div>
+				<div class="col-lg d-flex">
+					<div class="form-group p-4">
+						<label for="#">Check-in date</label>
+						<div class="form-field">
+							<div class="icon">
+								<span class="fa fa-calendar"></span>
+							</div>
+							<input type="text" class="form-control checkin_date" placeholder="Check In Date">
+						</div>
+					</div>
+				</div>
+				<div class="col-lg d-flex">
+					<div class="form-group p-4">
+						<label for="#">Check-out date</label>
+						<div class="form-field">
+							<div class="icon">
+								<span class="fa fa-calendar"></span>
+							</div>
+							<input type="text" class="form-control checkout_date" placeholder="Check Out Date">
+						</div>
+					</div>
+				</div>
+				<div class="col-lg d-flex">
+					<div class="form-group p-4">
+						<label for="#">Price Limit</label>
+						<div class="form-field">
+							<div class="select-wrap">
+								<div class="icon">
+									<span class="fa fa-chevron-down"></span>
+								</div>
+								<select name="" id="" class="form-control">
+									<option value="">$100</option>
+									<option value="">$10,000</option>
+									<option value="">$50,000</option>
+									<option value="">$100,000</option>
+									<option value="">$200,000</option>
+									<option value="">$300,000</option>
+									<option value="">$400,000</option>
+									<option value="">$500,000</option>
+									<option value="">$600,000</option>
+									<option value="">$700,000</option>
+									<option value="">$800,000</option>
+									<option value="">$900,000</option>
+									<option value="">$1,000,000</option>
+									<option value="">$2,000,000</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg d-flex">
+					<div class="form-group d-flex w-100 border-0">
+						<div class="form-field w-100 align-items-center d-flex">
+							<input type="submit" value="Search" class="align-self-stretch form-control btn btn-primary p-0">
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div></div></div></div></div></div></section>{% block mescommandes %}{% endblock %}{% block listActivites %}{% endblock %}{% block panierr  %}{% endblock %}<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image:<section class=" ftco-section img ftco-select-destination" style=" background-image: url('{{ asset('client/images/bg_3.jpg') }}')><div class="container"><div class="row mb-5"><div class="col-md pt-5"><div class="ftco-footer-widget pt-md-5 mb-4"><h2 class="ftco-heading-2">À propos de Tunisight</h2><p>Bienvenue sur Tunisight, votre plateforme de réservation touristique en Tunisie. Découvrez les trésors cachés du pays, des plages paradisiaques aux sites historiques fascinants.</p><ul class="ftco-footer-social list-unstyled float-md-left float-lft">
+<li class="ftco-animate">
+	<a href="#" class="icons">
+		<span class="fa fa-twitter"></span>
+	</a>
+</li>
+<li class="ftco-animate">
+	<a href="#" class="icons">
+		<span class="fa fa-facebook"></span>
+	</a>
+</li>
+<li class="ftco-animate">
+	<a href="#" class="icons">
+		<span class="fa fa-instagram"></span>
+	</a>
+</li></ul></div></div><div class="col-md pt-5 border-left"><div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5"><h2 class="ftco-heading-2">Informations</h2><ul class="list-unstyled">
+
+<li>
+	<a href="#" class="py-2 d-block">Questions générales</a>
+</li>
+<li>
+	<a href="#" class="py-2 d-block">Politique de confidentialité</a>
+</li>
+<li>
+	<a href="#" class="py-2 d-block">Contactez-nous
+	</a>
+</li></ul></div></div><div class="col-md pt-5 border-left"><div class="ftco-footer-widget pt-md-5 mb-4"><h2 class="ftco-heading-2">Experience</h2><ul class="list-unstyled">
+<li>
+	<a href="#" class="py-2 d-block">Aventure</a>
+</li>
+<li>
+	<a href="#" class="py-2 d-block">Nature</a>
+</li>
+
+<li>
+	<a href="#" class="py-2 d-block">Camping</a>
+</li></ul></div></div><div class="col-md pt-5 border-left"><div class="ftco-footer-widget pt-md-5 mb-4"><h2 class="ftco-heading-2">Vous avez une question ?</h2><div class="block-23 mb-3">
+<ul>
+	<li>
+		<span class="icon fa fa-map-marker" style="color: #53d2dc !important"></span>
+		<span class="text">Tunis, Tunisie</span>
+	</li>
+	<li>
+		<a href="#">
+			<span class="icon fa fa-phone" style="color: #53d2dc !important"></span>
+			<span class="text">+216 71 100 750</span>
+		</a>
+	</li>
+	<li>
+		<a href="#">
+			<span class="icon fa fa-paper-plane" style="color: #53d2dc !important"></span>
+			<span class="text">contact@tunisight.com</span>
+		</a>
+	</li>
+</ul></div></div></div></div><div class="row"><div class="col-md-12 text-center"><p>Copyright  &copy;<script>
+document.write(new Date().getFullYear());</script>Tunisight . Tous droits réservés.<i class="fa fa-heart" aria-hidden="true"></i></p></div></div></div></footer>{% block js %}<script src="{{asset('client/js/jquery.min.js')}}"></script><script src="{{asset('client/js/jquery-migrate-3.0.1.min.js')}}"></script><script src="{{asset('client/js/popper.min.js')}}"></script><script src="{{asset('client/js/bootstrap.min.js')}}"></script><script src="{{asset('client/js/jquery.easing.1.3.js')}}"></script><script src="{{asset('client/js/jquery.waypoints.min.js')}}"></script><script src="{{asset('client/js/jquery.stellar.min.js')}}"></script><script src="{{asset('client/js/owl.carousel.min.js')}}"></script><script src="{{asset('client/js/jquery.magnific-popup.min.js')}}"></script><script src="{{asset('client/js/jquery.animateNumber.min.js')}}"></script><script src="{{asset('client/js/bootstrap-datepicker.js')}}"></script><script src="{{asset('client/js/scrollax.min.js')}}"></script><script src="{{asset('client/js/main.js')}}"></script>{% endblock%}</body>{% block javascript %}<script>window.addEventListener('scroll', function () {
+var navbar = document.getElementById('ftco-navbar');
+if (window.scrollY > 50) {
+navbar.classList.add('scrolled');
+} else {
+navbar.classList.remove('scrolled');
+}
+});</script>{% endblock %}<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></body></html>

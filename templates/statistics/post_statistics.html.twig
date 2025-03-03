@@ -1,0 +1,165 @@
+{% extends 'admin/templateadmin.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <h1>Statistiques des Publication</h1>
+    <button id="generatePdf" class="btn btn-primary">Download PDF</button>
+
+    <!-- Most Frequent Words -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Mots les plus fréquents</h5>
+            <canvas id="mostFrequentWordsChart"></canvas>
+            <ul class="list-group mt-3">
+                {% for i in 0..(mostFrequentWords.labels|length - 1) %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ mostFrequentWords.labels[i] }}
+                        <span class="badge bg-primary rounded-pill" style="color:white;">{{ mostFrequentWords.data[i] }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Most Active Days -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Jours plus actifs</h5>
+            <canvas id="mostActiveDaysChart"></canvas>
+            <ul class="list-group mt-3">
+                {% for i in 0..(mostActiveDays.labels|length - 1) %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ mostActiveDays.labels[i] }}
+                        <span class="badge bg-success rounded-pill">{{ mostActiveDays.data[i] }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Posts Per User -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">publication par utilisateur</h5>
+            <canvas id="postsPerUserChart"></canvas>
+            <ul class="list-group mt-3">
+                {% for i in 0..(postsPerUser.labels|length - 1) %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ postsPerUser.labels[i] }}
+                        <span class="badge bg-warning rounded-pill">{{ postsPerUser.data[i] }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    // Render charts using Chart.js
+    const mostFrequentWordsCtx = document.getElementById('mostFrequentWordsChart').getContext('2d');
+    new Chart(mostFrequentWordsCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ mostFrequentWords.labels|json_encode|raw }},
+            datasets: [{
+                label: 'Frequency',
+                data: {{ mostFrequentWords.data|json_encode|raw }},
+                backgroundColor: '#FF6384',
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    const mostActiveDaysCtx = document.getElementById('mostActiveDaysChart').getContext('2d');
+    new Chart(mostActiveDaysCtx, {
+        type: 'line',
+        data: {
+            labels: {{ mostActiveDays.labels|json_encode|raw }},
+            datasets: [{
+                label: 'Posts',
+                data: {{ mostActiveDays.data|json_encode|raw }},
+                borderColor: '#36A2EB',
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    const postsPerUserCtx = document.getElementById('postsPerUserChart').getContext('2d');
+    new Chart(postsPerUserCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ postsPerUser.labels|json_encode|raw }},
+            datasets: [{
+                label: 'Posts',
+                data: {{ postsPerUser.data|json_encode|raw }},
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+            }]
+        }
+    });
+
+    // Convert charts to images and generate PDF
+document.getElementById('generatePdf').addEventListener('click', async () => {
+    const charts = document.querySelectorAll('canvas');
+    const chartImages = [];
+
+    // Convert each chart to an image
+    for (const chart of charts) {
+        const image = await html2canvas(chart);
+        chartImages.push(image.toDataURL('image/png'));
+    }
+
+    // Replace canvas elements with images
+    charts.forEach((chart, index) => {
+        const img = document.createElement('img');
+        img.src = chartImages[index];
+        chart.replaceWith(img);
+    });
+
+    // Hide the download button before capturing HTML (optional)
+    const downloadButton = document.getElementById('generatePdf');
+    downloadButton.style.display = 'none';
+
+    // Capture the updated HTML
+    const bodyContent = document.querySelector('.container').innerHTML;
+
+    // Send the HTML to the server for PDF generation
+    fetch('{{ path('admin_post_statistics_pdf') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ html: bodyContent }),
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'post_statistics.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        // Wait a short time before reloading to ensure download completes
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500); // Adjust delay if needed
+    })
+    .catch(error => {
+        console.error('Error generating PDF:', error);
+        window.location.reload(); // Reload even in case of error
+    });
+});
+
+</script>
+{% endblock %}

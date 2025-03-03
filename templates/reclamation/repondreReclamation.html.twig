@@ -1,0 +1,84 @@
+{% extends "admin/templateadmin.html.twig" %}
+{% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <a class="retour" href="{{ path('app_reclamation') }}">➜</a>
+    <div class="card shadow mb-4">
+        
+        <div class="card-body">
+            <div id="reclamationDetails">
+                <p><strong>Utilisateur:</strong> {{ reclamation.user.nom }} {{ reclamation.user.prenom }}</p>
+                <p><strong>Date d'envoi:</strong> {{ reclamation.dateEnvoie|date('Y-m-d') }}</p>
+                <p><strong>Etat:</strong> {{ reclamation.etat }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ reclamation.description }}</p>
+            </div>
+            {% if reclamation.reponse is null %} 
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <label for="{{ form.reponse.vars.id }}"></label>
+                {{ form_widget(form.reponse, {
+                    'attr': {
+                        'rows': '2',
+                        'cols': '33',
+                        'placeholder': 'Répondre à la réclamation',
+                        'required': 'required',
+                        'class': 'textarea'
+                    }
+                }) }}
+                {% for error in form.reponse.vars.errors %}
+                    <p class="text-danger mt-1">{{ error.message }}</p>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            {{ form_end(form) }}
+            {% else %}
+                <p><strong>Réponse:</strong></p>
+                <p>{{ reclamation.reponse.reponse }}</p>
+            {% endif %}
+            
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<!-- Script JavaScript si nécessaire -->
+{% endblock %}
+{% block css %}
+ <style>
+    textarea {
+    font-family: system-ui;
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+    max-width: 100%;
+    min-height : 50px;
+    line-height: 1.5;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    border: none;
+    outline: none;
+    resize: vertical;
+}
+
+ textarea:focus {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.retour {
+    font-size : 30px;
+    display: inline-block;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+.retour:hover {
+    text-decoration : none ;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+
+
+</style>
+{% endblock %}

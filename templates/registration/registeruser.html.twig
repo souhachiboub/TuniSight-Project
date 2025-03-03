@@ -1,0 +1,158 @@
+{# {% extends 'base.html.twig' %} #}
+{#
+	{% block body %}
+		<h2>Inscription</h2>
+		{{ form_start(registrationForm) }}
+			{{ form_row(registrationForm.email) }}
+			{{ form_row(registrationForm.plainPassword) }}
+			
+		{{ form_end(registrationForm) }}
+	{% endblock %}
+	#}
+	{% extends 'baseLoginInscriFront.html.twig' %}
+	
+	{% block title %}Inscription
+	{% endblock %}
+	{% block content %}
+		<style>
+			.form-row {
+				display: flex;
+				justify-content: space-between;
+				gap: 15px;
+				margin-bottom: 15px;
+			}
+	
+			.field {
+				flex-basis: 45%;
+			}
+	
+			.input {
+				width: 100%;
+				padding: 10px;
+				margin-bottom: 8px;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				font-size: 14px;
+			}
+	
+			.btn {
+				padding: 10px 18px;
+				background-color: #53d2dc;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+	
+			.btn:hover {
+				background-color: #53d2dc;
+			}
+	
+			.invalid-feedback {
+				color: red;
+				font-size: 12px;
+			}
+	
+			h1 {
+				text-align: center;
+				font-size: 24px;
+			}
+		</style>
+	
+	
+	{{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+		<h1>Inscrivez-vous</h1>
+	
+		<div class="form-row">
+			<div class="field input-field">
+				{{ form_widget(registrationForm.nom, {'attr': {'class': 'input', 'placeholder': 'Nom'}}) }}
+				<div class="invalid-feedback">
+					{{ form_errors(registrationForm.nom) }}
+				</div>
+			</div>
+			
+	
+			<div class="field input-field">
+				{{ form_widget(registrationForm.prenom, {'attr': {'class': 'input', 'placeholder': 'Prénom'}}) }}
+				<div class="invalid-feedback">
+					{{ form_errors(registrationForm.prenom) }}
+				</div>
+			</div>
+			
+		</div>
+		<br/>
+	
+		<div class="field input-field">
+		{{ form_widget(registrationForm.numTel, {'attr': {'class': 'input', 'placeholder': 'Numéro de téléphone'}}) }}
+		<div class="invalid-feedback">
+			{{ form_errors(registrationForm.numTel) }}
+		</div>
+	</div>
+	<br/>
+	
+		<div class="field input-field">
+			{{ form_widget(registrationForm.email, {'attr': {'class': 'input', 'placeholder': 'Email'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(registrationForm.email) }}
+			</div>
+		</div>
+	   
+		<div class="field input-field">
+			{{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input', 'placeholder': 'Password'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(registrationForm.plainPassword) }}
+			</div>
+		</div>
+	
+	
+		<div class="field input-field">
+			{{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'input', 'placeholder': 'Mot de passe', 'type': 'password'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(registrationForm.confirmPassword) }}
+			</div>
+		</div>
+	
+		<br/>
+	
+		<div class="field input-field">
+			{{ form_widget(registrationForm.dateNaissance, {'attr': {'class': 'input', 'placeholder': 'Date de naissance'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(registrationForm.dateNaissance) }}
+			</div>
+		</div>
+		<br/>
+		<div class="field input-field">
+			{{ form_widget(registrationForm.cin, {'attr': {'class': 'input', 'placeholder': 'CIN'}}) }}
+			<div class="invalid-feedback">
+				{{ form_errors(registrationForm.cin) }}
+			</div>
+		</div>
+	
+		<center>
+			<div class="field button-field">
+				<button class="btn btn-primary">{{ button_label|default("S'inscrire") }}</button>
+			</div>
+			<a href="{{ path('app_login') }}" style="color: black; margin-right: 300px;">
+				Retour
+				<i class="bx bx-arrow-right"></i>
+			</a>
+		</center>    
+		{{ form_end(registrationForm) }}
+	{% endblock %}
+	
+	
+	
+	
+	
+	
+		
+	
+		
+		
+	
+			
+	
+		
+	
+		

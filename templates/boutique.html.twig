@@ -1,0 +1,284 @@
+
+
+
+{% block stylesheets %}
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .product-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .product-card:hover {
+            transform: scale(1.02);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px; /* Taille uniforme */
+            object-fit: cover;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            min-height: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2C3E50; /* Bleu foncé sobre */
+        }
+
+        .product-price, .product-availability {
+            min-height: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #34495E; /* Bleu-gris élégant */
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        /* Icônes */
+        .btn-icon {
+            background-color: transparent;
+            color: #2C3E50;
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+        }
+
+        .btn-icon:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Panier */
+        .cart-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .cart-dropdown {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .quantity-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4 text-primary">Boutique</h1>
+
+    <!-- Filtrage et recherche -->
+    
+
+    <!-- Affichage des produits -->
+    <div class="row">
+        {% for produit in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card product-card shadow-sm">
+                    {% if produit.image %}
+                        <img src="{{ asset('uploads/produits/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.libelle }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="product-title">{{ produit.libelle }}</h5>
+                        <p class="product-price"><strong>Prix :</strong> {{ produit.prix }} €</p>
+                        <p class="product-availability"><strong>Disponibilité :</strong> 
+                            <span class="badge bg-{% if produit.disponibilite %}success{% else %}danger{% endif %}">
+                                {{ produit.disponibilite ? 'En stock' : 'Rupture de stock' }}
+                            </span>
+                        </p>
+                        <div class="btn-group">
+                            <!-- Ajouter au panier (AJAX) -->
+                            <button class="btn btn-icon" title="Ajouter au panier" onclick="addToCart({{ produit.id }}, '{{ produit.libelle }}', {{ produit.prix }})">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                            <!-- Voir le produit -->
+                            <a href="#" class="btn btn-icon" title="Voir le produit">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <!-- Like -->
+                            <a href="#" class="btn btn-icon" title="J'aime">
+                                <i class="fas fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p class="alert alert-warning">Aucun produit trouvé.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Icône Chariot -->
+<div class="cart-container" onclick="toggleCart()">
+    <i class="fas fa-shopping-cart"></i>
+    <span id="cartCount" class="badge bg-primary">0</span>
+</div>
+
+<!-- Panier déroulant -->
+<div class="cart-dropdown" id="cartDropdown">
+    <h4>Mon Panier</h4>
+    <div id="cartItems">
+        <!-- Liste des articles du panier affichée ici -->
+    </div>
+    <div id="cartTotal">
+        <!-- Total des articles du panier affiché ici -->
+    </div>
+    <button class="btn btn-primary" onclick="checkout()">Passer à la caisse</button>
+    <button class="btn btn-danger" onclick="clearCart()">Vider le panier</button>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // Fonction pour afficher/masquer le panier
+        function toggleCart() {
+            var cartDropdown = document.getElementById('cartDropdown');
+            cartDropdown.style.display = (cartDropdown.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Fonction pour ajouter un produit au panier via AJAX
+        function addToCart(id, libelle, prix) {
+            // Récupérer le panier dans le localStorage ou créer un panier vide
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Vérifier si le produit est déjà dans le panier
+            var productIndex = cart.findIndex(item => item.id === id);
+            if (productIndex !== -1) {
+                // Si le produit est déjà dans le panier, on incrémente la quantité
+                cart[productIndex].quantity++;
+            } else {
+                // Si le produit n'est pas encore dans le panier, on l'ajoute
+                cart.push({ id: id, libelle: libelle, prix: prix, quantity: 1 });
+            }
+
+            // Mettre à jour le panier dans le localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Mettre à jour l'icône du panier et le contenu
+            updateCart();
+        }
+
+        // Fonction pour incrémenter la quantité d'un produit
+        function increaseQuantity(id) {
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+            var product = cart.find(item => item.id === id);
+            if (product) {
+                product.quantity++;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            }
+        }
+
+        // Fonction pour décrémenter la quantité d'un produit
+        function decreaseQuantity(id) {
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+            var product = cart.find(item => item.id === id);
+            if (product && product.quantity > 1) {
+                product.quantity--;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            }
+        }
+
+        // Met à jour l'affichage du panier et calcule le total
+        function updateCart() {
+            var cartItemsContainer = document.getElementById('cartItems');
+            var cartCount = document.getElementById('cartCount');
+            var cartTotal = document.getElementById('cartTotal');
+
+            // Récupérer les articles du panier
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItemsContainer.innerHTML = '';
+            cartTotal.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p>Aucun article dans le panier.</p>';
+                cartCount.textContent = '0';
+            } else {
+                var totalQuantity = 0;
+                var totalPrice = 0;
+                cart.forEach(item => {
+                    var cartItem = document.createElement('div');
+                    cartItem.innerHTML = `
+                        <p>${item.libelle} - ${item.quantity} x ${item.prix}€</p>
+                        <div class="quantity-btn">
+                            <button class="btn btn-sm btn-secondary" onclick="decreaseQuantity(${item.id})">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="btn btn-sm btn-secondary" onclick="increaseQuantity(${item.id})">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+
+                    totalQuantity += item.quantity;
+                    totalPrice += item.quantity * item.prix;
+                });
+
+                // Afficher le total des articles
+                cartTotal.innerHTML = `<h5>Total: ${totalPrice}€</h5>`;
+                cartCount.textContent = totalQuantity;
+            }
+        }
+
+        // Initialiser le panier au chargement de la page
+        updateCart();
+
+        // Fonction pour vider le panier
+        function clearCart() {
+            localStorage.removeItem('cart');
+            updateCart();
+        }
+
+        // Fonction de passage à la caisse
+        function checkout() {
+            alert('Passage à la caisse');
+        }
+    </script>
+{% endblock %}

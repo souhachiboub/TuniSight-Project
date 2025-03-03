@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}TunisSight - Dashboard{% endblock %}</title>
+
+    {% block css %}
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ asset('client/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('client/css/style.css') }}">
+    {% endblock %}
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('app_index') }}">
+                <img src="{{ asset('admin/img/logo.png') }}" alt="TunisSight Logo" width="150">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="{{ path('app_index') }}" class="nav-link">Accueil</a></li>
+                    <li class="nav-item"><a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a></li>
+                    <li class="nav-item"><a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a></li>
+                    <li class="nav-item"><a href="{{ path('app_reclamation_mes') }}" class="nav-link">Réclamations</a></li>
+                    <li class="nav-item"><a href="{{ path('list_publications') }}" class="nav-link">Publications</a></li>
+
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-toggle="dropdown">
+                            {% if app.user.photoProfil %}
+                                <img src="{{ asset('uploads/profile_pictures/' ~ app.user.photoProfil) }}" class="rounded-circle" width="30" height="30" alt="Profile">
+                            {% else %}
+                                <i class="fa fa-user-circle fa-lg"></i>
+                            {% endif %}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {% if app.user %}
+                                <a class="dropdown-item" href="{{ path('user_profile') }}">
+                                    <i class="fa fa-user text-primary"></i> Mon Profil
+                                </a>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                    <i class="fas fa-sign-out-alt"></i> Se Déconnecter
+                                </a>
+                            {% else %}
+                                <a class="dropdown-item" href="{{ path('app_login') }}">
+                                    <i class="fa fa-sign-in"></i> Se Connecter
+                                </a>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="ftco-footer bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p>© {{ "now"|date("Y") }} TunisSight. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    {% block js %}
+    <script src="{{ asset('client/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('client/js/bootstrap.bundle.min.js') }}"></script>
+    {% endblock %}
+
+</body>
+</html>

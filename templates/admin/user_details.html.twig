@@ -1,0 +1,65 @@
+{% extends "admin/templateadmin.html.twig" %}
+
+{% block body %}
+<a class="retour" href="{{ path('app_list_user') }}">➜</a>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Détails de l'utilisateur</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <!-- Display user profile photo -->
+                    {% if user.photoProfil %}
+                        <img src="{{ asset('uploads/profile_pictures/' ~ user.photoProfil) }}" 
+                             alt="Photo de profil" 
+                             class="profile-img">
+                    {% else %}
+                        <img src="{{ asset('photo_profile/default.jpg') }}" 
+                             alt="Photo de profil par défaut" 
+                             class="profile-img">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Nom:</strong> {{ user.nom }}</p>
+                    <p><strong>Prénom:</strong> {{ user.prenom }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Numéro de téléphone:</strong> {{ user.numTel }}</p>
+                    <p><strong>Rôle:</strong> {{ user.role }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Page Content -->
+{% endblock %}
+
+{% block css %}
+<style>
+/* Adjust profile image size */
+.profile-img {
+    width: 250px; /* Increased size */
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #ddd;
+}
+
+/* Style for the back arrow */
+.retour {
+    margin-left: 10px;
+    font-size: 30px;
+    display: inline-block;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+.retour:hover {
+    text-decoration: none;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+</style>
+{% endblock %}

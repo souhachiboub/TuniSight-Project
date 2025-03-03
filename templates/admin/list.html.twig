@@ -1,0 +1,111 @@
+{% extends "admin/templateadmin.html.twig" %}
+
+{% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Search Bar -->
+    <form method="GET" action="{{ path('app_list_user') }}" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+        <div class="input-group">
+            <input value="{{ searchQuery }}" name="searchQuery" type="text" class="form-control bg-light border-0 small" placeholder="Chercher..."
+                aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- User List Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold text-primary">Liste des utilisateurs</h4>
+        </div>
+        <div class="card-body">
+
+            <!-- Role Filter -->
+            <form method="get" action="{{ path('app_list_user') }}">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <select class="form-control" name="role" onchange="this.form.submit()">
+                            <option value="">Tous les rôles</option>
+                            <option value="ROLE_USER" {% if app.request.query.get('role') == 'ROLE_USER' %}selected{% endif %}>Utilisateur</option>
+                            <option value="ROLE_PRESTATAIRE" {% if app.request.query.get('role') == 'ROLE_PRESTATAIRE' %}selected{% endif %}>Prestataire</option>
+                            <option value="ROLE_ARTISAN" {% if app.request.query.get('role') == 'ROLE_ARTISAN' %}selected{% endif %}>Artisan</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <!-- User Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Numéro de téléphone</th>
+                            <th>Rôle</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            {% if 'ROLE_ADMIN' not in user.roles %} {# Exclude admins from the table #}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.nom }}</td>
+                                    <td>{{ user.prenom }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.numTel }}</td>
+                                    <td>{{ user.role }}</td>
+                                    <td>
+                                        {% if user.isBanned %}
+                                            <span class="badge bg-danger text-white">Banni</span>
+                                        {% else %}
+                                            <span class="badge bg-success text-white">Actif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('user_details', {'id': user.id}) }}" class="btn btn-info btn-sm">Voir</a>
+
+                                        <!-- Ban/Unban Button -->
+                                        {% if user.isBanned %}
+                                            <a href="{{ path('admin_user_unban', {'id': user.id}) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-unlock"></i> Débannir
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('admin_user_ban', {'id': user.id}) }}" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-ban"></i> Bannir
+                                            </a>
+                                        {% endif %}
+
+                                        <!-- Delete Button -->
+                                        <form method="post" action="{{ path('admin_user_delete', {'id': user.id}) }}" 
+                                            onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">Aucun utilisateur trouvé</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- End Page Content -->
+{% endblock %}

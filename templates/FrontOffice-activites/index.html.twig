@@ -1,0 +1,307 @@
+{% extends 'base.html.twig' %}
+
+{% block listActivites %}
+
+	<style>
+		.filter-btn {
+			padding: 5px 15px;
+			font-size: 14px;
+			border: 1px solid #53d2dc;
+		}
+		.filter-btn.active {
+			background-color: #53d2dc;
+		}
+
+		.city-card {
+			position: relative;
+			height: 150px;
+			background-size: cover;
+			background-position: center;
+			border-radius: 15px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 22px;
+			font-weight: bold;
+			text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+			overflow: hidden;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+			transition: transform 0.3s ease-in-out;
+		}
+
+		.city-card:hover {
+			transform: scale(1.05);
+		}
+
+		.overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.4);
+			border-radius: 15px;
+		}
+
+		.city-card h4 {
+			position: relative;
+			z-index: 2;
+			margin: 0;
+			font-size: 24px;
+			color: white
+		}
+		#numPages {
+			appearance: none;
+			background-color: transparent;
+			border: 0.125em solid #53d2dc;
+			border-radius: 0.9375em;
+			box-sizing: border-box;
+			color: #3B3B3B;
+			cursor: pointer;
+			display: inline-block;
+			font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 1.2;
+			margin: 0;
+		}
+		.filter-btn.active {
+			background-color: #53d2dc !important;
+
+		}
+
+		/* Design du badge Promo */
+		.promo-label {
+			background: #FFD700;
+			color: black;
+			font-size: 14px;
+			font-weight: bold;
+			padding: 5px 10px;
+			border-radius: 5px 0 0 5px;
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Design du pourcentage de réduction */
+		.reduction {
+			background: #FF4D4D;
+			color: white;
+			font-size: 14px;
+			font-weight: bold;
+			padding: 5px 8px;
+			border-radius: 0 5px 5px 0;
+			position: absolute;
+			top: 10px;
+			left: 75px;
+			box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Animation pour rendre la réduction plus visible */
+		@keyframes fadeInOut {
+			0% {
+				opacity: 1;
+			}
+			50% {
+				opacity: 0.5;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		.reduction {
+			animation: fadeInOut 1.5s infinite;
+		}
+		/* css lel prix des activités */
+
+		.price {
+			background-color: rgba(83, 210, 220, 0.7) !important;
+			color: black !important;
+			border: 1px solid rgba(83, 210, 220, 0.7);
+			padding: 5px 10px;
+			border-radius: 5px;
+			font-size: 18px;
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+			font-weight: bold
+		}
+
+		.price small {
+			font-size: 12px;
+			opacity: 0.8;
+			font-weight: bold
+		}
+	</style>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center pb-4">
+				<div class="col-md-12 heading-section text-center ftco-animate">
+					<span class="subheading">Activités</span>
+					<h2 class="mb-4">Nos Activités</h2>
+				</div>
+			</div>
+
+			<!-- Boutons de filtre par catégorie -->
+			<div class="text-center mb-4">
+				<button class="filter-btn" data-category="all">Toutes</button>
+				{% for categorie in categories %}
+					<button class="filter-btn" data-category="{{ categorie.id }}">{{ categorie.nom }}</button>
+				{% endfor %}
+			</div>
+
+			<div class="row" id="pagination">
+				{% for activite in pagination %}
+					<div class="col-md-4 ftco-animate activite-card" data-category="{{ activite.categorie.id }}">
+						<div class="project-wrap">
+							<a href="#" class="img" style="background-image: url('{{ asset('uploads/images/' ~ activite.image) }}');">
+								<span class="price">
+									&nbsp;{{ activite.prix }}&nbsp;<small>
+										<small>TND</small>/personne</small>
+								</span>
+							</a>
+							<div class="text p-4">
+								<span class="days">{{ activite.duree }}
+									jours</span>
+								<h3>
+									<a href="#">{{ activite.libelle }}</a>
+								</h3>
+								<p class="location">
+									<span class="fa fa-map-marker"></span>
+									{{ activite.localisation }}</p>
+								{% if activite.offre is not null and activite.offre.reduction is not null %}
+
+									<span class="promo-label">Promo</span>
+									<span class="reduction">-{{ activite.offre.reduction }}%</span>
+								</div>
+							{% endif %}
+							<a style="margin-left:85px" href="{{ path('app_activite_show', {'id': activite.id}) }}">
+								<button>Réserver
+								</button>
+							</a>
+							&nbsp;
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+		<!-- Pagination -->
+		<div id="pagination-container" class="text-center mt-4">
+			{% if pagination.pageCount > 1 %}
+				{% for page in 1..pagination.pageCount %}
+					<a id="numPages" href="{{ path('app_index', {'page': page, 'categorie': app.request.query.get('categorie')}) }}#pagination" class="filter-btn {% if page == pagination.currentPageNumber %}active{% endif %}">
+						{{ page }}
+					</a>
+				{% endfor %}
+			{% else %}
+				<button class="filter-btn">1</button>
+			{% endif %}
+		</div>
+
+		<div id=" calendar"></div>
+		<!-- Section villes -->
+		<section class="ftco-section">
+			<div class="container">
+				<div class="row justify-content-center pb-4">
+					<div class="col-md-12 heading-section text-center ftco-animate">
+						<span class="subheading">Villes</span>
+						<h2 class="mb-4">Nos destinations favorites</h2>
+					</div>
+				</div>
+
+				<div class="row">
+					{% if villes is defined %}
+
+						{% for ville in villes %}
+							<div class="col-md-3">
+								<div class="city-card" style="background-image: url('{{ asset('uploads/villes/' ~ ville.image) }}');">
+									<div class="overlay"></div>
+									<h4>{{ ville.nom }}</h4>
+								</div>
+								<br>
+							</div>
+						{% endfor %}
+					{% else %}
+						<p>Aucune ville n'a été définie.</p>
+					{% endif %}
+				</div>
+
+			</div>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzNn8CEsw_Di6bBbHrk1ePOYf0GLvLvuI&callback=initMap" async defer></script>
+			<hr class="my-4">
+			<div class="text-center my-4">
+				<i class="fas fa-map-marked-alt fa-2x text-white" style="background-color: #53d2dc; padding: 10px; border-radius: 50%;"></i>
+			</div>
+
+			<div id="map" style="height: 500px; width: 97%;border-radius:15px;margin-left:16px"></div>
+
+
+			<script>
+
+				function initMap() {
+var map = new google.maps.Map(document.getElementById("map"), {
+center: {
+lat: 33.8869,
+lng: 9.5375
+},
+zoom: 7
+});
+
+var infowindow = new google.maps.InfoWindow();{% for ville in villes %}var marker = new google.maps.Marker({
+position: {
+lat: {{ ville.latitude }},
+lng: {{ ville.longitude }}
+},
+map: map,
+title: "{{ ville.nom | escape }}",
+icon: {
+url: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
+scaledSize: new google.maps.Size(40, 40)
+}
+});
+
+marker.addListener("click", (function (marker) {
+return function () {
+var googleMapsUrl = `https://www.google.com/maps?q={{ ville.latitude }},{{ ville.longitude }}`;
+var contentString = `
+                <div style="max-width: 220px;height:70px; padding: 4px; font-family: Arial, sans-serif; color: #333;">
+                    <h3 style="margin: 5px 0 10px; font-size: 14px;">📍 <b>{{ ville.region | escape }}</b></h3>
+                    <a href="${googleMapsUrl}" target="_blank" 
+                        style="display: inline-block; padding: 6px 10px; background-color: #53d2dc; 
+                        color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
+                        Ouvrir Google Maps
+                    </a>
+                </div>
+            `;
+infowindow.setContent(contentString);
+infowindow.open(map, marker);
+};
+})(marker));{% endfor %}
+}
+			</script>
+
+			{# Script filtre categories -- boutons catégories #}
+			<script>
+				document.addEventListener("DOMContentLoaded", function () {
+const filterButtons = document.querySelectorAll(".filter-btn");
+
+filterButtons.forEach(button => {
+button.addEventListener("click", function () {
+const category = this.getAttribute("data-category");
+const url = new URL(window.location.href);
+if (category === "all") {
+url.searchParams.delete('categorie');
+} else {
+url.searchParams.set('categorie', category);
+}
+window.location.href = url.toString();
+});
+});
+});
+			</script>
+
+
+		{% endblock %}

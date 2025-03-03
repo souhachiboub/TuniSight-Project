@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+
+		<title>TunisSight - Details</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{% block css %}
+			<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+			<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+
+			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+			<link rel="stylesheet" href="{{asset('client/css/animate.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.carousel.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/owl.theme.default.min.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/magnific-popup.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/bootstrap-datepicker.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/flaticon.css')}}">
+			<link rel="stylesheet" href="{{asset('client/css/style.css')}}">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+		{% endblock %}
+
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				font-family: Poppins, sans-serif;
+				background-color: #f9f9f9;
+
+			}
+
+			.hero-wrap {
+				position: relative;
+				background-image: url('{{ asset('client/images/background33.jpg') }}');
+				height: 45vh;
+				background-size: cover;
+				background-position: center;
+			}
+
+			.hero-wrap .overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0, 0, 0, 0.5);
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+
+			.details-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				padding: 40px;
+				background-color: #fff;
+				border-radius: 10px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			}
+
+			.details-image {
+				width: 45%;
+				height: 400px;
+				background-size: cover;
+				background-position: center;
+				border-radius: 8px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+				transition: transform 0.3s ease-in-out;
+			}
+
+			.details-image:hover {
+				transform: scale(1.05);
+			}
+
+			.details-text {
+				width: 50%;
+			}
+
+			.details-text h3 {
+				font-size: 32px;
+				color: #333;
+				margin-bottom: 15px;
+				line-height: 1.3;
+			}
+
+			.details-text p {
+				font-size: 16px;
+				color: #777;
+				line-height: 1.6;
+				margin: 15px 0;
+				text-align: justify;
+			}
+
+			.price {
+				color: #53d2dc;
+				font-size: 20px;
+				font-style: italic;
+				margin-bottom: 15px;
+			}
+
+			.location {
+				font-size: 16px;
+				color: #555;
+				margin-top: 10px;
+				display: flex;
+				align-items: center;
+			}
+
+			.location .fa {
+				color: #53d2dc;
+				margin-right: 8px;
+			}
+
+			.btn-reserver {
+				padding: 12px 40px;
+				background-color: #53d2dc;
+				color: #fff;
+				border: none;
+				border-radius: 25px;
+				font-size: 18px;
+				cursor: pointer;
+				transition: background-color 0.3s ease, transform 0.3s ease;
+			}
+
+			.btn-reserver:hover {
+				background-color: #1a1a1a;
+				transform: translateY(-3px);
+			}
+
+			.details-container .container {
+				display: flex;
+				justify-content: space-between;
+			}
+			#btn-back {
+				background-color: black;
+				color: white
+			}
+			button {
+				appearance: none;
+				background-color: transparent;
+				border: 0.125em solid rgb(197, 189, 189);
+				border-radius: 0.9375em;
+				box-sizing: border-box;
+				color: #3B3B3B;
+				cursor: pointer;
+				display: inline-block;
+				font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.2;
+				margin: 0;
+				min-height: 2.5em;
+				min-width: 0;
+				outline: none;
+				padding: 0.5em 1.5em;
+				text-align: center;
+				text-decoration: none;
+				transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+				will-change: transform;
+			}
+			button:disabled {
+				pointer-events: none;
+			}
+			button:hover {
+				color: #fff;
+				background-color: #1A1A1A;
+				box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+				transform: translateY(-2px);
+			}
+
+			button:active {
+				box-shadow: none;
+				transform: translateY(0);
+			}
+			#btn-reserver:hover {
+				background-color: #53d2dc;
+			}
+			.overlay {
+				margin-top: 250px !important;
+				text-align: center;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: 1;
+			}
+			h3 {
+				color: black !important;
+				text-align: center !important
+			}
+
+			/* css sur le bouton réserver wa9teli dispo=0*/
+			button:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			button:disabled:hover,
+			button:disabled:focus,
+			button:disabled:active {
+				background-color: inherit;
+				color: inherit;
+			}
+
+
+			/* css lel navbaraaa */
+			#ftco-navbar {
+				height: 20vh;
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				background-image: url('{{ asset('client/images/background33.jpg') }}');
+				position: relative
+			}
+			.navbar-brand img {
+				height: 60px;
+				width: auto;
+			}
+
+			.navbar-nav .nav-item {
+				margin: 0 10px;
+				font-weight: bold
+			}
+
+			.navbar-nav .nav-link {
+				font-size: 17px;
+				color: white !important;
+				transition: color 0.3s ease-in-out;
+			}
+
+			.navbar-nav .nav-link:hover {
+				color: #53d2dc !important;
+			}
+
+			.navbar-toggler {
+				border: none;
+				outline: none;
+			}
+
+			.navbar-toggler i {
+				font-size: 24px;
+				color: white;
+			}
+
+
+			/* Style pour le bouton de réservation */
+			button {
+				appearance: none;
+				background-color: transparent;
+				border: 0.125em solid #1A1A1A;
+				border-radius: 0.9375em;
+				box-sizing: border-box;
+				color: #3B3B3B;
+				cursor: pointer;
+				display: inline-block;
+				font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.2;
+				margin: 0;
+				min-height: 2.5em;
+				min-width: 0;
+				outline: none;
+				padding: 0.5em 1.5em;
+				text-align: center;
+				text-decoration: none;
+				transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+				will-change: transform;
+			}
+			button:hover {
+				color: #fff;
+				background-color: #1A1A1A;
+				box-shadow: rgba(0, 0, 0, 0.25) 0 6px 10px;
+				transform: translateY(-2px);
+			}
+			/**/
+			.activity-card {
+				max-width: 300px;
+				background: white;
+				border-radius: 12px;
+				box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+				padding: 20px;
+				text-align: center;
+				border: 1px solid black
+			}
+
+
+			.dates-container {
+				display: flex;
+				justify-content: space-between;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+
+			.date-box {
+				flex: 1;
+				background: #f7f7f7;
+				padding: 10px;
+				border-radius: 8px;
+				text-align: center;
+			}
+
+			.date-label {
+				font-size: 12px;
+				font-weight: bold;
+				color: #26648e;
+				display: block;
+			}
+
+			.date-value {
+				font-size: 15px;
+			}
+
+			.adults-section {
+				text-align: left;
+				margin-bottom: 15px;
+			}
+
+			.adults-label {
+				display: block;
+				color: black
+			}
+
+
+			.counter {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+
+			}
+
+			.counter button {
+				border: none;
+				background: none;
+				font-size: 20px;
+				color: #87CEEB !important;
+				cursor: pointer;
+			}
+
+			.date-icon {
+				font-size: 18px;
+				color: black;
+				margin-bottom: 5px;
+			}
+			.price-bar {
+				background: #87CEEB;
+				color: white;
+				font-size: 18px;
+				font-weight: bold;
+				padding: 7px;
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+				text-align: center;
+			}
+
+			.price-text {
+				font-size: 14px;
+				font-weight: normal;
+			}
+
+			/*css du voucher */
+
+			.voucher-section {
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+			}
+
+			.voucher-section input {
+				padding: 8px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				width: 150px;
+			}
+
+			.voucher-section button {
+				background: #26648e;
+				color: white;
+				border: none;
+				border-radius: 5px;
+			}
+			/* Structure générale du modal */
+			.modal-content {
+				border-radius: 10px; /* Coins arrondis pour une apparence plus douce */
+				border: none;
+				background-color: #f8f9fa; /* Couleur de fond douce et claire */
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre portée */
+			}
+
+			/* Header du modal */
+			.modal-header {
+				background-color: #7AB2D3; /* Un bleu vif pour l'en-tête */
+				color: white;
+				font-weight: bold;
+				border-bottom: 2px solid #f0f0f0; /* Séparation subtile avec un bord */
+				padding: 15px;
+				border-radius: 10px 10px 0 0;
+				text-align: center;
+			}
+
+			/* Titres et icônes du modal */
+			.modal-title {
+				font-size: 1.25rem;
+				margin: 0;
+			}
+
+			/* Bouton de fermeture avec effet bleu doux */
+			.btn-close.soft-blue {
+				background-color: #ADD8E6; /* Bleu clair */
+				border: none;
+				border-radius: 50%;
+				padding: 10px;
+				transition: background-color 0.3s ease, transform 0.2s ease;
+			}
+
+			/* Effet au survol du bouton */
+			.btn-close.soft-blue:hover {
+				background-color: #87CEEB; /* Bleu ciel */
+				cursor: pointer;
+				transform: scale(1.1); /* Agrandissement léger au survol */
+			}
+
+			/* Ajout d'une légère ombre autour du bouton */
+			.btn-close.soft-blue:focus {
+				box-shadow: 0 0 10px rgba(135, 206, 235, 0.5); /* Ombre bleue douce */
+			}
+
+			/* Corps du modal */
+			.modal-body {
+				padding: 25px;
+				font-size: 1rem;
+				line-height: 1.6;
+				color: #333;
+			}
+
+			/* Ajouter des marges et de l'espace autour du formulaire */
+			#voucherFormContainer {
+				margin-top: 20px;
+			}
+
+			/* Pour donner plus de structure et de hiérarchie, on peut styliser les champs du formulaire */
+			.modal-body input,
+			.modal-body select,
+			.modal-body textarea {
+				width: 100%;
+				padding: 10px;
+				margin-bottom: 15px;
+				border-radius: 5px;
+				border: 1px solid #ddd;
+				font-size: 1rem;
+			}
+
+			/* Ajouter des couleurs et un effet au bouton de soumission */
+			.modal-body .btn-primary {
+				background-color: #007BFF;
+				border: none;
+				padding: 10px 20px;
+				border-radius: 5px;
+				color: white;
+				font-size: 1rem;
+				transition: background-color 0.3s ease;
+			}
+
+			/* Effet au survol du bouton de soumission */
+			.modal-body .btn-primary:hover {
+				background-color: #0056b3;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- code du calcul prix total - et + - lezm ykoun f awl lbody, bch l page ta9ra les fonctions increment & decrement */-->
+
+		<script>
+			let nbrPersonnes = 1;
+const prixUnitaire = {{ activite.prix }};
+const capaciteMax = {{ activite.capacite }};
+
+function updateTotalPrice() {
+const totalPrice = nbrPersonnes * prixUnitaire;
+document.getElementById('totalPrice').textContent = totalPrice + ' DT';
+document.getElementById('totalPriceInput').value = totalPrice; // Met à jour le champ caché
+document.getElementById('nbrPersonnesInput').value = nbrPersonnes; // Met à jour le champ caché
+}
+function updateButtons() {
+document.querySelector('.counter button:first-child').disabled = nbrPersonnes === 1;
+document.querySelector('.counter button:last-child').disabled = nbrPersonnes === capaciteMax;
+}
+
+function increment() {
+if (nbrPersonnes < capaciteMax) {
+nbrPersonnes++;
+document.getElementById('nbrPersonnes').textContent = nbrPersonnes;
+updateTotalPrice();
+updateButtons();
+}
+}
+
+function decrement() {
+if (nbrPersonnes > 1) {
+nbrPersonnes--;
+document.getElementById('nbrPersonnes').textContent = nbrPersonnes;
+updateTotalPrice();
+updateButtons();
+}
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+updateTotalPrice();
+updateButtons();
+});
+		</script>
+
+
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ftco-navbar">
+			<div class="container">
+				<img class="img" src="{{ asset('admin/img/logo.png') }}"/>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
+					<span class="oi oi-menu"></span>
+					Menu
+				</button>
+				<div class="collapse navbar-collapse" id="ftco-nav">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item active">
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:30px" class="fa fa-user-circle"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right shadow-lg p-2 rounded" aria-labelledby="loginDropdown">
+
+								{% if app.user %}
+									<a class="dropdown-item d-flex align-items-center" href="">
+										<i class="fa fa-user text-primary"></i>
+										<span class="ml-2">👤
+											{{ app.user.nom }}
+											{{ app.user.prenom }}</span>
+									</a>
+									<a class="dropdown-item" href="{{ path('app_logout') }}">
+										<i class="fas fa-sign-out-alt"></i>
+										<span class="ml-2">Se déconnecter</span>
+									</a>
+								{% else %}
+									<a class="dropdown-item d-flex align-items-center" href="{{ path('app_login') }}">
+										<i class="fas fa-user"></i>
+										<span class="ml-2">Se connecter</span>
+									</a>
+
+									<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+										<i class="fa fa-user-plus"></i>
+										<span class="ml-2">Devenez Prestataire</span>
+									</a>
+									<a class="dropdown-item d-flex align-items-center font-weight-bold text-success" href="{{ path('app_register') }}">
+										<i class="fa fa-user-plus"></i>
+										<span class="ml-2">Créer un compte</span>
+									</a>
+								{% endif %}
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<section class="ftco-section details-container">
+				<div class="details-image" style="background-image: url('{{ asset('uploads/images/' ~ activite.image) }}');"></div>
+				&nbsp;&nbsp;&nbsp;
+				<div class="container">
+
+					<div class="details-text">
+						<h3>{{ activite.libelle }}</h3>
+						<button style="margin-left:300px">
+							Catégorie :
+							{{activite.categorie.nom}}
+						</button>
+						<hr>
+
+						<br>
+						<span class="price">&nbsp;{{ activite.prix }}
+							DT/personne
+						</span>
+
+						<p>{{ activite.description }}</p>
+
+						<div class="activity-dates">
+							<span style=" font-size:16px">
+
+								<i class="fa fa-calendar"></i>
+								{{ activite.dateDebut|date('d/m/Y') }}</span>
+							&nbsp;&nbsp;
+							<span style="font-size:16px">
+								<i class="fa fa-calendar-check"></i>
+								{{ activite.dateFin|date('d/m/Y') }}</span>
+							&nbsp;&nbsp;&nbsp;
+							<span>
+								<i class="fa fa-clock time-icon"></i>
+								{{ activite.duree }}
+								JOURS</span>
+						</div>
+
+						<p class="location">
+							<span class="fa fa-map-marker"></span>
+							{{ activite.localisation }}</p>
+
+						<hr>
+
+						<button onclick="window.location.href='{{ path('app_index') }}'" id="btn-back">Revenir</button>
+					</button>
+
+					{# <button type="button" style=" color:#26648e" data-bs-toggle="modal" data-bs-target="#voucherModal">
+																																																																																																																																																						Apply voucher
+																																																																																																																																																					</button> #}
+
+
+					{% if app.user %}
+						<button type="button" style=" color:#26648e" data-bs-toggle="modal" data-bs-target="#voucherModal">
+							Appliquer Voucher
+						</button>
+					{% else %}
+
+						<a href="{{ path('app_login', {'redirect': app.request.uri }) }}" class="btn-reserver">
+							Appliquer Voucher
+						</a>
+
+					{% endif %}
+
+				</div>
+
+				<div class="activity-card">
+					<div class="price-bar">
+						<span class="price-text">Prix total</span>
+						<span class="price-value" id="totalPrice">{{ activite.prix }}
+							DT</span>
+					</div>
+					<div class="dates-container">
+						<div class="date-box">
+							<i class="fa fa-calendar-alt date-icon"></i>
+							<span class="date-label">DÉPART</span>
+							<span class="date-value">{{ activite.dateDebut|date('d/m/Y') }}</span>
+						</div>
+						<div class="date-box">
+							<i class="fa fa-calendar-alt date-icon"></i>
+							<span class="date-label">RETOUR</span>
+							<span class="date-value">{{ activite.dateFin|date('d/m/Y') }}</span>
+						</div>
+					</div>
+					<hr>
+
+					<div class="adults-section">
+						<span class="adults-label">Nombre personnes
+						</span>
+						<div class="counter">
+							<button style="border: 1px solid black; width: 30px; height: 20px; padding: 0; font-size: 16px;" onclick="decrement()">&#8722;</button>
+							<span id="nbrPersonnes">1</span>
+							<button style="border: 1px solid black; width: 30px; height: 20px; padding: 0; font-size: 16px;" onclick="increment()">&#43;</button>
+						</div>
+
+					</div><hr>
+
+					<hr>
+					{% if app.user %}
+						<form action="/checkout" method="POST">
+							<input type="hidden" name="totalPrice" id="totalPriceInput" value="{{ activite.prix }}">
+							<input type="hidden" name="nbrPersonnes" id="nbrPersonnesInput" value="1">
+							<input type="hidden" name="activiteId" value="{{ activite.id }}">
+							<button type="submit" class="btn btn-primary btn-lg" style="background-color:#7AB2D3 !important;margin-left:18px;border:1px solid #7AB2D3 !important">Réserver</button>
+						</form>
+					{% else %}
+						<a href="{{ path('app_login', {'redirect': app.request.uri }) }}">Se connecter pour réserver</a>
+					{% endif %}
+
+				</div>
+
+				<!-- Modal -->
+				<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="voucherModalLabel">Appliquer un Coupon</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div
+								class="modal-body" id="voucherFormContainer"><!-- Le formulaire sera chargé ici via AJAX -->
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- JavaScript pour charger le formulaire et gérer la soumission -->
+				<script>
+					document.addEventListener('DOMContentLoaded', function () { // Charger le formulaire dans le modal lorsqu'il est ouvert
+document.getElementById('voucherModal').addEventListener('show.bs.modal', function (event) {
+const activityId = {{ activite.id|json_encode }};
+fetch(`/load-voucher-form/${activityId}`).then(response => response.text()).then(data => {
+document.getElementById('voucherFormContainer').innerHTML = data;
+}).catch(error => console.error('Erreur lors du chargement du formulaire', error));
+});
+
+document.addEventListener('submit', function (event) {
+if (event.target.id === 'voucherForm') {
+event.preventDefault();
+const formData = new FormData(event.target);
+const activityId = {{ activite.id|json_encode }};
+
+fetch(`/apply-voucher/${activityId}`, {
+method: 'POST',
+body: formData
+}).then(response => {
+if (!response.ok) {
+return response.json().then(data => {
+throw new Error(data.message); // Utiliser le message de l'API pour l'afficher
+});
+}
+return response.json();
+}).then(data => {
+if (data.status === 'success') {
+alert(data.message); // Afficher un message de succès
+window.location.reload(); // Recharger la page pour afficher le nouveau prix
+} else {
+alert(data.message); // Afficher un message d'erreur
+}
+}).catch(error => {
+console.error('Erreur lors de la soumission du formulaire', error);
+alert('Une erreur est survenue : ' + error.message); // Afficher un message d'erreur général
+});
+}
+});
+});
+				</script>
+			</section>
+
+
+			<!-- Ajouter Bootstrap JS si nécessaire -->
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+		</body>
+	</body>
+</html>

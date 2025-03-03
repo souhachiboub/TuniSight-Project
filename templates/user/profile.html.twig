@@ -1,0 +1,90 @@
+{% extends 'test.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+        <!-- ✅ Display Flash Messages -->
+        {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+<div class="container mt-5">
+    <!-- Navigation: Go Back to Homepage -->
+    
+
+    <div class="row">
+        <!-- Profile Image Section -->
+        <div class="col-md-4 text-center">
+            <div class="card p-4 shadow-sm">
+                <h4 class="mb-3">Photo de Profil</h4>
+                
+                {% if user.photoProfil %}
+                    <img src="{{ asset('uploads/profile_pictures/' ~ user.photoProfil) }}" class="rounded-circle mb-3" width="150" height="150" alt="Photo de profil">
+                {% else %}
+                    <img src="{{ asset('admin/img/default_profile.png') }}" class="rounded-circle mb-3" width="120" height="120" alt="Default Profile">
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    <input type="file" name="photoProfil" class="form-control mb-2">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Changer la photo</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Profile Information Section -->
+        <div class="col-md-8">
+            <div class="card p-4 shadow-sm">
+                <h4 class="mb-3">Informations Personnelles</h4>
+                <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                  <label>Nom :</label>
+                 <input type="text" name="nom" value="{{ user.nom }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Prénom :</label>
+                 <input type="text" name="prenom" value="{{ user.prenom }}" class="form-control">
+            </div>
+           <div class="form-group">
+             <label>Numéro de téléphone :</label>
+             <input type="text" name="numTel" value="{{ user.numTel }}" class="form-control">
+            </div>
+            <div class="form-group">
+             <label>Adresse :</label>
+            <input type="text" name="adresse" value="{{ user.adresse }}" class="form-control">
+            </div>
+
+            
+
+            <button type="submit" class="btn btn-primary w-100">Mettre à Jour</button>
+            </form>
+
+ </div>
+
+            <!-- Change Password Section -->
+            <div class="card p-4 shadow-sm mt-4">
+                <h4 class="mb-3">Changer le mot de passe</h4>
+                <form method="post" action="{{ path('change_password') }}">
+                    <div class="form-group">
+                        <label>Ancien mot de passe :</label>
+                        <input type="password" name="old_password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nouveau mot de passe :</label>
+                        <input type="password" name="new_password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmer le mot de passe :</label>
+                        <input type="password" name="confirm_password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">Changer le mot de passe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

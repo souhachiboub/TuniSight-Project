@@ -1,0 +1,174 @@
+{% extends 'user/templateuser.html.twig' %}
+{% block actualButton %}
+            <li class="nav-item ">
+							<a href="{{ path('app_index') }}" class="nav-link">Accueil</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_boutique') }}" class="nav-link">Boutique</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{ path('app_activite_index') }}" class="nav-link">Découvrir</a>
+						</li>
+						<li class="nav-item active">
+							<a href="{{path('app_reclamation_mes')}}" class="nav-link">Réclamations</a>
+						</li>
+						<li class="nav-item">
+							<a href="{{path('list_publications')}}" class="nav-link">Publications</a>
+						</li>{% endblock %}
+{% block actuel %}<p class="breadcrumbs"><span class="mr-2"><a href={{ path('app_index') }}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Réclamation <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Réclamation</h1>{% endblock %}
+{% block actual1 %}<h2 class="ftco-heading-2">Réclamation</h2>{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <h1 class="page-title">Modifier la réclamation</h1>
+
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'id': 'editReclamationForm', 'novalidate': 'novalidate'}}) }}
+        
+        <div class="input-group">
+            <label for="{{ form.description.vars.id }}"></label>
+            {{ form_widget(form.description, {
+                'attr': {
+                    'rows': '5',
+                    'placeholder': 'Modifiez votre réclamation...',
+                    'required': 'required',
+                    'class': 'textarea'
+                }
+            }) }}
+            <div id="error-message"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Enregistrer les modifications</button>
+        
+        {{ form_end(form) }}
+        
+        <a href="{{ path('app_reclamation_mes') }}" class="back-btn">Retour</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('editReclamationForm');
+        const textarea = form.querySelector('textarea');
+        const errorDiv = document.getElementById('error-message');
+
+        // Clear error when user starts typing
+        textarea.addEventListener('input', function() {
+            errorDiv.textContent = this.value.trim() ? '' : errorDiv.textContent;
+        });
+
+        // Auto-resize textarea
+        textarea.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = this.scrollHeight + "px";
+        });
+
+        form.addEventListener('submit', function(e) {
+            if (!textarea.value.trim()) {
+                errorDiv.textContent = 'La réclamation ne peut pas être vide.';
+                e.preventDefault();
+            } else if (textarea.value.length > 5000) {
+                errorDiv.textContent = 'La réclamation ne peut pas dépasser 5000 caractères.';
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block css %}
+<style>
+    .container {
+        font-family: system-ui;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .page-title {
+        text-align: center;
+        color: #2B3940;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .input-group textarea {
+        font-family: system-ui;
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+        line-height: 1.5;
+        border-radius: 5px;
+        background-color: #f7f7f7;
+        border: none;
+        outline: none;
+        resize: vertical;
+    }
+
+    .input-group textarea:focus {
+        background-color: #f0f0f0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #26648E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .submit-btn:hover {
+        background-color: #4F8FC0;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-btn {
+        color : #2B3940;
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #fff;
+        color: black;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        color : #2B3940;
+        background-color: 0 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    #error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+        transition: all 0.3s ease;
+    }
+
+</style>
+{% endblock %}

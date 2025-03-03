@@ -1,0 +1,13 @@
+{% extends 'baseLoginInscriFront.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}    
+    {{ include('user/_inscrifront.html.twig') }}
+
+    <center>
+        <a href="{{ path('app_login_front') }}" style="color: black;">
+            Retour
+        </a>
+    </center>
+{% endblock %}

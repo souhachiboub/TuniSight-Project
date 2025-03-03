@@ -1,0 +1,259 @@
+{% extends 'baseboutique.html.twig' %}
+
+{% block panierr %}
+
+<h2>🛒 Résumé de votre commande</h2>
+
+{% if produitsPanier is empty %}
+    <div class="alert alert-warning text-center">
+        <p>Votre panier est vide.</p>
+    </div>
+{% else %}
+    <div>
+        <ul class="list-group">
+            {% for item in produitsPanier %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ item.produit.libelle }}</strong>
+                        <br>
+                        <small class="text-muted">{{ item.quantite }} x {{ item.produit.prix }}€</small>
+                    </div>
+                    <span class="badge badge-primary p-2">{{ item.quantite * item.produit.prix }}€</span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="d-flex justify-content-between mt-3">
+            <h4 class="font-weight-bold">Total :</h4>
+            <h4 class="font-weight-bold text-success">
+                {{ produitsPanier|reduce((carry, item) => carry + (item.produit.prix * item.quantite), 0) }}€
+            </h4>
+        </div>
+
+        {# ✅ Formulaire de commande #}
+{{ form_start(formCommande, {'attr': {'id': 'commandeForm', 'novalidate': 'novalidate'}}) }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <div class="form-group">
+    {{ form_label(formCommande.nom) }}
+    {{ form_widget(formCommande.nom, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger" id="error_nom"></div> {# ✅ Ajout d'un ID pour chaque erreur #}
+</div>
+
+<div class="form-group">
+    {{ form_label(formCommande.prenom) }}
+    {{ form_widget(formCommande.prenom, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger" id="error_prenom"></div>
+</div>
+
+<div class="form-group">
+    {{ form_label(formCommande.adresseliv) }}
+    {{ form_widget(formCommande.adresseliv, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger" id="error_adresseliv"></div>
+</div>
+
+<div class="form-group">
+    {{ form_label(formCommande.numerotelephone) }}
+    {{ form_widget(formCommande.numerotelephone, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger" id="error_numerotelephone"></div>
+</div>
+
+<div class="form-group">
+    {{ form_label(formCommande.email) }}
+    {{ form_widget(formCommande.email, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger" id="error_email"></div>
+</div>
+
+
+        {{ form_end(formCommande) }}
+
+        {% if app.user %}
+            <button id="payerBtn" class="btn btn-success">✅ Confirmer l'achat</button>
+        {% else %}
+            <a href="{{ path('app_login', {'redirect': app.request.uri }) }}" class="btn btn-primary">
+                🔑 Connectez-vous pour finaliser l'achat
+            </a>
+        {% endif %}
+    </div>
+    {# ✅ Modale d'alerte (simplifiée) #}
+    <div id="stockAlertModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">⚠️ Stock insuffisant</h5>
+                    <button type="button" class="close btn btn-light" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Certains produits ne sont plus disponibles :</p>
+                    <ul id="stockAlertMessage" class="list-group text-start"></ul>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {# ✅ Script Stripe & Vérification du stock #}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+     
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const stripe = Stripe("{{ stripe_public_key }}");
+
+    document.getElementById("payerBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        let formData = new FormData(document.getElementById("commandeForm"));
+
+        // Vérifier le stock avant d'enregistrer la commande
+        fetch("{{ path('verifier_stock') }}", {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Stock validé, enregistrement de la commande...");
+                return fetch("{{ path('save_commande') }}", {
+    method: "POST",
+    body: new URLSearchParams(formData), // ✅ Convertit FormData en un format lisible par Symfony
+    headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "Content-Type": "application/x-www-form-urlencoded" // ✅ Ajoute ce header pour que Symfony traite bien les données
+    }
+});
+
+
+
+            } else {
+                console.error("Stock insuffisant :", data.erreurs);
+                afficherErreursStock(data.erreurs);
+                throw new Error("Stock insuffisant");
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.error("Erreur de validation :", data.errors);
+                afficherErreursValidation(data.errors); // ✅ Afficher les erreurs sous chaque champ
+                throw new Error("Erreur de validation");
+            } else {
+                console.log("Commande enregistrée en session !");
+                return fetch("{{ path('checkoutraw') }}", { method: "POST" });
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                stripe.redirectToCheckout({ sessionId: data.id });
+            } else {
+                alert("Erreur lors de la création de la session Stripe.");
+            }
+        })
+        .catch(error => {
+            console.error("Erreur AJAX :", error);
+        });
+    });
+});
+
+function afficherErreursValidation(erreurs) {
+    // ✅ Effacer les erreurs précédentes
+    document.querySelectorAll('.text-danger').forEach(el => el.innerHTML = "");
+
+    // ✅ Ajouter les nouvelles erreurs sous chaque champ concerné
+    for (const [champ, message] of Object.entries(erreurs)) {
+        let divErreur = document.getElementById("error_" + champ);
+        if (divErreur) {
+            divErreur.innerHTML = message; // ✅ Insère l'erreur sous le champ
+        } else {
+            console.warn("⚠️ ID introuvable pour le champ :", champ);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function afficherErreursStock(erreurs) {
+            let stockMessageContainer = document.getElementById("stockAlertMessage");
+            stockMessageContainer.innerHTML = ""; // Nettoyage avant affichage
+
+            erreurs.forEach(erreur => {
+                let listItem = document.createElement("li");
+                listItem.classList.add("list-group-item", "list-group-item-danger");
+                listItem.innerHTML = `<strong>${erreur.produit}</strong> - Disponible : <strong>${erreur.quantite_disponible}</strong>, Demandé : <strong>${erreur.quantite_demandee}</strong>`;
+                stockMessageContainer.appendChild(listItem);
+            });
+
+            // Afficher la modale Bootstrap
+            let stockModal = new bootstrap.Modal(document.getElementById("stockAlertModal"));
+            stockModal.show();
+
+            // ✅ Fermer automatiquement la modale après 5 secondes
+            setTimeout(() => {
+                stockModal.hide();
+            }, 5000);
+        }
+    </script>
+
+{% endif %}
+{% endblock %}
+
+
+

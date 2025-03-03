@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'utilisateur{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <a href="{{ path('app_user_index') }}" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+
+    <h2 class="text-primary">Détails de l'utilisateur</h2>
+
+    <div class="card shadow-sm p-4">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <!-- Debugging Image Path (Remove this once it works) -->
+                <p>Image Path: {{ asset('uploads/profile_pictures/' ~ user.photoProfil) }}</p>
+
+                <!-- Profile Picture -->
+                {% if user.photoProfil is defined and user.photoProfil is not empty and user.photoProfil is not null %}
+                    <img src="{{ asset('uploads/profile_pictures/' ~ user.photoProfil) }}" 
+                         class="rounded-circle mb-3" 
+                         width="150" 
+                         height="150" 
+                         alt="Profile Picture"
+                         onerror="this.onerror=null; this.src='{{ asset('admin/img/default_profile.png') }}';">
+                {% else %}
+                    <img src="{{ asset('admin/img/default_profile.png') }}" 
+                         class="rounded-circle mb-3" 
+                         width="150" 
+                         height="150" 
+                         alt="Default Profile">
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th>ID:</th>
+                            <td>{{ user.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom:</th>
+                            <td>{{ user.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prénom:</th>
+                            <td>{{ user.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Numéro de téléphone:</th>
+                            <td>{{ user.numTel }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rôle:</th>
+                            <td>{{ user.role }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date de Naissance:</th>
+                            <td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Adresse:</th>
+                            <td>{{ user.adresse }}</td>
+                        </tr>
+                        <tr>
+                            <th>Biographie:</th>
+                            <td>{{ user.bio }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Edit & Delete Buttons -->
+                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+
+                {{ include('user/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
