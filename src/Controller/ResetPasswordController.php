@@ -108,9 +108,9 @@ public function reset(
 
 private function sendSms(string $phoneNumber, int $verificationCode): void
 {
-    $twilioSid = 'AC5e27b45c72fc451bcc927229cd443cc3';
-    $twilioAuthToken = '33c7a76d68400207ce69f5a99010ec6e';
-    $twilioPhoneNumber = '+16823399394';
+    $twilioSid = '';
+    $twilioAuthToken = '';
+    $twilioPhoneNumber = '';
 
     // Format phone number to ensure it includes the country code
     $phoneNumber = $this->formatPhoneNumber($phoneNumber);
